@@ -1,4 +1,4 @@
-use ray::Colour;
+use rays::Colour;
 
 fn main() {
     const IMAGE_WIDTH: i32 = 256;
