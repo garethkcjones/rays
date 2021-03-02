@@ -1,3 +1,5 @@
+use ray::Colour;
+
 fn main() {
     const IMAGE_WIDTH: i32 = 256;
     const IMAGE_HEIGHT: i32 = 256;
@@ -13,11 +15,9 @@ fn main() {
             let g = f64::from(j) / f64::from(IMAGE_HEIGHT - 1);
             let b = 0.25;
 
-            let r = (255.999 * r) as i32;
-            let g = (255.999 * g) as i32;
-            let b = (255.999 * b) as i32;
+            let pixel_colour = Colour { r, g, b };
 
-            println!("{} {} {}", r, g, b);
+            println!("{}", pixel_colour);
         }
     }
 
