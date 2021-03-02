@@ -1,6 +1,10 @@
 mod colour;
+mod hit;
 mod ray;
+mod sphere;
 mod vec3;
 pub use colour::Colour;
+pub use hit::{HitRecord, Hittable};
 pub use ray::Ray;
+pub use sphere::Sphere;
 pub use vec3::Vec3;
