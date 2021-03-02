@@ -13,6 +13,8 @@ pub trait Hittable {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord>;
 }
 
+pub type HittableList = Vec<Box<dyn Hittable>>;
+
 impl HitRecord {
     #[must_use]
     pub fn new(r: &Ray, p: Vec3, normal: Vec3, t: f64) -> Self {
@@ -27,7 +29,7 @@ impl HitRecord {
     }
 }
 
-impl Hittable for Vec<Box<dyn Hittable>> {
+impl Hittable for HittableList {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
         let mut temp_rec = None;
         let mut closest_so_far = t_max;

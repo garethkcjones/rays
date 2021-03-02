@@ -1,19 +1,6 @@
-use rays::{Colour, Ray, Vec3};
+use rays::{Colour, Hittable, HittableList, Ray, Sphere, Vec3};
 
-fn hit_sphere(centre: &Vec3, radius: f64, r: &Ray) -> f64 {
-    let oc = r.origin - centre;
-    let a = r.direction.dot(r.direction);
-    let half_b = oc.dot(r.direction);
-    let c = oc.dot(oc) - radius * radius;
-    let discriminant = half_b * half_b - a * c;
-    if discriminant < 0.0 {
-        -1.0
-    } else {
-        (-half_b - discriminant.sqrt()) / a
-    }
-}
-
-fn ray_colour(r: &Ray) -> Colour {
+fn ray_colour(r: &Ray, world: &dyn Hittable) -> Colour {
     const WHITE: Colour = Colour {
         r: 1.0,
         g: 1.0,
@@ -25,20 +12,12 @@ fn ray_colour(r: &Ray) -> Colour {
         b: 1.0,
     };
 
-    let sphere_centre = Vec3 {
-        x: 0.0,
-        y: 0.0,
-        z: -1.0,
-    };
-    let sphere_radius = 0.5;
-    let t = hit_sphere(&sphere_centre, sphere_radius, r);
-    if t > 0.0 {
-        let n = (r.at(t) - sphere_centre).unit();
+    if let Some(rec) = world.hit(r, 0.0, f64::INFINITY) {
         return 0.5
             * Colour {
-                r: n.x + 1.0,
-                g: n.y + 1.0,
-                b: n.z + 1.0,
+                r: rec.normal.x + 1.0,
+                g: rec.normal.y + 1.0,
+                b: rec.normal.z + 1.0,
             };
     }
 
@@ -53,6 +32,29 @@ fn main() {
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 400;
     let image_height = (f64::from(image_width) / aspect_ratio) as _;
+
+    // World.
+
+    let mut world = HittableList::new();
+
+    world.push(Box::new(Sphere {
+        centre: Vec3 {
+            x: 0.0,
+            y: 0.0,
+            z: -1.0,
+        },
+        radius: 0.5,
+    }));
+    world.push(Box::new(Sphere {
+        centre: Vec3 {
+            x: 0.0,
+            y: -100.5,
+            z: -1.0,
+        },
+        radius: 100.0,
+    }));
+
+    let world = world;
 
     // Camera.
 
@@ -99,7 +101,7 @@ fn main() {
             let direction = lower_left_corner + u * horizontal + v * vertical - origin;
             let r = Ray { origin, direction };
 
-            let pixel_colour = ray_colour(&r);
+            let pixel_colour = ray_colour(&r, &world);
 
             println!("{}", pixel_colour);
         }
