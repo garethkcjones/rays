@@ -1,16 +1,40 @@
 use rays::{Colour, Ray, Vec3};
 
+fn hit_sphere(centre: &Vec3, radius: f64, r: &Ray) -> bool {
+    let oc = r.origin - centre;
+    let a = r.direction.dot(r.direction);
+    let b = 2.0 * oc.dot(r.direction);
+    let c = oc.dot(oc) - radius * radius;
+    let discriminant = b * b - 4.0 * a * c;
+    discriminant > 0.0
+}
+
 fn ray_colour(r: &Ray) -> Colour {
     const WHITE: Colour = Colour {
         r: 1.0,
         g: 1.0,
         b: 1.0,
     };
+    const RED: Colour = Colour {
+        r: 1.0,
+        g: 0.0,
+        b: 0.0,
+    };
     const BLUE: Colour = Colour {
         r: 0.5,
         g: 0.7,
         b: 1.0,
     };
+
+    let sphere_centre = Vec3 {
+        x: 0.0,
+        y: 0.0,
+        z: -1.0,
+    };
+    let sphere_radius = 0.5;
+    if hit_sphere(&sphere_centre, sphere_radius, r) {
+        return RED;
+    }
 
     let unit_direction = r.direction.unit();
     let t = 0.5 * (unit_direction.y + 1.0);
