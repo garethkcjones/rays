@@ -1,10 +1,12 @@
 use rand::prelude::*;
 
+mod camera;
 mod colour;
 mod hit;
 mod ray;
 mod sphere;
 mod vec3;
+pub use camera::Camera;
 pub use colour::Colour;
 pub use hit::{HitRecord, Hittable, HittableList};
 pub use ray::Ray;
