@@ -35,7 +35,7 @@ fn ray_colour(r: &Ray, world: &impl Hittable, depth: i32) -> Colour {
 
     if let Some(rec) = world.hit(r, 0.001, f64::INFINITY) {
         let origin = rec.p;
-        let direction = rec.normal + Vec3::random_in_unit_sphere();
+        let direction = rec.normal + Vec3::random_unit();
         return 0.5 * ray_colour(&Ray { origin, direction }, world, depth - 1);
     }
 

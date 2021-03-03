@@ -36,6 +36,11 @@ impl Vec3 {
     }
 
     #[must_use]
+    pub fn random_unit() -> Self {
+        Vec3::random_in_unit_sphere().unit()
+    }
+
+    #[must_use]
     pub fn abs(self) -> f64 {
         self.dot(self).sqrt()
     }
