@@ -1,9 +1,11 @@
-use crate::{HitRecord, Hittable, Ray, Vec3};
+use crate::{HitRecord, Hittable, Material, Ray, Vec3};
+use std::rc::Rc;
 
-#[derive(Clone, Copy, Debug, Default, PartialEq)]
+#[derive(Clone, Debug)]
 pub struct Sphere {
     pub centre: Vec3,
     pub radius: f64,
+    pub material: Rc<dyn Material>,
 }
 
 impl Hittable for Sphere {
@@ -32,6 +34,7 @@ impl Hittable for Sphere {
         let t = root;
         let p = r.at(t);
         let normal = (p - self.centre) / self.radius;
-        Some(HitRecord::new(r, p, normal, t))
+        let material = Rc::clone(&self.material);
+        Some(HitRecord::new(r, p, normal, material, t))
     }
 }

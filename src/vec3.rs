@@ -41,6 +41,28 @@ impl Vec3 {
     }
 
     #[must_use]
+    pub fn random_in_hemisphere(normal: Self) -> Self {
+        let in_sphere = Vec3::random_in_unit_sphere();
+        if in_sphere.dot(normal) > 0.0 {
+            in_sphere
+        } else {
+            -in_sphere
+        }
+    }
+
+    #[must_use]
+    pub fn near_zero(self) -> bool {
+        // Return true if the vector is close to zero in all dimensions.
+        const EPSILON: f64 = 1e-8;
+        self.x.abs() < EPSILON && self.y.abs() < EPSILON && self.z.abs() < EPSILON
+    }
+
+    #[must_use]
+    pub fn reflect(self, normal: Self) -> Self {
+        self - 2.0 * self.dot(normal) * normal
+    }
+
+    #[must_use]
     pub fn abs(self) -> f64 {
         self.dot(self).sqrt()
     }

@@ -1,7 +1,10 @@
-use rays::{Camera, Colour, Hittable, HittableList, Ray, Sphere, Vec3};
+use rays::{
+    Camera, Colour, Hittable, HittableList, Lambertian2, Material, Metal, Ray, Sphere, Vec3,
+};
 use std::{
     io::{self, prelude::*},
     process,
+    rc::Rc,
 };
 
 const BLACK: Colour = Colour {
@@ -34,9 +37,11 @@ fn ray_colour(r: &Ray, world: &impl Hittable, depth: i32) -> Colour {
     }
 
     if let Some(rec) = world.hit(r, 0.001, f64::INFINITY) {
-        let origin = rec.p;
-        let direction = rec.normal + Vec3::random_unit();
-        return 0.5 * ray_colour(&Ray { origin, direction }, world, depth - 1);
+        if let Some((scattered, attenuation)) = rec.material.scatter(&r, &rec) {
+            return attenuation * ray_colour(&scattered, world, depth - 1);
+        } else {
+            return BLACK;
+        }
     }
 
     let unit_direction = r.direction.unit();
@@ -57,21 +62,41 @@ fn main() {
 
     let mut world = HittableList::new();
 
+    let material_ground: Rc<dyn Material> = Rc::new(Lambertian2 {
+        albedo: Colour::from((0.8, 0.8, 0.0)),
+    });
+    let material_centre: Rc<dyn Material> = Rc::new(Lambertian2 {
+        albedo: Colour::from((0.7, 0.3, 0.3)),
+    });
+    let material_left: Rc<dyn Material> = Rc::new(Metal {
+        albedo: Colour::from((0.8, 0.8, 0.8)),
+    });
+    let material_right: Rc<dyn Material> = Rc::new(Metal {
+        albedo: Colour::from((0.8, 0.6, 0.2)),
+    });
+
     world.push(Box::new(Sphere {
-        centre: Vec3 {
-            x: 0.0,
-            y: 0.0,
-            z: -1.0,
-        },
-        radius: 0.5,
-    }));
-    world.push(Box::new(Sphere {
-        centre: Vec3 {
-            x: 0.0,
-            y: -100.5,
-            z: -1.0,
-        },
+        centre: Vec3::from((0.0, -100.5, -1.0)),
         radius: 100.0,
+        material: Rc::clone(&material_ground),
+    }));
+
+    world.push(Box::new(Sphere {
+        centre: Vec3::from((0.0, 0.0, -1.0)),
+        radius: 0.5,
+        material: Rc::clone(&material_centre),
+    }));
+
+    world.push(Box::new(Sphere {
+        centre: Vec3::from((-1.0, 0.0, -1.0)),
+        radius: 0.5,
+        material: Rc::clone(&material_left),
+    }));
+
+    world.push(Box::new(Sphere {
+        centre: Vec3::from((1.0, 0.0, -1.0)),
+        radius: 0.5,
+        material: Rc::clone(&material_right),
     }));
 
     let world = world;
