@@ -1,3 +1,4 @@
+use crate::{random_f64, random_f64_in};
 use std::{fmt, ops};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
@@ -8,6 +9,32 @@ pub struct Vec3 {
 }
 
 impl Vec3 {
+    #[must_use]
+    pub fn random() -> Self {
+        let x = random_f64();
+        let y = random_f64();
+        let z = random_f64();
+        Self { x, y, z }
+    }
+
+    #[must_use]
+    pub fn random_in(min: f64, max: f64) -> Self {
+        let x = random_f64_in(min, max);
+        let y = random_f64_in(min, max);
+        let z = random_f64_in(min, max);
+        Self { x, y, z }
+    }
+
+    #[must_use]
+    pub fn random_in_unit_sphere() -> Self {
+        loop {
+            let p = Vec3::random_in(-1.0, 1.0);
+            if p.dot(p) < 1.0 {
+                return p;
+            }
+        }
+    }
+
     #[must_use]
     pub fn abs(self) -> f64 {
         self.dot(self).sqrt()

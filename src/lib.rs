@@ -16,6 +16,7 @@ pub use vec3::Vec3;
 /**
  * Returns a random `f64` in [0.0, 1.0).
  */
+#[must_use]
 pub fn random_f64() -> f64 {
     rand::thread_rng().gen()
 }
@@ -23,6 +24,7 @@ pub fn random_f64() -> f64 {
 /**
  * Returns a random `f64` in [min, max).
  */
+#[must_use]
 pub fn random_f64_in(min: f64, max: f64) -> f64 {
     min + (max - min) * random_f64()
 }

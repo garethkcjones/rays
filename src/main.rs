@@ -27,14 +27,16 @@ fn output_error(error: io::Error) -> ! {
     process::exit(1);
 }
 
-fn ray_colour(r: &Ray, world: &impl Hittable) -> Colour {
-    if let Some(rec) = world.hit(r, 0.0, f64::INFINITY) {
-        return 0.5
-            * Colour {
-                r: rec.normal.x + 1.0,
-                g: rec.normal.y + 1.0,
-                b: rec.normal.z + 1.0,
-            };
+fn ray_colour(r: &Ray, world: &impl Hittable, depth: i32) -> Colour {
+    // If we’ve exceeded the ray bounce limit, no more light is gathered.
+    if depth <= 0 {
+        return BLACK;
+    }
+
+    if let Some(rec) = world.hit(r, 0.001, f64::INFINITY) {
+        let origin = rec.p;
+        let direction = rec.normal + Vec3::random_in_unit_sphere();
+        return 0.5 * ray_colour(&Ray { origin, direction }, world, depth - 1);
     }
 
     let unit_direction = r.direction.unit();
@@ -49,6 +51,7 @@ fn main() {
     let image_width = 400;
     let image_height = (f64::from(image_width) / aspect_ratio) as _;
     let samples_per_pixel = 100;
+    let max_depth = 50;
 
     // World.
 
@@ -93,7 +96,7 @@ fn main() {
                 let u = (f64::from(i) + rays::random_f64()) / f64::from(image_width - 1);
                 let v = (f64::from(j) + rays::random_f64()) / f64::from(image_height - 1);
                 let r = cam.get_ray(u, v);
-                pixel_colour += ray_colour(&r, &world);
+                pixel_colour += ray_colour(&r, &world, max_depth);
             }
             if let Err(error) = pixel_colour.write_to(&mut output, samples_per_pixel) {
                 output_error(error);
