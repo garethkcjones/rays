@@ -1,4 +1,7 @@
-use std::{fmt, ops};
+use std::{
+    io::{self, prelude::*},
+    ops,
+};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct Colour {
@@ -7,13 +10,19 @@ pub struct Colour {
     pub b: f64,
 }
 
-impl fmt::Display for Colour {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let Self { r, g, b } = self;
-        let r = (255.999 * r) as i32;
-        let g = (255.999 * g) as i32;
-        let b = (255.999 * b) as i32;
-        write!(f, "{} {} {}", r, g, b)
+impl Colour {
+    pub fn write_to(&self, mut output: impl Write, samples_per_pixel: i32) -> io::Result<()> {
+        // Divide the colour by the number of samples.
+        let scale = 1.0 / f64::from(samples_per_pixel);
+        let r = self.r * scale;
+        let g = self.g * scale;
+        let b = self.b * scale;
+
+        // Write the translated [0, 255] value of each colour component.
+        let r = (256.0 * r.clamp(0.0, 0.999)) as i32;
+        let g = (256.0 * g.clamp(0.0, 0.999)) as i32;
+        let b = (256.0 * b.clamp(0.0, 0.999)) as i32;
+        writeln!(output, "{} {} {}", r, g, b)
     }
 }
 
