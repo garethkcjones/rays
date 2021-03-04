@@ -11,19 +11,6 @@ pub struct Camera {
 impl Camera {
     #[must_use]
     pub fn new() -> Self {
-        Default::default()
-    }
-
-    #[must_use]
-    pub fn get_ray(&self, u: f64, v: f64) -> Ray {
-        let origin = self.origin;
-        let direction = self.lower_left_corner + u * self.horizontal + v * self.vertical - origin;
-        Ray { origin, direction }
-    }
-}
-
-impl Default for Camera {
-    fn default() -> Self {
         let aspect_ratio = 16.0 / 9.0;
         let viewport_height = 2.0;
         let viewport_width = aspect_ratio * viewport_height;
@@ -59,5 +46,12 @@ impl Default for Camera {
             horizontal,
             vertical,
         }
+    }
+
+    #[must_use]
+    pub fn get_ray(&self, u: f64, v: f64) -> Ray {
+        let origin = self.origin;
+        let direction = self.lower_left_corner + u * self.horizontal + v * self.vertical - origin;
+        Ray { origin, direction }
     }
 }
