@@ -31,6 +31,17 @@ impl Vec3 {
     }
 
     #[must_use]
+    pub fn random_in_unit_disk() -> Self {
+        loop {
+            let x = random_f64_in(-1.0, 1.0);
+            let y = random_f64_in(-1.0, 1.0);
+            if x * x + y * y < 1.0 {
+                return Self { x, y, z: 0.0 };
+            }
+        }
+    }
+
+    #[must_use]
     pub fn random_in_unit_sphere() -> Self {
         loop {
             let p = Vec3::random_in(-1.0, 1.0);
