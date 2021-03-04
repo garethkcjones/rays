@@ -1,4 +1,7 @@
-use rays::{Camera, Colour, Hittable, HittableList, Lambertian2, Material, Ray, Sphere, Vec3};
+use rays::{
+    Camera, Colour, Dielectric, Hittable, HittableList, Lambertian2, Material, Metal, Ray, Sphere,
+    Vec3,
+};
 use std::{
     io::{self, prelude::*},
     process,
@@ -58,22 +61,40 @@ fn main() {
 
     // World.
 
-    let r = std::f64::consts::FRAC_PI_4.cos();
-
     let mut world = HittableList::new();
 
-    let material_left: Rc<dyn Material> = Rc::new(Lambertian2::new(Colour::new(0.0, 0.0, 1.0)));
-    let material_right: Rc<dyn Material> = Rc::new(Lambertian2::new(Colour::new(1.0, 0.0, 0.0)));
+    let material_ground: Rc<dyn Material> = Rc::new(Lambertian2::new(Colour::new(0.8, 0.8, 0.0)));
+    let material_centre: Rc<dyn Material> = Rc::new(Lambertian2::new(Colour::new(0.1, 0.2, 0.5)));
+    let material_left: Rc<dyn Material> = Rc::new(Dielectric::new(1.5));
+    let material_right: Rc<dyn Material> = Rc::new(Metal::new(Colour::new(0.8, 0.6, 0.2), 0.0));
 
     world.push(Box::new(Sphere::new(
-        Vec3::new(-r, 0.0, -1.0),
-        r,
+        Vec3::new(0.0, -100.5, -1.0),
+        100.0,
+        Rc::clone(&material_ground),
+    )));
+
+    world.push(Box::new(Sphere::new(
+        Vec3::new(0.0, 0.0, -1.0),
+        0.5,
+        Rc::clone(&material_centre),
+    )));
+
+    world.push(Box::new(Sphere::new(
+        Vec3::new(-1.0, 0.0, -1.0),
+        0.5,
         Rc::clone(&material_left),
     )));
 
     world.push(Box::new(Sphere::new(
-        Vec3::new(r, 0.0, -1.0),
-        r,
+        Vec3::new(-1.0, 0.0, -1.0),
+        -0.45,
+        Rc::clone(&material_left),
+    )));
+
+    world.push(Box::new(Sphere::new(
+        Vec3::new(1.0, 0.0, -1.0),
+        0.5,
         Rc::clone(&material_right),
     )));
 
@@ -81,7 +102,11 @@ fn main() {
 
     // Camera.
 
-    let cam = Camera::new(90.0, aspect_ratio);
+    let look_from = Vec3::new(-2.0, 2.0, 1.0);
+    let look_at = Vec3::new(0.0, 0.0, -1.0);
+    let vup = Vec3::new(0.0, 1.0, 0.0);
+    let vfov = 20.0;
+    let cam = Camera::new(look_from, look_at, vup, vfov, aspect_ratio);
 
     // Render.
 
