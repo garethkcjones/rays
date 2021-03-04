@@ -88,33 +88,33 @@ impl Vec3 {
     #[must_use]
     pub fn dot(self, other: Self) -> f64 {
         let Self {
-            x: x1,
-            y: y1,
-            z: z1,
+            x: ux,
+            y: uy,
+            z: uz,
         } = self;
         let Self {
-            x: x2,
-            y: y2,
-            z: z2,
+            x: vx,
+            y: vy,
+            z: vz,
         } = other;
-        x1 * x2 + y1 * y2 + z1 * z2
+        ux * vx + uy * vy + uz * vz
     }
 
     #[must_use]
     pub fn cross(self, other: Self) -> Self {
         let Self {
-            x: x1,
-            y: y1,
-            z: z1,
+            x: ux,
+            y: uy,
+            z: uz,
         } = self;
         let Self {
-            x: x2,
-            y: y2,
-            z: z2,
+            x: vx,
+            y: vy,
+            z: vz,
         } = other;
-        let x = y1 * z2 - y2 * z1;
-        let y = x2 * z1 - x1 * z2;
-        let z = x1 * y2 - x2 - y1;
+        let x = uy * vz - uz * vy;
+        let y = uz * vx - ux * vz;
+        let z = ux * vy - uy * vx;
         Self { x, y, z }
     }
 }
