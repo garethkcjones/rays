@@ -1,3 +1,4 @@
+use crate::{random_f64, random_f64_in};
 use std::{
     io::{self, prelude::*},
     ops,
@@ -13,6 +14,22 @@ pub struct Colour {
 impl Colour {
     #[must_use]
     pub const fn new(r: f64, g: f64, b: f64) -> Self {
+        Self { r, g, b }
+    }
+
+    #[must_use]
+    pub fn random() -> Self {
+        let r = random_f64();
+        let g = random_f64();
+        let b = random_f64();
+        Self { r, g, b }
+    }
+
+    #[must_use]
+    pub fn random_in(min: f64, max: f64) -> Self {
+        let r = random_f64_in(min, max);
+        let g = random_f64_in(min, max);
+        let b = random_f64_in(min, max);
         Self { r, g, b }
     }
 
