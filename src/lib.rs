@@ -2,6 +2,7 @@ use rand::prelude::*;
 
 mod camera;
 mod colour;
+mod dielectric;
 mod hit;
 mod lambertian;
 mod material;
@@ -11,6 +12,7 @@ mod sphere;
 mod vec3;
 pub use camera::Camera;
 pub use colour::Colour;
+pub use dielectric::Dielectric;
 pub use hit::{HitRecord, Hittable, HittableList};
 pub use lambertian::{Lambertian1, Lambertian2, Simple};
 pub use material::Material;
