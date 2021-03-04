@@ -11,6 +11,11 @@ pub struct Colour {
 }
 
 impl Colour {
+    #[must_use]
+    pub fn new(r: f64, g: f64, b: f64) -> Self {
+        Self { r, g, b }
+    }
+
     pub fn write_to(&self, mut output: impl Write, samples_per_pixel: i32) -> io::Result<()> {
         // Divide the colour by the number of samples and gamma-correct for gamma = 2.0.
         let scale = 1.0 / f64::from(samples_per_pixel);

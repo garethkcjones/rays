@@ -3,9 +3,20 @@ use std::rc::Rc;
 
 #[derive(Clone, Debug)]
 pub struct Sphere {
-    pub centre: Vec3,
-    pub radius: f64,
-    pub material: Rc<dyn Material>,
+    centre: Vec3,
+    radius: f64,
+    material: Rc<dyn Material>,
+}
+
+impl Sphere {
+    #[must_use]
+    pub fn new(centre: Vec3, radius: f64, material: Rc<dyn Material>) -> Self {
+        Self {
+            centre,
+            radius,
+            material,
+        }
+    }
 }
 
 impl Hittable for Sphere {

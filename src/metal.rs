@@ -2,15 +2,23 @@ use crate::{Colour, HitRecord, Material, Ray};
 
 #[derive(Clone, Debug)]
 pub struct Metal {
-    pub albedo: Colour,
+    albedo: Colour,
+}
+
+impl Metal {
+    #[must_use]
+    pub fn new(albedo: Colour) -> Self {
+        Self { albedo }
+    }
 }
 
 impl Material for Metal {
     fn scatter(&self, ray: &Ray, rec: &HitRecord) -> Option<(Ray, Colour)> {
-        let origin = rec.p;
-        let direction = ray.direction.unit().reflect(rec.normal);
+        let origin = rec.p();
+        let normal = rec.normal();
+        let direction = ray.direction.unit().reflect(normal);
         let scattered = Ray { origin, direction };
-        if direction.dot(rec.normal) > 0.0 {
+        if direction.dot(normal) > 0.0 {
             Some((scattered, self.albedo))
         } else {
             None

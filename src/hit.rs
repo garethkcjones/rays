@@ -3,11 +3,11 @@ use std::{fmt::Debug, rc::Rc};
 
 #[derive(Clone, Debug)]
 pub struct HitRecord {
-    pub p: Vec3,
-    pub normal: Vec3,
-    pub material: Rc<dyn Material>,
-    pub t: f64,
-    pub front_face: bool,
+    p: Vec3,
+    normal: Vec3,
+    material: Rc<dyn Material>,
+    t: f64,
+    front_face: bool,
 }
 
 pub trait Hittable: Debug {
@@ -29,6 +29,31 @@ impl HitRecord {
             t,
             front_face,
         }
+    }
+
+    #[must_use]
+    pub fn p(&self) -> Vec3 {
+        self.p
+    }
+
+    #[must_use]
+    pub fn normal(&self) -> Vec3 {
+        self.normal
+    }
+
+    #[must_use]
+    pub fn material(&self) -> &(dyn Material + 'static) {
+        self.material.as_ref()
+    }
+
+    #[must_use]
+    pub fn t(&self) -> f64 {
+        self.t
+    }
+
+    #[must_use]
+    pub fn front_face(&self) -> bool {
+        self.front_face
     }
 }
 

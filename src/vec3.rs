@@ -10,6 +10,11 @@ pub struct Vec3 {
 
 impl Vec3 {
     #[must_use]
+    pub fn new(x: f64, y: f64, z: f64) -> Self {
+        Self { x, y, z }
+    }
+
+    #[must_use]
     pub fn random() -> Self {
         let x = random_f64();
         let y = random_f64();
