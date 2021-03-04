@@ -17,21 +17,21 @@ pub struct Lambertian2 {
 
 impl Simple {
     #[must_use]
-    pub fn new(albedo: Colour) -> Self {
+    pub const fn new(albedo: Colour) -> Self {
         Self { albedo }
     }
 }
 
 impl Lambertian1 {
     #[must_use]
-    pub fn new(albedo: Colour) -> Self {
+    pub const fn new(albedo: Colour) -> Self {
         Self { albedo }
     }
 }
 
 impl Lambertian2 {
     #[must_use]
-    pub fn new(albedo: Colour) -> Self {
+    pub const fn new(albedo: Colour) -> Self {
         Self { albedo }
     }
 }

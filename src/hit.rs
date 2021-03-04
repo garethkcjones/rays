@@ -32,12 +32,12 @@ impl HitRecord {
     }
 
     #[must_use]
-    pub fn p(&self) -> Vec3 {
+    pub const fn p(&self) -> Vec3 {
         self.p
     }
 
     #[must_use]
-    pub fn normal(&self) -> Vec3 {
+    pub const fn normal(&self) -> Vec3 {
         self.normal
     }
 
@@ -47,12 +47,12 @@ impl HitRecord {
     }
 
     #[must_use]
-    pub fn t(&self) -> f64 {
+    pub const fn t(&self) -> f64 {
         self.t
     }
 
     #[must_use]
-    pub fn front_face(&self) -> bool {
+    pub const fn front_face(&self) -> bool {
         self.front_face
     }
 }
