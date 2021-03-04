@@ -20,15 +20,26 @@ impl Material for Dielectric {
             b: 1.0,
         };
 
-        let defraction_ratio = if rec.front_face() {
+        let origin = rec.p();
+        let normal = rec.normal();
+
+        let refraction_ratio = if rec.front_face() {
             self.ir.recip()
         } else {
             self.ir
         };
 
-        let origin = rec.p();
-        let normal = rec.normal();
-        let direction = ray.direction.unit().refract(normal, defraction_ratio);
+        let unit_direction = ray.direction.unit();
+        let cos_theta = (-unit_direction).dot(normal).clamp(-1.0, 1.0);
+        let sin_theta = (1.0 - cos_theta * cos_theta).sqrt();
+        let cannot_refract = refraction_ratio * sin_theta > 1.0;
+
+        let direction = if cannot_refract {
+            unit_direction.reflect(normal)
+        } else {
+            unit_direction.refract(normal, refraction_ratio)
+        };
+
         let scattered = Ray { origin, direction };
         Some((scattered, ATTENUATION))
     }
