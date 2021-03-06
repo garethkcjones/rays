@@ -97,9 +97,9 @@ fn random_scene() -> HittableList {
     world
 }
 
-fn ray_colour(r: &Ray, world: &impl Hittable, depth: i32) -> Colour {
+fn ray_colour(r: &Ray, world: &impl Hittable, depth: u32) -> Colour {
     // If we’ve exceeded the ray bounce limit, no more light is gathered.
-    if depth <= 0 {
+    if depth == 0 {
         return BLACK;
     }
 
