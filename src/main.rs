@@ -112,15 +112,48 @@ fn ray_colour(r: &Ray, world: &impl Hittable, depth: u32) -> Colour {
     (1.0 - t) * WHITE + t * BLUE
 }
 
+fn render(
+    thread_num: u32,
+    world: &impl Hittable,
+    cam: &Camera,
+    image_width: usize,
+    image_height: usize,
+    samples_per_pixel: u32,
+    max_depth: u32,
+) -> Box<[Colour]> {
+    let mut pixels = Vec::with_capacity(image_width * image_height);
+
+    for j in 0..image_height {
+        if thread_num == 0 {
+            print!("\rScanlines remaining: {:5}", image_height - j);
+            io::stdout().flush().expect("Error writing to stdout");
+        }
+
+        for i in 0..image_width {
+            let mut pixel_colour = BLACK;
+            for _ in 0..samples_per_pixel {
+                let u = ((i as f64) + rays::random_f64()) / (image_width - 1) as f64;
+                let v = ((j as f64) + rays::random_f64()) / (image_height - 1) as f64;
+                let r = cam.get_ray(u, v);
+                pixel_colour += ray_colour(&r, world, max_depth);
+            }
+            pixels.push(pixel_colour);
+        }
+    }
+
+    if thread_num == 0 {
+        println!("\rScanlines remaining: {:5}", 0);
+    }
+
+    pixels.into_boxed_slice()
+}
+
 fn main() {
     // Image.
 
     let aspect_ratio = 3.0 / 2.0;
     let image_width = 1200;
     let image_height = ((image_width as f64) / aspect_ratio) as _;
-    let num_pixels = image_width * image_height;
-    let samples_per_pixel = 500;
-    let max_depth = 50;
 
     // World.
 
@@ -146,24 +179,21 @@ fn main() {
 
     // Render.
 
-    let mut pixels = Vec::with_capacity(num_pixels);
+    let samples_per_pixel = 500;
+    let max_depth = 50;
 
-    for j in 0..image_height {
-        print!("\rScanlines remaining: {:5}", image_height - j);
-        io::stdout().flush().expect("Error writing to stdout");
-        for i in 0..image_width {
-            let mut pixel_colour = BLACK;
-            for _ in 0..samples_per_pixel {
-                let u = ((i as f64) + rays::random_f64()) / (image_width - 1) as f64;
-                let v = ((j as f64) + rays::random_f64()) / (image_height - 1) as f64;
-                let r = cam.get_ray(u, v);
-                pixel_colour += ray_colour(&r, &world, max_depth);
-            }
-            pixels.push(pixel_colour);
-        }
-    }
+    let pixels = render(
+        0,
+        &world,
+        &cam,
+        image_width,
+        image_height,
+        samples_per_pixel,
+        max_depth,
+    );
 
-    println!("\rScanlines remaining: {:5}", 0);
+    // Output.
+
     println!("Writing output...");
 
     write_ppm_file(
