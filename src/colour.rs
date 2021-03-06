@@ -1,5 +1,6 @@
 use crate::{random_f64, random_f64_in};
 use std::{
+    fmt,
     io::{self, prelude::*},
     ops,
 };
@@ -45,6 +46,12 @@ impl Colour {
         let g = (256.0 * g.clamp(0.0, 0.999)) as i32;
         let b = (256.0 * b.clamp(0.0, 0.999)) as i32;
         writeln!(output, "{} {} {}", r, g, b)
+    }
+}
+
+impl fmt::Display for Colour {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "({}, {}, {})", self.r, self.g, self.b)
     }
 }
 
