@@ -1,16 +1,16 @@
 use crate::{Material, Ray, Vec3};
-use std::{fmt::Debug, rc::Rc};
+use std::{fmt::Debug, sync::Arc};
 
 #[derive(Clone, Debug)]
 pub struct HitRecord {
     p: Vec3,
     normal: Vec3,
-    material: Rc<dyn Material>,
+    material: Arc<dyn Material>,
     t: f64,
     front_face: bool,
 }
 
-pub trait Hittable: Debug {
+pub trait Hittable: Debug + Send + Sync {
     #[must_use]
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord>;
 }
@@ -19,7 +19,7 @@ pub type HittableList = Vec<Box<dyn Hittable>>;
 
 impl HitRecord {
     #[must_use]
-    pub fn new(r: &Ray, p: Vec3, normal: Vec3, material: Rc<dyn Material>, t: f64) -> Self {
+    pub fn new(r: &Ray, p: Vec3, normal: Vec3, material: Arc<dyn Material>, t: f64) -> Self {
         let front_face = r.direction.dot(normal) < 0.0;
         let normal = if front_face { normal } else { -normal };
         Self {
