@@ -165,7 +165,7 @@ fn main() {
                 let r = cam.get_ray(u, v);
                 pixel_colour += ray_colour(&r, &world, max_depth);
             }
-            if let Err(error) = pixel_colour.write_to(&mut output, samples_per_pixel) {
+            if let Err(error) = write_ppm_pixel(&mut output, pixel_colour, samples_per_pixel) {
                 output_error(error);
             }
         }
@@ -176,4 +176,22 @@ fn main() {
     }
 
     eprintln!("\nDone.");
+}
+
+fn write_ppm_pixel(
+    mut output: impl Write,
+    pixel: Colour,
+    samples_per_pixel: u32,
+) -> io::Result<()> {
+    // Divide the colour by the number of samples and gamma-correct for gamma = 2.0.
+    let scale = 1.0 / f64::from(samples_per_pixel);
+    let r = (pixel.r * scale).sqrt();
+    let g = (pixel.g * scale).sqrt();
+    let b = (pixel.b * scale).sqrt();
+
+    // Write the translated [0, 255] value of each colour component.
+    let r = (256.0 * r.clamp(0.0, 0.999)) as u8;
+    let g = (256.0 * g.clamp(0.0, 0.999)) as u8;
+    let b = (256.0 * b.clamp(0.0, 0.999)) as u8;
+    writeln!(output, "{} {} {}", r, g, b)
 }

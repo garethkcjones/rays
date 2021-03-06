@@ -1,9 +1,5 @@
 use crate::{random_f64, random_f64_in};
-use std::{
-    fmt,
-    io::{self, prelude::*},
-    ops,
-};
+use std::{fmt, ops};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct Colour {
@@ -32,20 +28,6 @@ impl Colour {
         let g = random_f64_in(min, max);
         let b = random_f64_in(min, max);
         Self { r, g, b }
-    }
-
-    pub fn write_to(&self, mut output: impl Write, samples_per_pixel: i32) -> io::Result<()> {
-        // Divide the colour by the number of samples and gamma-correct for gamma = 2.0.
-        let scale = 1.0 / f64::from(samples_per_pixel);
-        let r = (self.r * scale).sqrt();
-        let g = (self.g * scale).sqrt();
-        let b = (self.b * scale).sqrt();
-
-        // Write the translated [0, 255] value of each colour component.
-        let r = (256.0 * r.clamp(0.0, 0.999)) as i32;
-        let g = (256.0 * g.clamp(0.0, 0.999)) as i32;
-        let b = (256.0 * b.clamp(0.0, 0.999)) as i32;
-        writeln!(output, "{} {} {}", r, g, b)
     }
 }
 
