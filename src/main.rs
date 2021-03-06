@@ -3,8 +3,9 @@ use rays::{
     Material, Metal, Ray, Sphere, Vec3,
 };
 use std::{
-    io::{self, prelude::*},
-    process,
+    fs::File,
+    io::{self, prelude::*, BufWriter},
+    path::Path,
     rc::Rc,
 };
 
@@ -25,11 +26,6 @@ const BLUE: Colour = Colour {
     g: 0.7,
     b: 1.0,
 };
-
-fn output_error(error: io::Error) -> ! {
-    eprintln!("\nError writing output: {}", error);
-    process::exit(1);
-}
 
 fn random_scene() -> HittableList {
     let mut world = HittableList::new();
@@ -121,7 +117,8 @@ fn main() {
 
     let aspect_ratio = 3.0 / 2.0;
     let image_width = 1200;
-    let image_height = (f64::from(image_width) / aspect_ratio) as _;
+    let image_height = ((image_width as f64) / aspect_ratio) as _;
+    let num_pixels = image_width * image_height;
     let samples_per_pixel = 500;
     let max_depth = 50;
 
@@ -149,33 +146,61 @@ fn main() {
 
     // Render.
 
-    let output = io::stdout();
-    let mut output = output.lock();
-    if let Err(error) = writeln!(&mut output, "P3\n{} {}\n255", image_width, image_height) {
-        output_error(error);
-    }
+    let mut pixels = Vec::with_capacity(num_pixels);
 
-    for j in (0..image_height).rev() {
-        eprint!("\rScanlines remaining: {:5}", j);
+    for j in 0..image_height {
+        print!("\rScanlines remaining: {:5}", image_height - j);
+        io::stdout().flush().expect("Error writing to stdout");
         for i in 0..image_width {
             let mut pixel_colour = BLACK;
             for _ in 0..samples_per_pixel {
-                let u = (f64::from(i) + rays::random_f64()) / f64::from(image_width - 1);
-                let v = (f64::from(j) + rays::random_f64()) / f64::from(image_height - 1);
+                let u = ((i as f64) + rays::random_f64()) / (image_width - 1) as f64;
+                let v = ((j as f64) + rays::random_f64()) / (image_height - 1) as f64;
                 let r = cam.get_ray(u, v);
                 pixel_colour += ray_colour(&r, &world, max_depth);
             }
-            if let Err(error) = write_ppm_pixel(&mut output, pixel_colour, samples_per_pixel) {
-                output_error(error);
-            }
+            pixels.push(pixel_colour);
         }
     }
 
-    if let Err(error) = output.flush() {
-        output_error(error);
+    println!("\rScanlines remaining: {:5}", 0);
+    println!("Writing output...");
+
+    write_ppm_file(
+        "out.ppm",
+        image_width,
+        image_height,
+        &pixels,
+        samples_per_pixel,
+    )
+    .expect("Error writing output");
+
+    println!("Done.");
+}
+
+fn write_ppm_file(
+    output: impl AsRef<Path>,
+    image_width: usize,
+    image_height: usize,
+    pixels: &[Colour],
+    samples_per_pixel: u32,
+) -> io::Result<()> {
+    let output = File::create(output)?;
+    let mut output = BufWriter::new(output);
+
+    writeln!(output, "P3")?;
+    writeln!(output, "{} {}", image_width, image_height)?;
+    writeln!(output, "255")?;
+
+    for j in (0..image_height).rev() {
+        for i in 0..image_width {
+            let idx = j * image_width + i;
+            let pixel = pixels[idx];
+            write_ppm_pixel(&mut output, pixel, samples_per_pixel)?
+        }
     }
 
-    eprintln!("\nDone.");
+    output.flush()
 }
 
 fn write_ppm_pixel(
