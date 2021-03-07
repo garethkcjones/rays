@@ -196,6 +196,8 @@ fn main() {
         aspect_ratio,
         aperture,
         dist_to_focus,
+        0.0,
+        0.0,
     ));
 
     // Render.

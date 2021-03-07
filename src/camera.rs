@@ -1,4 +1,4 @@
-use crate::{Ray, Vec3};
+use crate::{random_f64_in, Ray, Vec3};
 
 #[derive(Clone, Debug)]
 pub struct Camera {
@@ -9,6 +9,7 @@ pub struct Camera {
     u: Vec3,
     v: Vec3,
     w: Vec3,
+    time: (f64, f64),
     lens_radius: f64,
 }
 
@@ -22,6 +23,8 @@ impl Camera {
         aspect_ratio: f64,
         aperture: f64,
         focus_dist: f64,
+        time0: f64,
+        time1: f64,
     ) -> Self {
         let theta = vfov.to_radians();
         let h = (0.5 * theta).tan();
@@ -47,6 +50,7 @@ impl Camera {
             u,
             v,
             w,
+            time: (time0, time1),
             lens_radius,
         }
     }
@@ -57,6 +61,7 @@ impl Camera {
         let offset = self.u * rd.x + self.v * rd.y;
         let origin = self.origin + offset;
         let direction = self.lower_left_corner + s * self.horizontal + t * self.vertical - origin;
-        Ray::new(origin, direction)
+        let time = random_f64_in(self.time.0, self.time.1);
+        Ray::with_time(origin, direction, time)
     }
 }
