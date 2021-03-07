@@ -22,7 +22,7 @@ impl Material for Metal {
         let normal = rec.normal();
         let reflected = ray.direction.unit().reflect(normal);
         let direction = reflected + self.fuzz * Vec3::random_in_unit_sphere();
-        let scattered = Ray { origin, direction };
+        let scattered = Ray::new(origin, direction);
         if direction.dot(normal) > 0.0 {
             Some((scattered, self.albedo))
         } else {

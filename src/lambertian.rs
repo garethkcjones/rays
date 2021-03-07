@@ -41,7 +41,7 @@ impl Material for Simple {
         let origin = rec.p();
         let normal = rec.normal();
         let direction = Vec3::random_in_hemisphere(normal);
-        let scattered = Ray { origin, direction };
+        let scattered = Ray::new(origin, direction);
         Some((scattered, self.albedo))
     }
 }
@@ -57,7 +57,7 @@ impl Material for Lambertian1 {
             direction = normal;
         }
 
-        let scattered = Ray { origin, direction };
+        let scattered = Ray::new(origin, direction);
         Some((scattered, self.albedo))
     }
 }
@@ -73,7 +73,7 @@ impl Material for Lambertian2 {
             direction = normal;
         }
 
-        let scattered = Ray { origin, direction };
+        let scattered = Ray::new(origin, direction);
         Some((scattered, self.albedo))
     }
 }

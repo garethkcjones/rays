@@ -57,6 +57,6 @@ impl Camera {
         let offset = self.u * rd.x + self.v * rd.y;
         let origin = self.origin + offset;
         let direction = self.lower_left_corner + s * self.horizontal + t * self.vertical - origin;
-        Ray { origin, direction }
+        Ray::new(origin, direction)
     }
 }
