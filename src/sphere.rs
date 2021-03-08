@@ -8,6 +8,14 @@ pub struct Sphere {
     material: Arc<dyn Material>,
 }
 
+#[derive(Clone, Debug)]
+pub struct MovingSphere {
+    centre: (Vec3, Vec3),
+    time: (f64, f64),
+    radius: f64,
+    material: Arc<dyn Material>,
+}
+
 impl Sphere {
     #[must_use]
     pub fn new(centre: Vec3, radius: f64, material: Arc<dyn Material>) -> Self {
@@ -16,6 +24,31 @@ impl Sphere {
             radius,
             material,
         }
+    }
+}
+
+impl MovingSphere {
+    #[must_use]
+    pub fn new(
+        centre0: Vec3,
+        centre1: Vec3,
+        time0: f64,
+        time1: f64,
+        radius: f64,
+        material: Arc<dyn Material>,
+    ) -> Self {
+        Self {
+            centre: (centre0, centre1),
+            time: (time0, time1),
+            radius,
+            material,
+        }
+    }
+
+    #[must_use]
+    pub fn centre(&self, time: f64) -> Vec3 {
+        self.centre.0
+            + ((time - self.time.0) / (self.time.1 - self.time.0)) * (self.centre.1 - self.centre.0)
     }
 }
 

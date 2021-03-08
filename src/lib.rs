@@ -18,7 +18,7 @@ pub use lambertian::{Lambertian1, Lambertian2, Simple};
 pub use material::Material;
 pub use metal::Metal;
 pub use ray::Ray;
-pub use sphere::Sphere;
+pub use sphere::{MovingSphere, Sphere};
 pub use vec3::Vec3;
 
 /**
