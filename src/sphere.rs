@@ -47,17 +47,22 @@ impl MovingSphere {
 
     #[must_use]
     pub fn centre(&self, time: f64) -> Vec3 {
-        self.centre.0
-            + ((time - self.time.0) / (self.time.1 - self.time.0)) * (self.centre.1 - self.centre.0)
+        let (c0, c1) = self.centre;
+        let (t0, t1) = self.time;
+        c0 + ((time - t0) / (t1 - t0)) * (c1 - c0)
     }
 }
 
 impl Hittable for Sphere {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
-        let oc = r.origin - self.centre;
+        let centre = self.centre;
+        let radius = self.radius;
+        let material = Arc::clone(&self.material);
+
+        let oc = r.origin - centre;
         let a = r.direction.dot(r.direction);
         let b = oc.dot(r.direction);
-        let c = oc.dot(oc) - self.radius * self.radius;
+        let c = oc.dot(oc) - radius * radius;
 
         let discriminant = b * b - a * c;
         if discriminant < 0.0 {
@@ -77,8 +82,7 @@ impl Hittable for Sphere {
 
         let t = root;
         let p = r.at(t);
-        let normal = (p - self.centre) / self.radius;
-        let material = Arc::clone(&self.material);
+        let normal = (p - centre) / radius;
         Some(HitRecord::new(r, p, normal, material, t))
     }
 }
@@ -86,11 +90,13 @@ impl Hittable for Sphere {
 impl Hittable for MovingSphere {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
         let centre = self.centre(r.time);
+        let radius = self.radius;
+        let material = Arc::clone(&self.material);
 
         let oc = r.origin - centre;
         let a = r.direction.dot(r.direction);
         let b = oc.dot(r.direction);
-        let c = oc.dot(oc) - self.radius * self.radius;
+        let c = oc.dot(oc) - radius * radius;
 
         let discriminant = b * b - a * c;
         if discriminant < 0.0 {
@@ -110,8 +116,7 @@ impl Hittable for MovingSphere {
 
         let t = root;
         let p = r.at(t);
-        let normal = (p - centre) / self.radius;
-        let material = Arc::clone(&self.material);
+        let normal = (p - centre) / radius;
         Some(HitRecord::new(r, p, normal, material, t))
     }
 }
