@@ -82,3 +82,36 @@ impl Hittable for Sphere {
         Some(HitRecord::new(r, p, normal, material, t))
     }
 }
+
+impl Hittable for MovingSphere {
+    fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
+        let centre = self.centre(r.time);
+
+        let oc = r.origin - centre;
+        let a = r.direction.dot(r.direction);
+        let b = oc.dot(r.direction);
+        let c = oc.dot(oc) - self.radius * self.radius;
+
+        let discriminant = b * b - a * c;
+        if discriminant < 0.0 {
+            return None;
+        }
+        let sqrtd = discriminant.sqrt();
+
+        // Find the nearest root that lies in the acceptable range.
+        let mut root = (-b - sqrtd) / a;
+        if root < t_min || root > t_max {
+            root = (-b + sqrtd) / a;
+            if root < t_min || root > t_max {
+                return None;
+            }
+        }
+        let root = root;
+
+        let t = root;
+        let p = r.at(t);
+        let normal = (p - centre) / self.radius;
+        let material = Arc::clone(&self.material);
+        Some(HitRecord::new(r, p, normal, material, t))
+    }
+}
