@@ -37,17 +37,17 @@ impl Lambertian2 {
 }
 
 impl Material for Simple {
-    fn scatter(&self, _ray: &Ray, rec: &HitRecord) -> Option<(Ray, Colour)> {
+    fn scatter(&self, ray: &Ray, rec: &HitRecord) -> Option<(Ray, Colour)> {
         let origin = rec.p();
         let normal = rec.normal();
         let direction = Vec3::random_in_hemisphere(normal);
-        let scattered = Ray::new(origin, direction);
+        let scattered = Ray::new(origin, direction, ray.time);
         Some((scattered, self.albedo))
     }
 }
 
 impl Material for Lambertian1 {
-    fn scatter(&self, _ray: &Ray, rec: &HitRecord) -> Option<(Ray, Colour)> {
+    fn scatter(&self, ray: &Ray, rec: &HitRecord) -> Option<(Ray, Colour)> {
         let origin = rec.p();
         let normal = rec.normal();
         let mut direction = normal + Vec3::random_in_unit_sphere();
@@ -57,13 +57,13 @@ impl Material for Lambertian1 {
             direction = normal;
         }
 
-        let scattered = Ray::new(origin, direction);
+        let scattered = Ray::new(origin, direction, ray.time);
         Some((scattered, self.albedo))
     }
 }
 
 impl Material for Lambertian2 {
-    fn scatter(&self, _ray: &Ray, rec: &HitRecord) -> Option<(Ray, Colour)> {
+    fn scatter(&self, ray: &Ray, rec: &HitRecord) -> Option<(Ray, Colour)> {
         let origin = rec.p();
         let normal = rec.normal();
         let mut direction = normal + Vec3::random_unit();
@@ -73,7 +73,7 @@ impl Material for Lambertian2 {
             direction = normal;
         }
 
-        let scattered = Ray::new(origin, direction);
+        let scattered = Ray::new(origin, direction, ray.time);
         Some((scattered, self.albedo))
     }
 }

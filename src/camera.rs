@@ -62,6 +62,6 @@ impl Camera {
         let origin = self.origin + offset;
         let direction = self.lower_left_corner + s * self.horizontal + t * self.vertical - origin;
         let time = random_f64_in(self.time.0, self.time.1);
-        Ray::with_time(origin, direction, time)
+        Ray::new(origin, direction, time)
     }
 }
