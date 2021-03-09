@@ -1,6 +1,6 @@
 use rays::{
     random_f64, random_f64_in, Camera, Colour, Dielectric, Hittable, HittableList, Lambertian2,
-    Material, Metal, Ray, Sphere, Vec3,
+    Metal, MovingSphere, Ray, Sphere, Vec3,
 };
 use std::{
     fs::File,
@@ -48,24 +48,29 @@ fn random_scene() -> Arc<dyn Hittable> {
             let centre = Vec3::new(a + 0.9 * random_f64(), 0.2, b + 0.9 * random_f64());
 
             if (centre - Vec3::new(4.0, 0.2, 0.0)).abs() > 0.9 {
-                let material: Arc<dyn Material> = match choose_mat {
+                match choose_mat {
                     x if x < 0.8 => {
                         // Diffuse.
                         let albedo = Colour::random() * Colour::random();
-                        Arc::new(Lambertian2::new(albedo))
+                        let material = Arc::new(Lambertian2::new(albedo));
+                        let centre2 = centre + Vec3::new(0.0, random_f64_in(0.0, 0.5), 0.0);
+                        world.push(Box::new(MovingSphere::new(
+                            centre, centre2, 0.0, 1.0, 0.2, material,
+                        )));
                     }
                     x if x < 0.95 => {
                         // Metal.
                         let albedo = Colour::random_in(0.5, 1.0);
                         let fuzz = random_f64_in(0.0, 0.5);
-                        Arc::new(Metal::new(albedo, fuzz))
+                        let material = Arc::new(Metal::new(albedo, fuzz));
+                        world.push(Box::new(Sphere::new(centre, 0.2, material)));
                     }
                     _ => {
                         // Glass.
-                        Arc::new(Dielectric::new(1.5))
+                        let material = Arc::new(Dielectric::new(1.5));
+                        world.push(Box::new(Sphere::new(centre, 0.2, material)));
                     }
-                };
-                world.push(Box::new(Sphere::new(centre, 0.2, material)));
+                }
             }
         }
     }
@@ -172,8 +177,8 @@ fn render_thread(
 fn main() {
     // Image.
 
-    let aspect_ratio = 3.0 / 2.0;
-    let image_width = 1200;
+    let aspect_ratio = 16.0 / 9.0;
+    let image_width = 400;
     let image_height = ((image_width as f64) / aspect_ratio) as _;
 
     // World.
@@ -197,12 +202,12 @@ fn main() {
         aperture,
         dist_to_focus,
         0.0,
-        0.0,
+        1.0,
     ));
 
     // Render.
 
-    let samples_per_pixel = 500;
+    let samples_per_pixel = 100;
     let max_depth = 50;
     let num_threads = 32;
     let samples_per_thread = samples_per_pixel / num_threads;
