@@ -1,14 +1,14 @@
-use crate::{random_f64_in, Ray, Vec3};
+use crate::{random_f64_in, Ray, Vector};
 
 #[derive(Clone, Debug)]
 pub struct Camera {
-    origin: Vec3,
-    lower_left_corner: Vec3,
-    horizontal: Vec3,
-    vertical: Vec3,
-    u: Vec3,
-    v: Vec3,
-    w: Vec3,
+    origin: Vector,
+    lower_left_corner: Vector,
+    horizontal: Vector,
+    vertical: Vector,
+    u: Vector,
+    v: Vector,
+    w: Vector,
     time: (f64, f64),
     lens_radius: f64,
 }
@@ -16,9 +16,9 @@ pub struct Camera {
 impl Camera {
     #[must_use]
     pub fn new(
-        look_from: Vec3,
-        look_at: Vec3,
-        vup: Vec3,
+        look_from: Vector,
+        look_at: Vector,
+        vup: Vector,
         vfov: f64,
         aspect_ratio: f64,
         aperture: f64,
@@ -57,8 +57,8 @@ impl Camera {
 
     #[must_use]
     pub fn get_ray(&self, s: f64, t: f64) -> Ray {
-        let rd = self.lens_radius * Vec3::random_in_unit_disk();
-        let offset = self.u * rd.x + self.v * rd.y;
+        let rd = self.lens_radius * Vector::random_in_unit_disk();
+        let offset = self.u * rd.x() + self.v * rd.y();
         let origin = self.origin + offset;
         let direction = self.lower_left_corner + s * self.horizontal + t * self.vertical - origin;
         let time = random_f64_in(self.time.0, self.time.1);

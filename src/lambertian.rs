@@ -1,4 +1,4 @@
-use crate::{Colour, HitRecord, Material, Ray, Vec3};
+use crate::{Colour, HitRecord, Material, Ray, Vector};
 
 #[derive(Clone, Debug)]
 pub struct Simple {
@@ -40,7 +40,7 @@ impl Material for Simple {
     fn scatter(&self, ray: &Ray, rec: &HitRecord) -> Option<(Ray, Colour)> {
         let origin = rec.p();
         let normal = rec.normal();
-        let direction = Vec3::random_in_hemisphere(normal);
+        let direction = Vector::random_in_hemisphere(normal);
         let scattered = Ray::new(origin, direction, ray.time);
         Some((scattered, self.albedo))
     }
@@ -50,7 +50,7 @@ impl Material for Lambertian1 {
     fn scatter(&self, ray: &Ray, rec: &HitRecord) -> Option<(Ray, Colour)> {
         let origin = rec.p();
         let normal = rec.normal();
-        let mut direction = normal + Vec3::random_in_unit_sphere();
+        let mut direction = normal + Vector::random_in_unit_sphere();
 
         // Catch degenerate scatter direction
         if direction.near_zero() {
@@ -66,7 +66,7 @@ impl Material for Lambertian2 {
     fn scatter(&self, ray: &Ray, rec: &HitRecord) -> Option<(Ray, Colour)> {
         let origin = rec.p();
         let normal = rec.normal();
-        let mut direction = normal + Vec3::random_unit();
+        let mut direction = normal + Vector::random_unit();
 
         // Catch degenerate scatter direction
         if direction.near_zero() {

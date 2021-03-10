@@ -1,16 +1,16 @@
-use crate::{HitRecord, Hittable, Material, Ray, Vec3};
+use crate::{HitRecord, Hittable, Material, Ray, Vector};
 use std::sync::Arc;
 
 #[derive(Clone, Debug)]
 pub struct Sphere {
-    centre: Vec3,
+    centre: Vector,
     radius: f64,
     material: Arc<dyn Material>,
 }
 
 #[derive(Clone, Debug)]
 pub struct MovingSphere {
-    centre: (Vec3, Vec3),
+    centre: (Vector, Vector),
     time: (f64, f64),
     radius: f64,
     material: Arc<dyn Material>,
@@ -18,7 +18,7 @@ pub struct MovingSphere {
 
 impl Sphere {
     #[must_use]
-    pub fn new(centre: Vec3, radius: f64, material: Arc<dyn Material>) -> Self {
+    pub fn new(centre: Vector, radius: f64, material: Arc<dyn Material>) -> Self {
         Self {
             centre,
             radius,
@@ -30,8 +30,8 @@ impl Sphere {
 impl MovingSphere {
     #[must_use]
     pub fn new(
-        centre0: Vec3,
-        centre1: Vec3,
+        centre0: Vector,
+        centre1: Vector,
         time0: f64,
         time1: f64,
         radius: f64,
@@ -46,7 +46,7 @@ impl MovingSphere {
     }
 
     #[must_use]
-    pub fn centre(&self, time: f64) -> Vec3 {
+    pub fn centre(&self, time: f64) -> Vector {
         let (c0, c1) = self.centre;
         let (t0, t1) = self.time;
         c0 + ((time - t0) / (t1 - t0)) * (c1 - c0)

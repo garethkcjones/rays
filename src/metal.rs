@@ -1,4 +1,4 @@
-use crate::{Colour, HitRecord, Material, Ray, Vec3};
+use crate::{Colour, HitRecord, Material, Ray, Vector};
 
 #[derive(Clone, Debug)]
 pub struct Metal {
@@ -21,7 +21,7 @@ impl Material for Metal {
         let origin = rec.p();
         let normal = rec.normal();
         let reflected = ray.direction.unit().reflect(normal);
-        let direction = reflected + self.fuzz * Vec3::random_in_unit_sphere();
+        let direction = reflected + self.fuzz * Vector::random_in_unit_sphere();
         let scattered = Ray::new(origin, direction, ray.time);
         if direction.dot(normal) > 0.0 {
             Some((scattered, self.albedo))

@@ -14,11 +14,7 @@ impl Dielectric {
 
 impl Material for Dielectric {
     fn scatter(&self, ray: &Ray, rec: &HitRecord) -> Option<(Ray, Colour)> {
-        const ATTENUATION: Colour = Colour {
-            r: 1.0,
-            g: 1.0,
-            b: 1.0,
-        };
+        let attenuation: Colour = Colour::new(1.0, 1.0, 1.0);
 
         let origin = rec.p();
         let normal = rec.normal();
@@ -43,7 +39,7 @@ impl Material for Dielectric {
         };
 
         let scattered = Ray::new(origin, direction, ray.time);
-        Some((scattered, ATTENUATION))
+        Some((scattered, attenuation))
     }
 }
 

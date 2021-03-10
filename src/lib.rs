@@ -1,7 +1,6 @@
 use rand::prelude::*;
 
 mod camera;
-mod colour;
 mod dielectric;
 mod hit;
 mod lambertian;
@@ -9,9 +8,8 @@ mod material;
 mod metal;
 mod ray;
 mod sphere;
-mod vec3;
+mod triplet;
 pub use camera::Camera;
-pub use colour::Colour;
 pub use dielectric::Dielectric;
 pub use hit::{HitRecord, Hittable, HittableList};
 pub use lambertian::{Lambertian1, Lambertian2, Simple};
@@ -19,7 +17,7 @@ pub use material::Material;
 pub use metal::Metal;
 pub use ray::Ray;
 pub use sphere::{MovingSphere, Sphere};
-pub use vec3::Vec3;
+pub use triplet::{Colour, Vector};
 
 /**
  * Returns a random `f64` in [0.0, 1.0).

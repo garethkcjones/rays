@@ -1,6 +1,6 @@
 use rays::{
     random_f64, random_f64_in, Camera, Colour, Dielectric, Hittable, HittableList, Lambertian2,
-    Metal, MovingSphere, Ray, Sphere, Vec3,
+    Metal, MovingSphere, Ray, Sphere, Vector,
 };
 use std::{
     fs::File,
@@ -10,30 +10,12 @@ use std::{
     thread,
 };
 
-const BLACK: Colour = Colour {
-    r: 0.0,
-    g: 0.0,
-    b: 0.0,
-};
-
-const WHITE: Colour = Colour {
-    r: 1.0,
-    g: 1.0,
-    b: 1.0,
-};
-
-const BLUE: Colour = Colour {
-    r: 0.5,
-    g: 0.7,
-    b: 1.0,
-};
-
 fn random_scene() -> Arc<dyn Hittable> {
     let mut world = HittableList::new();
 
     let material = Arc::new(Lambertian2::new(Colour::new(0.5, 0.5, 0.5)));
     world.push(Box::new(Sphere::new(
-        Vec3::new(0.0, -1000.0, 0.0),
+        Vector::new(0.0, -1000.0, 0.0),
         1000.0,
         material,
     )));
@@ -45,15 +27,15 @@ fn random_scene() -> Arc<dyn Hittable> {
 
             let choose_mat = random_f64();
 
-            let centre = Vec3::new(a + 0.9 * random_f64(), 0.2, b + 0.9 * random_f64());
+            let centre = Vector::new(a + 0.9 * random_f64(), 0.2, b + 0.9 * random_f64());
 
-            if (centre - Vec3::new(4.0, 0.2, 0.0)).abs() > 0.9 {
+            if (centre - Vector::new(4.0, 0.2, 0.0)).abs() > 0.9 {
                 match choose_mat {
                     x if x < 0.8 => {
                         // Diffuse.
                         let albedo = Colour::random() * Colour::random();
                         let material = Arc::new(Lambertian2::new(albedo));
-                        let centre2 = centre + Vec3::new(0.0, random_f64_in(0.0, 0.5), 0.0);
+                        let centre2 = centre + Vector::new(0.0, random_f64_in(0.0, 0.5), 0.0);
                         world.push(Box::new(MovingSphere::new(
                             centre, centre2, 0.0, 1.0, 0.2, material,
                         )));
@@ -77,21 +59,21 @@ fn random_scene() -> Arc<dyn Hittable> {
 
     let material = Arc::new(Dielectric::new(1.5));
     world.push(Box::new(Sphere::new(
-        Vec3::new(0.0, 1.0, 0.0),
+        Vector::new(0.0, 1.0, 0.0),
         1.0,
         material,
     )));
 
     let material = Arc::new(Lambertian2::new(Colour::new(0.4, 0.2, 0.1)));
     world.push(Box::new(Sphere::new(
-        Vec3::new(-4.0, 1.0, 0.0),
+        Vector::new(-4.0, 1.0, 0.0),
         1.0,
         material,
     )));
 
     let material = Arc::new(Metal::new(Colour::new(0.7, 0.6, 0.5), 0.0));
     world.push(Box::new(Sphere::new(
-        Vec3::new(4.0, 1.0, 0.0),
+        Vector::new(4.0, 1.0, 0.0),
         1.0,
         material,
     )));
@@ -100,22 +82,26 @@ fn random_scene() -> Arc<dyn Hittable> {
 }
 
 fn ray_colour(r: &Ray, world: &dyn Hittable, depth: usize) -> Colour {
+    let black = Colour::new(0.0, 0.0, 0.0);
+    let white = Colour::new(1.0, 1.0, 1.0);
+    let blue = Colour::new(0.5, 0.7, 1.0);
+
     // If we’ve exceeded the ray bounce limit, no more light is gathered.
     if depth == 0 {
-        return BLACK;
+        return black;
     }
 
     if let Some(rec) = world.hit(r, 0.001, f64::INFINITY) {
         if let Some((scattered, attenuation)) = rec.material().scatter(&r, &rec) {
             return attenuation * ray_colour(&scattered, world, depth - 1);
         } else {
-            return BLACK;
+            return black;
         }
     }
 
     let unit_direction = r.direction.unit();
-    let t = 0.5 * (unit_direction.y + 1.0);
-    (1.0 - t) * WHITE + t * BLUE
+    let t = 0.5 * (unit_direction.y() + 1.0);
+    (1.0 - t) * white + t * blue
 }
 
 fn render(
@@ -136,7 +122,7 @@ fn render(
         }
 
         for i in 0..image_width {
-            let mut pixel_colour = BLACK;
+            let mut pixel_colour = Colour::new(0.0, 0.0, 0.0);
             for _ in 0..samples_per_pixel {
                 let u = ((i as f64) + rays::random_f64()) / (image_width - 1) as f64;
                 let v = ((j as f64) + rays::random_f64()) / (image_height - 1) as f64;
@@ -187,9 +173,9 @@ fn main() {
 
     // Camera.
 
-    let look_from = Vec3::new(13.0, 2.0, 3.0);
-    let look_at = Vec3::new(0.0, 0.0, 0.0);
-    let vup = Vec3::new(0.0, 1.0, 0.0);
+    let look_from = Vector::new(13.0, 2.0, 3.0);
+    let look_at = Vector::new(0.0, 0.0, 0.0);
+    let vup = Vector::new(0.0, 1.0, 0.0);
     let vfov = 20.0;
     let aperture = 0.1;
     let dist_to_focus = 10.0;
@@ -246,6 +232,8 @@ fn main() {
         samples_per_thread,
         max_depth,
     );
+
+    println!("Waiting for threads...");
 
     // Join threads.
     for thread in threads {
@@ -304,9 +292,9 @@ fn write_ppm_pixel(
 ) -> io::Result<()> {
     // Divide the colour by the number of samples and gamma-correct for gamma = 2.0.
     let scale = 1.0 / samples_per_pixel as f64;
-    let r = (pixel.r * scale).sqrt();
-    let g = (pixel.g * scale).sqrt();
-    let b = (pixel.b * scale).sqrt();
+    let r = (pixel.r() * scale).sqrt();
+    let g = (pixel.g() * scale).sqrt();
+    let b = (pixel.b() * scale).sqrt();
 
     // Write the translated [0, 255] value of each colour component.
     let r = (256.0 * r.clamp(0.0, 0.999)) as u8;
