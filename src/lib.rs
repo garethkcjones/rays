@@ -1,5 +1,6 @@
 use rand::prelude::*;
 
+mod aabb;
 mod camera;
 mod dielectric;
 mod hit;
@@ -9,6 +10,7 @@ mod metal;
 mod ray;
 mod sphere;
 mod triplet;
+pub use aabb::Aabb;
 pub use camera::Camera;
 pub use dielectric::Dielectric;
 pub use hit::{HitRecord, Hittable, HittableList};

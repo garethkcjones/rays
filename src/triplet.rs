@@ -3,10 +3,10 @@ use std::{fmt, marker::PhantomData, ops};
 
 pub trait Tag: Copy + Default {}
 
-#[derive(Clone, Copy, Debug, Default)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct ColourTag;
 
-#[derive(Clone, Copy, Debug, Default)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct VectorTag;
 
 impl Tag for ColourTag {}
