@@ -1,4 +1,4 @@
-use crate::{Material, Ray, Vector};
+use crate::{Aabb, Material, Ray, Vector};
 use std::{fmt::Debug, sync::Arc};
 
 #[derive(Clone, Debug)]
@@ -13,6 +13,9 @@ pub struct HitRecord {
 pub trait Hittable: Debug + Send + Sync {
     #[must_use]
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord>;
+
+    #[must_use]
+    fn bounding_box(&self, time0: f64, time1: f64) -> Option<Aabb>;
 }
 
 pub type HittableList = Vec<Box<dyn Hittable>>;
