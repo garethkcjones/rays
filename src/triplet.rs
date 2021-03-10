@@ -1,7 +1,7 @@
 use crate::{random_f64, random_f64_in};
 use std::{fmt, marker::PhantomData, ops};
 
-pub trait Tag: Copy {}
+pub trait Tag: Copy + Default {}
 
 #[derive(Clone, Copy, Debug, Default)]
 pub struct ColourTag;
@@ -66,18 +66,16 @@ impl<T: Tag> Vec3<T> {
 
     #[must_use]
     pub fn random() -> Self {
-        let a = random_f64();
-        let b = random_f64();
-        let c = random_f64();
-        Self::new(a, b, c)
+        let mut u = Self::default();
+        u.data.iter_mut().for_each(|u| *u = random_f64());
+        u
     }
 
     #[must_use]
     pub fn random_in(min: f64, max: f64) -> Self {
-        let a = random_f64_in(min, max);
-        let b = random_f64_in(min, max);
-        let c = random_f64_in(min, max);
-        Self::new(a, b, c)
+        let mut u = Self::default();
+        u.data.iter_mut().for_each(|u| *u = random_f64_in(min, max));
+        u
     }
 
     #[must_use]
@@ -85,11 +83,12 @@ impl<T: Tag> Vec3<T> {
     where
         F: Fn(f64) -> f64,
     {
-        let [a, b, c] = self.data;
-        let aa = f(a);
-        let bb = f(b);
-        let cc = f(c);
-        Self::new(aa, bb, cc)
+        let mut u = Self::default();
+        u.data
+            .iter_mut()
+            .zip(self.data.iter())
+            .for_each(|(u, v)| *u = f(*v));
+        u
     }
 
     #[must_use]
@@ -97,12 +96,12 @@ impl<T: Tag> Vec3<T> {
     where
         F: Fn(f64, f64) -> f64,
     {
-        let [a1, b1, c1] = self.data;
-        let [a2, b2, c2] = other.data;
-        let aa = f(a1, a2);
-        let bb = f(b1, b2);
-        let cc = f(c1, c2);
-        Self::new(aa, bb, cc)
+        let mut u = Self::default();
+        u.data
+            .iter_mut()
+            .zip(self.data.iter().zip(other.data.iter()))
+            .for_each(|(u, (v, w))| *u = f(*v, *w));
+        u
     }
 }
 
@@ -147,7 +146,12 @@ impl Vector {
     pub fn near_zero(self) -> bool {
         // Return true if the vector is close to zero in all dimensions.
         const EPSILON: f64 = 1e-8;
-        self.x().abs() < EPSILON && self.y().abs() < EPSILON && self.z().abs() < EPSILON
+        for u in self.data.iter() {
+            if *u >= EPSILON {
+                return false;
+            }
+        }
+        true
     }
 
     #[must_use]
@@ -231,7 +235,7 @@ impl<T: Tag> ops::IndexMut<usize> for Vec3<T> {
     }
 }
 
-// Vector–vector operators.
+// Unary operators.
 
 impl<T: Tag> ops::Neg for Vec3<T> {
     type Output = Self;
@@ -239,6 +243,8 @@ impl<T: Tag> ops::Neg for Vec3<T> {
         self.apply(f64::neg)
     }
 }
+
+// Vector–vector operators.
 
 impl<T: Tag> ops::Add for Vec3<T> {
     type Output = Self;
