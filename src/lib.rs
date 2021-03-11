@@ -38,3 +38,11 @@ pub fn random_f64() -> f64 {
 pub fn random_f64_in(min: f64, max: f64) -> f64 {
     min + (max - min) * random_f64()
 }
+
+/**
+ * Returns a random `i32` in [min, max].
+ */
+#[must_use]
+pub fn random_i32_in(min: i32, max: i32) -> i32 {
+    random_f64_in(f64::from(min), f64::from(max) + 1.0) as i32
+}
