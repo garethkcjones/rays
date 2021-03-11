@@ -1,5 +1,5 @@
 use crate::{Aabb, HitRecord, Hittable, HittableList, Ray};
-use std::sync::Arc;
+use std::{cmp::Ordering, sync::Arc};
 
 #[derive(Clone, Debug)]
 pub struct BvhNode {
@@ -41,4 +41,29 @@ impl Hittable for BvhNode {
     fn bounding_box(&self, _time0: f64, _time1: f64) -> Option<Aabb> {
         Some(self.bounding_box)
     }
+}
+
+fn box_cmp(a: &Arc<dyn Hittable>, b: &Arc<dyn Hittable>, axis: usize) -> Ordering {
+    let a = a.bounding_box(0.0, 0.0);
+    let b = b.bounding_box(0.0, 0.0);
+    match (a, b) {
+        (Some(a), Some(b)) => a.minimum[axis]
+            .partial_cmp(&b.minimum[axis])
+            .expect("Unexpected NaN in bounding box"),
+        (Some(_), None) => Ordering::Less,
+        (None, Some(_)) => Ordering::Greater,
+        (None, None) => Ordering::Equal,
+    }
+}
+
+fn box_x_cmp(a: &Arc<dyn Hittable>, b: &Arc<dyn Hittable>) -> Ordering {
+    box_cmp(a, b, 0)
+}
+
+fn box_y_cmp(a: &Arc<dyn Hittable>, b: &Arc<dyn Hittable>) -> Ordering {
+    box_cmp(a, b, 1)
+}
+
+fn box_z_cmp(a: &Arc<dyn Hittable>, b: &Arc<dyn Hittable>) -> Ordering {
+    box_cmp(a, b, 2)
 }

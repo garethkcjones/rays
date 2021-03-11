@@ -3,8 +3,8 @@ use std::mem;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct Aabb {
-    minimum: Vector,
-    maximum: Vector,
+    pub minimum: Vector,
+    pub maximum: Vector,
 }
 
 impl Aabb {
