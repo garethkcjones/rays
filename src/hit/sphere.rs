@@ -1,5 +1,6 @@
-use crate::{Aabb, HitRecord, Hittable, Material, Ray, Vector};
+use crate::{Aabb, Material, Ray, Vector};
 use std::sync::Arc;
+use super::{HitRecord, Hittable};
 
 #[derive(Clone, Debug)]
 pub struct Sphere {

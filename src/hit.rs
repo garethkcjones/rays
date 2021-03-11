@@ -1,4 +1,6 @@
+mod sphere;
 use crate::{Aabb, Material, Ray, Vector};
+pub use sphere::{MovingSphere, Sphere};
 use std::{fmt::Debug, sync::Arc};
 
 #[derive(Clone, Debug)]
