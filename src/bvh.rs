@@ -11,6 +11,9 @@ pub struct BvhNode {
 impl BvhNode {
     #[must_use]
     pub fn new(objects: &HittableList, time0: f64, time1: f64) -> Self {
+        if objects.is_empty() {
+            panic!("Empty object list");
+        }
         Self::from_range(&mut objects.clone(), time0, time1)
     }
 
