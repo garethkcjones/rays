@@ -1,4 +1,4 @@
-use crate::{HitRecord, Hittable, Material, Ray, Vector};
+use crate::{Aabb, HitRecord, Hittable, Material, Ray, Vector};
 use std::sync::Arc;
 
 #[derive(Clone, Debug)]
@@ -84,6 +84,17 @@ impl Hittable for Sphere {
         let p = r.at(t);
         let normal = (p - centre) / radius;
         Some(HitRecord::new(r, p, normal, material, t))
+    }
+
+    fn bounding_box(&self, _time0: f64, _time1: f64) -> Option<Aabb> {
+        let radius = self.radius;
+        let radius_vec = Vector::new(radius, radius, radius);
+
+        let centre = self.centre;
+        let minimum = centre - radius_vec;
+        let maximum = centre + radius_vec;
+
+        Some(Aabb::new(minimum, maximum))
     }
 }
 
