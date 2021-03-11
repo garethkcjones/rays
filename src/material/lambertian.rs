@@ -1,7 +1,8 @@
-use crate::{Colour, HitRecord, Material, Ray, Vector};
+use super::Material;
+use crate::{Colour, HitRecord, Ray, Vector};
 
 #[derive(Clone, Debug)]
-pub struct Simple {
+pub struct Lambertian0 {
     albedo: Colour,
 }
 
@@ -15,7 +16,7 @@ pub struct Lambertian2 {
     albedo: Colour,
 }
 
-impl Simple {
+impl Lambertian0 {
     #[must_use]
     pub const fn new(albedo: Colour) -> Self {
         Self { albedo }
@@ -36,7 +37,7 @@ impl Lambertian2 {
     }
 }
 
-impl Material for Simple {
+impl Material for Lambertian0 {
     fn scatter(&self, ray: &Ray, rec: &HitRecord) -> Option<(Ray, Colour)> {
         let origin = rec.p();
         let normal = rec.normal();

@@ -1,4 +1,5 @@
-use crate::{random_f64, Colour, HitRecord, Material, Ray};
+use super::Material;
+use crate::{random_f64, Colour, HitRecord, Ray};
 
 #[derive(Clone, Debug)]
 pub struct Dielectric {

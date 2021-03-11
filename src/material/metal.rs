@@ -1,4 +1,5 @@
-use crate::{Colour, HitRecord, Material, Ray, Vector};
+use super::Material;
+use crate::{Colour, HitRecord, Ray, Vector};
 
 #[derive(Clone, Debug)]
 pub struct Metal {
