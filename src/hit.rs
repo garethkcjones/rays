@@ -18,7 +18,7 @@ pub trait Hittable: Debug + Send + Sync {
     fn bounding_box(&self, time0: f64, time1: f64) -> Option<Aabb>;
 }
 
-pub type HittableList = Vec<Box<dyn Hittable>>;
+pub type HittableList = Vec<Arc<dyn Hittable>>;
 
 impl HitRecord {
     #[must_use]
