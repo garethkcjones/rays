@@ -1,14 +1,12 @@
 use rand::prelude::*;
 
-mod aabb;
-mod bvh;
+mod bounding;
 mod camera;
 mod hit;
 mod material;
 mod ray;
 mod triplet;
-pub use aabb::Aabb;
-pub use bvh::BvhNode;
+pub use bounding::{Aabb, BvhNode};
 pub use camera::Camera;
 pub use hit::{HitRecord, Hittable, HittableList, MovingSphere, Sphere};
 pub use material::{Dielectric, Lambertian0, Lambertian1, Lambertian2, Material, Metal};
