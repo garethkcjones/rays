@@ -5,12 +5,14 @@ mod camera;
 mod hit;
 mod material;
 mod ray;
+mod texture;
 mod triplet;
 pub use bounding::{Aabb, BvhNode};
 pub use camera::Camera;
 pub use hit::{HitRecord, Hittable, HittableList, MovingSphere, Sphere};
 pub use material::{Dielectric, Lambertian0, Lambertian1, Lambertian2, Material, Metal};
 pub use ray::Ray;
+pub use texture::{SolidColour, Texture};
 pub use triplet::{Colour, Vector};
 
 /**
