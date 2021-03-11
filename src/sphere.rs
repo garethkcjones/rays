@@ -130,4 +130,21 @@ impl Hittable for MovingSphere {
         let normal = (p - centre) / radius;
         Some(HitRecord::new(r, p, normal, material, t))
     }
+
+    fn bounding_box(&self, time0: f64, time1: f64) -> Option<Aabb> {
+        let radius = self.radius;
+        let radius_vec = Vector::new(radius, radius, radius);
+
+        let centre = self.centre(time0);
+        let minimum = centre - radius_vec;
+        let maximum = centre + radius_vec;
+        let box0 = Some(Aabb::new(minimum, maximum));
+
+        let centre = self.centre(time1);
+        let minimum = centre - radius_vec;
+        let maximum = centre + radius_vec;
+        let box1 = Some(Aabb::new(minimum, maximum));
+
+        Aabb::surrounding_box(box0, box1)
+    }
 }
