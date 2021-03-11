@@ -62,14 +62,18 @@ impl BvhNode {
 
 impl Hittable for BvhNode {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
-        if self.bounding_box.unwrap().hit(r, t_min, t_max) {
-            // FIXME: unwrap()...
-            let left_hit = self.left.hit(r, t_min, t_max);
-            let t_max = left_hit.as_ref().map_or(t_max, |rec| rec.t());
-            let right_hit = self.right.hit(r, t_min, t_max);
-            right_hit.or(left_hit)
-        } else {
-            None
+        match self.bounding_box {
+            Some(bounding_box) => {
+                if bounding_box.hit(r, t_min, t_max) {
+                    let left_hit = self.left.hit(r, t_min, t_max);
+                    let t_max = left_hit.as_ref().map_or(t_max, |rec| rec.t());
+                    let right_hit = self.right.hit(r, t_min, t_max);
+                    right_hit.or(left_hit)
+                } else {
+                    None
+                }
+            }
+            None => None,
         }
     }
 
@@ -85,8 +89,8 @@ fn box_cmp(a: &Arc<dyn Hittable>, b: &Arc<dyn Hittable>, axis: usize) -> Orderin
         (Some(a), Some(b)) => a.minimum[axis]
             .partial_cmp(&b.minimum[axis])
             .expect("Unexpected NaN in bounding box"),
-        (Some(_), None) => Ordering::Less,
-        (None, Some(_)) => Ordering::Greater,
+        (Some(_), None) => Ordering::Greater,
+        (None, Some(_)) => Ordering::Less,
         (None, None) => Ordering::Equal,
     }
 }

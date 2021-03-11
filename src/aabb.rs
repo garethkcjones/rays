@@ -21,6 +21,7 @@ impl Aabb {
                 let max_box = box0.maximum.apply_with(box1.maximum, f64::max);
                 Some(Self::new(min_box, max_box))
             }
+            (Some(box0), None) | (None, Some(box0)) => Some(box0),
             _ => None,
         }
     }
