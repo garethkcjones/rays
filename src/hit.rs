@@ -74,4 +74,24 @@ impl Hittable for HittableList {
 
         temp_rec
     }
+
+    fn bounding_box(&self, time0: f64, time1: f64) -> Option<Aabb> {
+        let mut objects = self.iter();
+
+        let mut bounding;
+        match objects.next() {
+            Some(object) => bounding = object.bounding_box(time0, time1),
+            None => return None,
+        }
+
+        for object in objects {
+            if bounding.is_none() {
+                return None;
+            }
+            let bb = object.bounding_box(time0, time1);
+            bounding = Aabb::surrounding_box(bounding, bb);
+        }
+
+        bounding
+    }
 }
