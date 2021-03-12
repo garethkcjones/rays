@@ -1,6 +1,6 @@
 use rays::{
-    random_f64, random_f64_in, Camera, Colour, Dielectric, Hittable, HittableList, Lambertian2,
-    Metal, MovingSphere, Ray, Sphere, Vector,
+    random_f64, random_f64_in, Camera, Chequered, Colour, Dielectric, Hittable, HittableList,
+    Lambertian2, Metal, MovingSphere, Ray, Sphere, Vector,
 };
 use std::{
     fs::File,
@@ -13,7 +13,12 @@ use std::{
 fn random_scene() -> Arc<dyn Hittable> {
     let mut world = HittableList::new();
 
-    let material = Arc::new(Lambertian2::with_colour(Colour::new(0.5, 0.5, 0.5)));
+    let texture = Arc::new(Chequered::with_colours(
+        Colour::new(0.9, 0.9, 0.9),
+        Colour::new(0.2, 0.3, 0.1),
+        Vector::new(10.0, 10.0, 10.0),
+    ));
+    let material = Arc::new(Lambertian2::new(texture));
     world.push(Arc::new(Sphere::new(
         Vector::new(0.0, -1000.0, 0.0),
         1000.0,
