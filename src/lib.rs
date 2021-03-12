@@ -12,7 +12,7 @@ pub use camera::Camera;
 pub use hit::{HitRecord, Hittable, HittableList, MovingSphere, Sphere};
 pub use material::{Dielectric, Lambertian0, Lambertian1, Lambertian2, Material, Metal};
 pub use ray::Ray;
-pub use texture::{SolidColour, Texture};
+pub use texture::{Chequered, SolidColour, Texture};
 pub use triplet::{Colour, Vector};
 
 /**

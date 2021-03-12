@@ -79,6 +79,16 @@ impl<T: Tag> Vec3<T> {
     }
 
     #[must_use]
+    pub fn sum(self) -> f64 {
+        self.data.iter().sum()
+    }
+
+    #[must_use]
+    pub fn product(self) -> f64 {
+        self.data.iter().product()
+    }
+
+    #[must_use]
     pub fn apply<F>(self, f: F) -> Self
     where
         F: Fn(f64) -> f64,
@@ -179,11 +189,7 @@ impl Vector {
 
     #[must_use]
     pub fn dot(self, other: Self) -> f64 {
-        self.data
-            .iter()
-            .zip(other.data.iter())
-            .map(|(u, v)| u * v)
-            .sum()
+        (self * other).sum()
     }
 
     #[must_use]
