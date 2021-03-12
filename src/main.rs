@@ -3,6 +3,7 @@ use rays::{
     Lambertian2, Material, Metal, MovingSphere, Ray, Sphere, Vector,
 };
 use std::{
+    env,
     fs::File,
     io::{self, prelude::*, BufWriter},
     path::Path,
@@ -88,10 +89,22 @@ fn random_scene() -> Arc<dyn Hittable> {
 
 fn two_spheres() -> Arc<dyn Hittable> {
     let mut world = HittableList::new();
-    let texture = Arc::new(Chequered::with_colours(Colour::new(0.9, 0.9, 0.9), Colour::new(0.2, 0.3, 0.1), Vector::new(10.0, 10.0, 10.0)));
+    let texture = Arc::new(Chequered::with_colours(
+        Colour::new(0.9, 0.9, 0.9),
+        Colour::new(0.2, 0.3, 0.1),
+        Vector::new(10.0, 10.0, 10.0),
+    ));
     let material: Arc<dyn Material> = Arc::new(Lambertian2::new(texture));
-    world.push(Arc::new(Sphere::new(Vector::new(0.0, -10.0, 0.0), 10.0, Arc::clone(&material))));
-    world.push(Arc::new(Sphere::new(Vector::new(0.0, 10.0, 0.0), 10.0, material)));
+    world.push(Arc::new(Sphere::new(
+        Vector::new(0.0, -10.0, 0.0),
+        10.0,
+        Arc::clone(&material),
+    )));
+    world.push(Arc::new(Sphere::new(
+        Vector::new(0.0, 10.0, 0.0),
+        10.0,
+        material,
+    )));
     Arc::new(world)
 }
 
@@ -175,35 +188,71 @@ fn render_thread(
 }
 
 fn main() {
-    // Image.
+    let scene_choice: u32 = env::args()
+        .skip(1)
+        .next()
+        .expect("Missing command-line argument")
+        .parse()
+        .expect("Invalid command-line argument");
 
+    // Image.
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 400;
     let image_height = ((image_width as f64) / aspect_ratio) as _;
 
-    // World.
+    let (world, cam) = match scene_choice {
+        1 => {
+            // World.
+            let world = random_scene();
 
-    let world = random_scene();
+            // Camera.
+            let look_from = Vector::new(13.0, 2.0, 3.0);
+            let look_at = Vector::new(0.0, 0.0, 0.0);
+            let vup = Vector::new(0.0, 1.0, 0.0);
+            let vfov = 20.0;
+            let aperture = 0.1;
+            let dist_to_focus = 10.0;
+            let cam = Arc::new(Camera::new(
+                look_from,
+                look_at,
+                vup,
+                vfov,
+                aspect_ratio,
+                aperture,
+                dist_to_focus,
+                0.0,
+                1.0,
+            ));
 
-    // Camera.
+            (world, cam)
+        }
+        2 => {
+            // World.
+            let world = two_spheres();
 
-    let look_from = Vector::new(13.0, 2.0, 3.0);
-    let look_at = Vector::new(0.0, 0.0, 0.0);
-    let vup = Vector::new(0.0, 1.0, 0.0);
-    let vfov = 20.0;
-    let aperture = 0.1;
-    let dist_to_focus = 10.0;
-    let cam = Arc::new(Camera::new(
-        look_from,
-        look_at,
-        vup,
-        vfov,
-        aspect_ratio,
-        aperture,
-        dist_to_focus,
-        0.0,
-        1.0,
-    ));
+            // Camera.
+            let look_from = Vector::new(13.0, 2.0, 3.0);
+            let look_at = Vector::new(0.0, 0.0, 0.0);
+            let vup = Vector::new(0.0, 1.0, 0.0);
+            let vfov = 20.0;
+            let aperture = 0.0;
+            let dist_to_focus = 10.0;
+            let cam = Arc::new(Camera::new(
+                look_from,
+                look_at,
+                vup,
+                vfov,
+                aspect_ratio,
+                aperture,
+                dist_to_focus,
+                0.0,
+                1.0,
+            ));
+
+            (world, cam)
+        }
+        _ => panic!("Invalid command-line argument"),
+    };
 
     // Render.
 
