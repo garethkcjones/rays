@@ -1,7 +1,9 @@
 mod chequered;
+mod perlin;
 mod solid_colour;
 use crate::{Colour, Vector};
 pub use chequered::Chequered;
+pub use perlin::Perlin;
 pub use solid_colour::SolidColour;
 use std::fmt::Debug;
 

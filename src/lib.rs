@@ -12,7 +12,7 @@ pub use camera::Camera;
 pub use hit::{HitRecord, Hittable, HittableList, MovingSphere, Sphere};
 pub use material::{Dielectric, Lambertian0, Lambertian1, Lambertian2, Material, Metal};
 pub use ray::Ray;
-pub use texture::{Chequered, SolidColour, Texture};
+pub use texture::{Chequered, Perlin, SolidColour, Texture};
 pub use triplet::{Colour, Vector};
 
 /**
@@ -36,5 +36,13 @@ pub fn random_f64_in(min: f64, max: f64) -> f64 {
  */
 #[must_use]
 pub fn random_i32_in(min: i32, max: i32) -> i32 {
-    random_f64_in(f64::from(min), f64::from(max) + 1.0) as i32
+    random_f64_in(f64::from(min), f64::from(max) + 1.0) as _
+}
+
+/**
+ * Returns a random `usize` in [min, max].
+ */
+#[must_use]
+pub fn random_usize_in(min: usize, max: usize) -> usize {
+    random_f64_in(min as f64, max as f64 + 1.0) as _
 }
