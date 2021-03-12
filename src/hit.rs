@@ -9,6 +9,8 @@ pub struct HitRecord {
     normal: Vector,
     material: Arc<dyn Material>,
     t: f64,
+    u: f64,
+    v: f64,
     front_face: bool,
 }
 
@@ -24,7 +26,15 @@ pub type HittableList = Vec<Arc<dyn Hittable>>;
 
 impl HitRecord {
     #[must_use]
-    pub fn new(r: &Ray, p: Vector, normal: Vector, material: Arc<dyn Material>, t: f64) -> Self {
+    pub fn new(
+        r: &Ray,
+        p: Vector,
+        normal: Vector,
+        material: Arc<dyn Material>,
+        t: f64,
+        u: f64,
+        v: f64,
+    ) -> Self {
         let front_face = r.direction.dot(normal) < 0.0;
         let normal = if front_face { normal } else { -normal };
         Self {
@@ -32,6 +42,8 @@ impl HitRecord {
             normal,
             material,
             t,
+            u,
+            v,
             front_face,
         }
     }
@@ -54,6 +66,16 @@ impl HitRecord {
     #[must_use]
     pub const fn t(&self) -> f64 {
         self.t
+    }
+
+    #[must_use]
+    pub const fn u(&self) -> f64 {
+        self.u
+    }
+
+    #[must_use]
+    pub const fn v(&self) -> f64 {
+        self.v
     }
 
     #[must_use]
