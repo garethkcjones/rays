@@ -7,7 +7,7 @@ pub use lambertian::{Lambertian0, Lambertian1, Lambertian2};
 pub use metal::Metal;
 use std::fmt::Debug;
 
-pub trait Material: Debug + Sync + Send {
+pub trait Material: Debug + Send + Sync {
     #[must_use]
     fn scatter(&self, ray: &Ray, rec: &HitRecord) -> Option<(Ray, Colour)>;
 }

@@ -1,39 +1,55 @@
 use super::Material;
-use crate::{Colour, HitRecord, Ray, Vector};
+use crate::{Colour, HitRecord, Ray, SolidColour, Texture, Vector};
+use std::sync::Arc;
 
 #[derive(Clone, Debug)]
 pub struct Lambertian0 {
-    albedo: Colour,
+    albedo: Arc<dyn Texture>,
 }
 
 #[derive(Clone, Debug)]
 pub struct Lambertian1 {
-    albedo: Colour,
+    albedo: Arc<dyn Texture>,
 }
 
 #[derive(Clone, Debug)]
 pub struct Lambertian2 {
-    albedo: Colour,
+    albedo: Arc<dyn Texture>,
 }
 
 impl Lambertian0 {
     #[must_use]
-    pub const fn new(albedo: Colour) -> Self {
+    pub fn new(albedo: Arc<dyn Texture>) -> Self {
         Self { albedo }
+    }
+
+    #[must_use]
+    pub fn with_colour(colour: Colour) -> Self {
+        Self::new(Arc::new(SolidColour::from(colour)))
     }
 }
 
 impl Lambertian1 {
     #[must_use]
-    pub const fn new(albedo: Colour) -> Self {
+    pub fn new(albedo: Arc<dyn Texture>) -> Self {
         Self { albedo }
+    }
+
+    #[must_use]
+    pub fn with_colour(colour: Colour) -> Self {
+        Self::new(Arc::new(SolidColour::from(colour)))
     }
 }
 
 impl Lambertian2 {
     #[must_use]
-    pub const fn new(albedo: Colour) -> Self {
+    pub fn new(albedo: Arc<dyn Texture>) -> Self {
         Self { albedo }
+    }
+
+    #[must_use]
+    pub fn with_colour(colour: Colour) -> Self {
+        Self::new(Arc::new(SolidColour::from(colour)))
     }
 }
 
@@ -42,8 +58,11 @@ impl Material for Lambertian0 {
         let origin = rec.p();
         let normal = rec.normal();
         let direction = Vector::random_in_hemisphere(normal);
+
         let scattered = Ray::new(origin, direction, ray.time);
-        Some((scattered, self.albedo))
+        let colour = self.albedo.value(rec.u(), rec.v(), origin);
+
+        Some((scattered, colour))
     }
 }
 
@@ -59,7 +78,9 @@ impl Material for Lambertian1 {
         }
 
         let scattered = Ray::new(origin, direction, ray.time);
-        Some((scattered, self.albedo))
+        let colour = self.albedo.value(rec.u(), rec.v(), origin);
+
+        Some((scattered, colour))
     }
 }
 
@@ -75,6 +96,8 @@ impl Material for Lambertian2 {
         }
 
         let scattered = Ray::new(origin, direction, ray.time);
-        Some((scattered, self.albedo))
+        let colour = self.albedo.value(rec.u(), rec.v(), origin);
+
+        Some((scattered, colour))
     }
 }

@@ -13,7 +13,7 @@ use std::{
 fn random_scene() -> Arc<dyn Hittable> {
     let mut world = HittableList::new();
 
-    let material = Arc::new(Lambertian2::new(Colour::new(0.5, 0.5, 0.5)));
+    let material = Arc::new(Lambertian2::with_colour(Colour::new(0.5, 0.5, 0.5)));
     world.push(Arc::new(Sphere::new(
         Vector::new(0.0, -1000.0, 0.0),
         1000.0,
@@ -34,7 +34,7 @@ fn random_scene() -> Arc<dyn Hittable> {
                     x if x < 0.8 => {
                         // Diffuse.
                         let albedo = Colour::random() * Colour::random();
-                        let material = Arc::new(Lambertian2::new(albedo));
+                        let material = Arc::new(Lambertian2::with_colour(albedo));
                         let centre2 = centre + Vector::new(0.0, random_f64_in(0.0, 0.5), 0.0);
                         world.push(Arc::new(MovingSphere::new(
                             centre, centre2, 0.0, 1.0, 0.2, material,
@@ -64,7 +64,7 @@ fn random_scene() -> Arc<dyn Hittable> {
         material,
     )));
 
-    let material = Arc::new(Lambertian2::new(Colour::new(0.4, 0.2, 0.1)));
+    let material = Arc::new(Lambertian2::with_colour(Colour::new(0.4, 0.2, 0.1)));
     world.push(Arc::new(Sphere::new(
         Vector::new(-4.0, 1.0, 0.0),
         1.0,
