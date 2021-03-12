@@ -1,6 +1,6 @@
 use rays::{
     random_f64, random_f64_in, Camera, Chequered, Colour, Dielectric, Hittable, HittableList,
-    Lambertian2, Material, Metal, MovingSphere, Ray, Sphere, Vector,
+    Lambertian2, Material, Metal, MovingSphere, Noise, Ray, Sphere, Vector,
 };
 use std::{
     env,
@@ -11,6 +11,7 @@ use std::{
     thread,
 };
 
+#[must_use]
 fn random_scene() -> Arc<dyn Hittable> {
     let mut world = HittableList::new();
 
@@ -87,6 +88,7 @@ fn random_scene() -> Arc<dyn Hittable> {
     Arc::new(world)
 }
 
+#[must_use]
 fn two_spheres() -> Arc<dyn Hittable> {
     let mut world = HittableList::new();
     let texture = Arc::new(Chequered::with_colours(
@@ -108,6 +110,25 @@ fn two_spheres() -> Arc<dyn Hittable> {
     Arc::new(world)
 }
 
+#[must_use]
+fn two_perlin_spheres() -> Arc<dyn Hittable> {
+    let mut world = HittableList::new();
+    let texture = Arc::new(Noise::new());
+    let material: Arc<dyn Material> = Arc::new(Lambertian2::new(texture));
+    world.push(Arc::new(Sphere::new(
+        Vector::new(0.0, -1000.0, 0.0),
+        1000.0,
+        Arc::clone(&material),
+    )));
+    world.push(Arc::new(Sphere::new(
+        Vector::new(0.0, 2.0, 0.0),
+        2.0,
+        material,
+    )));
+    Arc::new(world)
+}
+
+#[must_use]
 fn ray_colour(r: &Ray, world: &dyn Hittable, depth: usize) -> Colour {
     let black = Colour::new(0.0, 0.0, 0.0);
     let white = Colour::new(1.0, 1.0, 1.0);
@@ -131,6 +152,7 @@ fn ray_colour(r: &Ray, world: &dyn Hittable, depth: usize) -> Colour {
     (1.0 - t) * white + t * blue
 }
 
+#[must_use]
 fn render(
     thread_num: usize,
     world: &dyn Hittable,
@@ -167,6 +189,7 @@ fn render(
     pixels.into_boxed_slice()
 }
 
+#[must_use]
 fn render_thread(
     thread_num: usize,
     world: Arc<dyn Hittable>,
