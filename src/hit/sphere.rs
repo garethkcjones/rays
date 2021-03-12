@@ -84,7 +84,9 @@ impl Hittable for Sphere {
         let t = root;
         let p = r.at(t);
         let normal = (p - centre) / radius;
-        Some(HitRecord::new(r, p, normal, material, t, 0.0, 0.0))
+        let (u, v) = get_sphere_uv(normal);
+
+        Some(HitRecord::new(r, p, normal, material, t, u, v))
     }
 
     fn bounding_box(&self, _time0: f64, _time1: f64) -> Option<Aabb> {
@@ -129,7 +131,9 @@ impl Hittable for MovingSphere {
         let t = root;
         let p = r.at(t);
         let normal = (p - centre) / radius;
-        Some(HitRecord::new(r, p, normal, material, t, 0.0, 0.0))
+        let (u, v) = get_sphere_uv(normal);
+
+        Some(HitRecord::new(r, p, normal, material, t, u, v))
     }
 
     fn bounding_box(&self, time0: f64, time1: f64) -> Option<Aabb> {
