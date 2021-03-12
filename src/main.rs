@@ -274,6 +274,31 @@ fn main() {
 
             (world, cam)
         }
+        3 => {
+            // World.
+            let world = two_perlin_spheres();
+
+            // Camera.
+            let look_from = Vector::new(13.0, 2.0, 3.0);
+            let look_at = Vector::new(0.0, 0.0, 0.0);
+            let vup = Vector::new(0.0, 1.0, 0.0);
+            let vfov = 20.0;
+            let aperture = 0.0;
+            let dist_to_focus = 10.0;
+            let cam = Arc::new(Camera::new(
+                look_from,
+                look_at,
+                vup,
+                vfov,
+                aspect_ratio,
+                aperture,
+                dist_to_focus,
+                0.0,
+                1.0,
+            ));
+
+            (world, cam)
+        }
         _ => panic!("Invalid command-line argument"),
     };
 
