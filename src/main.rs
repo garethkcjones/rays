@@ -44,7 +44,7 @@ fn random_scene() -> Arc<dyn Hittable> {
                         // Metal.
                         let albedo = Colour::random_in(0.5, 1.0);
                         let fuzz = random_f64_in(0.0, 0.5);
-                        let material = Arc::new(Metal::new(albedo, fuzz));
+                        let material = Arc::new(Metal::with_colour(albedo, fuzz));
                         world.push(Arc::new(Sphere::new(centre, 0.2, material)));
                     }
                     _ => {
@@ -71,7 +71,7 @@ fn random_scene() -> Arc<dyn Hittable> {
         material,
     )));
 
-    let material = Arc::new(Metal::new(Colour::new(0.7, 0.6, 0.5), 0.0));
+    let material = Arc::new(Metal::with_colour(Colour::new(0.7, 0.6, 0.5), 0.0));
     world.push(Arc::new(Sphere::new(
         Vector::new(4.0, 1.0, 0.0),
         1.0,
