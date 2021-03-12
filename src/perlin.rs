@@ -46,6 +46,12 @@ impl Perlin {
     }
 }
 
+impl Default for Perlin {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[must_use]
 fn perlin_generate_perm() -> [usize; POINT_COUNT] {
     let mut p = [0; POINT_COUNT];
