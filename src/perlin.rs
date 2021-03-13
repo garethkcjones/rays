@@ -32,17 +32,40 @@ impl Perlin {
 
     #[must_use]
     pub fn noise(&self, p: Vector) -> f64 {
-        let p = 4.0 * p;
+        let fp = p.apply(f64::floor);
+        let dp = p - fp;
 
-        let x = p.x() as i32 & 255;
-        let y = p.y() as i32 & 255;
-        let z = p.z() as i32 & 255;
+        let u = dp.x();
+        let v = dp.y();
+        let w = dp.z();
 
-        let i = self.perm_x[x as usize];
-        let j = self.perm_y[y as usize];
-        let k = self.perm_z[z as usize];
+        let i = fp.x() as i32;
+        let j = fp.y() as i32;
+        let k = fp.z() as i32;
 
-        self.ranfloat[i ^ j ^ k]
+        let mut c = [[[0.0; 2]; 2]; 2];
+
+        for di in 0..2 {
+            let idi = (i + di) & 255;
+            let di = di as usize;
+            let x = self.perm_x[idi as usize];
+
+            for dj in 0..2 {
+                let jdj = (j + dj) & 255;
+                let dj = dj as usize;
+                let y = self.perm_y[jdj as usize];
+
+                for dk in 0..2 {
+                    let kdk = (k + dk) & 255;
+                    let dk = dk as usize;
+                    let z = self.perm_z[kdk as usize];
+
+                    c[di][dj][dk] = self.ranfloat[x ^ y ^ z];
+                }
+            }
+        }
+
+        trilinear_interp(&c, u, v, w)
     }
 }
 
@@ -65,4 +88,26 @@ fn permute(p: &mut [usize; POINT_COUNT]) {
         let target = random_usize_in(0, i);
         p.swap(i, target);
     }
+}
+
+#[must_use]
+fn trilinear_interp(c: &[[[f64; 2]; 2]; 2], u: f64, v: f64, w: f64) -> f64 {
+    let mut accum = 0.0;
+    let mut i = 0.0;
+    for c in c {
+        let mut j = 0.0;
+        for c in c {
+            let mut k = 0.0;
+            for c in c {
+                accum += (i * u + (1.0 - i) * (1.0 - u))
+                    * (j * v + (1.0 - j) * (1.0 - v))
+                    * (k * w + (1.0 - k) * (1.0 - w))
+                    * c;
+                k += 1.0;
+            }
+            j += 1.0;
+        }
+        i += 1.0;
+    }
+    accum
 }
