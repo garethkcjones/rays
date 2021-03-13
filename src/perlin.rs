@@ -39,15 +39,11 @@ impl Perlin {
         let v = dp.y();
         let w = dp.z();
 
-        let u = u * u * (3.0 - 2.0 * u);
-        let v = v * v * (3.0 - 2.0 * v);
-        let w = w * w * (3.0 - 2.0 * w);
-
         let i = fp.x() as i32;
         let j = fp.y() as i32;
         let k = fp.z() as i32;
 
-        let mut c = [[[0.0; 2]; 2]; 2];
+        let mut c = [[[Default::default(); 2]; 2]; 2];
 
         for di in 0..2 {
             let idi = (i + di) & 255;
@@ -64,12 +60,12 @@ impl Perlin {
                     let dk = dk as usize;
                     let z = self.perm_z[kdk as usize];
 
-                    c[di][dj][dk] = self.ranfloat[x ^ y ^ z];
+                    c[di][dj][dk] = self.ranvec[x ^ y ^ z];
                 }
             }
         }
 
-        trilinear_interp(&c, u, v, w)
+        perlin_interp(&c, u, v, w)
     }
 }
 
