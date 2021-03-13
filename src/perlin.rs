@@ -67,6 +67,21 @@ impl Perlin {
 
         perlin_interp(&c, u, v, w)
     }
+
+    #[must_use]
+    pub fn turb(&self, p: Vector, depth: u32) -> f64 {
+        let mut accum = 0.0;
+        let mut weight = 1.0;
+        let mut temp_p = p;
+
+        for _ in 0..depth {
+            accum += weight * self.noise(temp_p);
+            weight *= 0.5;
+            temp_p *= 2.0;
+        }
+
+        accum.abs()
+    }
 }
 
 impl Default for Perlin {
