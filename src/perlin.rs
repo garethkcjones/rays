@@ -1,10 +1,10 @@
-use crate::{random_f64, random_usize_in, Vector};
+use crate::{random_usize_in, Vector};
 
 const POINT_COUNT: usize = 256;
 
 #[derive(Clone, Debug)]
 pub struct Perlin {
-    ranfloat: [f64; POINT_COUNT],
+    ranvec: [Vector; POINT_COUNT],
     perm_x: [usize; POINT_COUNT],
     perm_y: [usize; POINT_COUNT],
     perm_z: [usize; POINT_COUNT],
@@ -13,9 +13,9 @@ pub struct Perlin {
 impl Perlin {
     #[must_use]
     pub fn new() -> Self {
-        let mut ranfloat = [0.0; POINT_COUNT];
-        for r in &mut ranfloat {
-            *r = random_f64();
+        let mut ranvec = [Default::default(); POINT_COUNT];
+        for r in &mut ranvec {
+            *r = Vector::random_in(-1.0, 1.0).unit();
         }
 
         let perm_x = perlin_generate_perm();
@@ -23,7 +23,7 @@ impl Perlin {
         let perm_z = perlin_generate_perm();
 
         Self {
-            ranfloat,
+            ranvec,
             perm_x,
             perm_y,
             perm_z,
