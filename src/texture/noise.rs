@@ -19,6 +19,6 @@ impl Noise {
 
 impl Texture for Noise {
     fn value(&self, _u: f64, _v: f64, p: Vector) -> Colour {
-        Colour::new(1.0, 1.0, 1.0) * 0.5 * (1.0 + self.noise.noise(self.scale * p))
+        Colour::new(1.0, 1.0, 1.0) * self.noise.turb(self.scale * p, 7)
     }
 }
