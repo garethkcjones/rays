@@ -113,7 +113,7 @@ fn two_spheres() -> Arc<dyn Hittable> {
 #[must_use]
 fn two_perlin_spheres() -> Arc<dyn Hittable> {
     let mut world = HittableList::new();
-    let texture = Arc::new(Noise::new());
+    let texture = Arc::new(Noise::new(4.0));
     let material: Arc<dyn Material> = Arc::new(Lambertian2::new(texture));
     world.push(Arc::new(Sphere::new(
         Vector::new(0.0, -1000.0, 0.0),
