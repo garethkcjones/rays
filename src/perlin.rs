@@ -91,23 +91,30 @@ fn permute(p: &mut [usize; POINT_COUNT]) {
 }
 
 #[must_use]
-fn trilinear_interp(c: &[[[f64; 2]; 2]; 2], u: f64, v: f64, w: f64) -> f64 {
+fn perlin_interp(c: &[[[Vector; 2]; 2]; 2], u: f64, v: f64, w: f64) -> f64 {
+    let uu = u * u * (3.0 - 2.0 * u);
+    let vv = v * v * (3.0 - 2.0 * v);
+    let ww = w * w * (3.0 - 2.0 * w);
+
     let mut accum = 0.0;
+
     let mut i = 0.0;
     for c in c {
         let mut j = 0.0;
         for c in c {
             let mut k = 0.0;
             for c in c {
-                accum += (i * u + (1.0 - i) * (1.0 - u))
-                    * (j * v + (1.0 - j) * (1.0 - v))
-                    * (k * w + (1.0 - k) * (1.0 - w))
-                    * c;
+                let weight = Vector::new(u - i, v - j, w - k);
+                accum += (i * uu + (1.0 - i) * (1.0 - uu))
+                    * (j * vv + (1.0 - j) * (1.0 - vv))
+                    * (k * ww + (1.0 - k) * (1.0 - ww))
+                    * c.dot(weight);
                 k += 1.0;
             }
             j += 1.0;
         }
         i += 1.0;
     }
+
     accum
 }
