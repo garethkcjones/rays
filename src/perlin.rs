@@ -39,6 +39,10 @@ impl Perlin {
         let v = dp.y();
         let w = dp.z();
 
+        let u = u * u * (3.0 - 2.0 * u);
+        let v = v * v * (3.0 - 2.0 * v);
+        let w = w * w * (3.0 - 2.0 * w);
+
         let i = fp.x() as i32;
         let j = fp.y() as i32;
         let k = fp.z() as i32;
