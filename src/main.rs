@@ -166,7 +166,11 @@ fn render(
 
     for j in 0..image_height {
         if thread_num == 0 {
-            print!("\rScanlines remaining: {:5}", image_height - j);
+            let percent = (100.0 * j as f64 / image_height as f64).round() as usize;
+            print!(
+                "\rMain thread scanlines remaining: {:5} ({:3}%)",
+                j, percent
+            );
             io::stdout().flush().expect("Error writing to stdout");
         }
 
@@ -183,7 +187,7 @@ fn render(
     }
 
     if thread_num == 0 {
-        println!("\rScanlines remaining: {:5}", 0);
+        println!("\rMain thread scanlines remaining: {:5} ({:3}%)", 0, 100);
     }
 
     pixels.into_boxed_slice()
@@ -303,7 +307,6 @@ fn main() {
     };
 
     // Render.
-
     let samples_per_pixel = 100;
     let max_depth = 50;
     let num_threads = 32;
@@ -344,21 +347,19 @@ fn main() {
         max_depth,
     );
 
-    println!("Waiting for threads...");
-
     // Join threads.
-    for thread in threads {
+    for (i, thread) in threads.into_iter().enumerate() {
+        print!("\rWaiting for thread {:2} of {}...", i + 2, num_threads);
         let thread_pixels = thread.join().expect("Worker thread error");
         assert_eq!(pixels.len(), thread_pixels.len());
         for (pixel, thread_pixel) in pixels.iter_mut().zip(thread_pixels.into_iter()) {
             *pixel += thread_pixel;
         }
     }
+    println!();
 
     // Output.
-
     println!("Writing output...");
-
     write_ppm_file(
         "out.ppm",
         image_width,
