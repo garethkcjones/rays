@@ -21,11 +21,11 @@ fn random_scene() -> Arc<dyn Hittable> {
         Vector::new(10.0, 10.0, 10.0),
     ));
     let material = Arc::new(Lambertian2::new(texture));
-    world.push(Arc::new(Sphere::new(
+    world.push(Sphere::new(
         Vector::new(0.0, -1000.0, 0.0),
         1000.0,
         material,
-    )));
+    ));
 
     for a in -11..11 {
         for b in -11..11 {
@@ -43,21 +43,19 @@ fn random_scene() -> Arc<dyn Hittable> {
                         let albedo = Colour::random() * Colour::random();
                         let material = Arc::new(Lambertian2::with_colour(albedo));
                         let centre2 = centre + Vector::new(0.0, random_f64_in(0.0, 0.5), 0.0);
-                        world.push(Arc::new(MovingSphere::new(
-                            centre, centre2, 0.0, 1.0, 0.2, material,
-                        )));
+                        world.push(MovingSphere::new(centre, centre2, 0.0, 1.0, 0.2, material));
                     }
                     x if x < 0.95 => {
                         // Metal.
                         let albedo = Colour::random_in(0.5, 1.0);
                         let fuzz = random_f64_in(0.0, 0.5);
                         let material = Arc::new(Metal::with_colour(albedo, fuzz));
-                        world.push(Arc::new(Sphere::new(centre, 0.2, material)));
+                        world.push(Sphere::new(centre, 0.2, material));
                     }
                     _ => {
                         // Glass.
                         let material = Arc::new(Dielectric::new(1.5));
-                        world.push(Arc::new(Sphere::new(centre, 0.2, material)));
+                        world.push(Sphere::new(centre, 0.2, material));
                     }
                 }
             }
@@ -65,25 +63,13 @@ fn random_scene() -> Arc<dyn Hittable> {
     }
 
     let material = Arc::new(Dielectric::new(1.5));
-    world.push(Arc::new(Sphere::new(
-        Vector::new(0.0, 1.0, 0.0),
-        1.0,
-        material,
-    )));
+    world.push(Sphere::new(Vector::new(0.0, 1.0, 0.0), 1.0, material));
 
     let material = Arc::new(Lambertian2::with_colour(Colour::new(0.4, 0.2, 0.1)));
-    world.push(Arc::new(Sphere::new(
-        Vector::new(-4.0, 1.0, 0.0),
-        1.0,
-        material,
-    )));
+    world.push(Sphere::new(Vector::new(-4.0, 1.0, 0.0), 1.0, material));
 
     let material = Arc::new(Metal::with_colour(Colour::new(0.7, 0.6, 0.5), 0.0));
-    world.push(Arc::new(Sphere::new(
-        Vector::new(4.0, 1.0, 0.0),
-        1.0,
-        material,
-    )));
+    world.push(Sphere::new(Vector::new(4.0, 1.0, 0.0), 1.0, material));
 
     Arc::new(world)
 }
@@ -97,16 +83,12 @@ fn two_spheres() -> Arc<dyn Hittable> {
         Vector::new(10.0, 10.0, 10.0),
     ));
     let material: Arc<dyn Material> = Arc::new(Lambertian2::new(texture));
-    world.push(Arc::new(Sphere::new(
+    world.push(Sphere::new(
         Vector::new(0.0, -10.0, 0.0),
         10.0,
         Arc::clone(&material),
-    )));
-    world.push(Arc::new(Sphere::new(
-        Vector::new(0.0, 10.0, 0.0),
-        10.0,
-        material,
-    )));
+    ));
+    world.push(Sphere::new(Vector::new(0.0, 10.0, 0.0), 10.0, material));
     Arc::new(world)
 }
 
@@ -115,16 +97,12 @@ fn two_perlin_spheres() -> Arc<dyn Hittable> {
     let mut world = HittableList::new();
     let texture = Arc::new(Noise::new(4.0));
     let material: Arc<dyn Material> = Arc::new(Lambertian2::new(texture));
-    world.push(Arc::new(Sphere::new(
+    world.push(Sphere::new(
         Vector::new(0.0, -1000.0, 0.0),
         1000.0,
         Arc::clone(&material),
-    )));
-    world.push(Arc::new(Sphere::new(
-        Vector::new(0.0, 2.0, 0.0),
-        2.0,
-        material,
-    )));
+    ));
+    world.push(Sphere::new(Vector::new(0.0, 2.0, 0.0), 2.0, material));
     Arc::new(world)
 }
 

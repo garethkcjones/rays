@@ -19,12 +19,12 @@ pub struct MovingSphere {
 
 impl Sphere {
     #[must_use]
-    pub fn new(centre: Vector, radius: f64, material: Arc<dyn Material>) -> Self {
-        Self {
+    pub fn new(centre: Vector, radius: f64, material: Arc<dyn Material>) -> Arc<Self> {
+        Arc::new(Self {
             centre,
             radius,
             material,
-        }
+        })
     }
 }
 
@@ -37,13 +37,13 @@ impl MovingSphere {
         time1: f64,
         radius: f64,
         material: Arc<dyn Material>,
-    ) -> Self {
-        Self {
+    ) -> Arc<Self> {
+        Arc::new(Self {
             centre: (centre0, centre1),
             time: (time0, time1),
             radius,
             material,
-        }
+        })
     }
 
     #[must_use]
