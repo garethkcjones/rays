@@ -1,5 +1,6 @@
 use super::Texture;
 use crate::{Colour, Vector};
+use std::sync::Arc;
 
 #[derive(Clone, Debug)]
 pub struct SolidColour {
@@ -8,32 +9,13 @@ pub struct SolidColour {
 
 impl SolidColour {
     #[must_use]
-    pub fn new(red: f64, green: f64, blue: f64) -> Self {
-        Self {
-            colour: Colour::new(red, green, blue),
-        }
+    pub fn new(colour: Colour) -> Arc<Self> {
+        Arc::new(Self { colour })
     }
-}
 
-impl From<Colour> for SolidColour {
-    fn from(colour: Colour) -> Self {
-        Self { colour }
-    }
-}
-
-impl From<[f64; 3]> for SolidColour {
-    fn from(colour: [f64; 3]) -> Self {
-        Self {
-            colour: Colour::from(colour),
-        }
-    }
-}
-
-impl From<(f64, f64, f64)> for SolidColour {
-    fn from(colour: (f64, f64, f64)) -> Self {
-        Self {
-            colour: Colour::from(colour),
-        }
+    #[must_use]
+    pub fn from_rgb(red: f64, green: f64, blue: f64) -> Arc<Self> {
+        Self::new(Colour::new(red, green, blue))
     }
 }
 

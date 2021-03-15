@@ -15,11 +15,11 @@ use std::{
 fn random_scene() -> Arc<dyn Hittable> {
     let mut world = HittableList::new();
 
-    let texture = Arc::new(Chequered::with_colours(
+    let texture = Chequered::with_colours(
         Colour::new(0.9, 0.9, 0.9),
         Colour::new(0.2, 0.3, 0.1),
         Vector::new(10.0, 10.0, 10.0),
-    ));
+    );
     let material = Lambertian2::new(texture);
     world.push(Sphere::new(
         Vector::new(0.0, -1000.0, 0.0),
@@ -77,11 +77,11 @@ fn random_scene() -> Arc<dyn Hittable> {
 #[must_use]
 fn two_spheres() -> Arc<dyn Hittable> {
     let mut world = HittableList::new();
-    let texture = Arc::new(Chequered::with_colours(
+    let texture = Chequered::with_colours(
         Colour::new(0.9, 0.9, 0.9),
         Colour::new(0.2, 0.3, 0.1),
         Vector::new(10.0, 10.0, 10.0),
-    ));
+    );
     let material: Arc<dyn Material> = Lambertian2::new(texture);
     world.push(Sphere::new(
         Vector::new(0.0, -10.0, 0.0),
@@ -95,7 +95,7 @@ fn two_spheres() -> Arc<dyn Hittable> {
 #[must_use]
 fn two_perlin_spheres() -> Arc<dyn Hittable> {
     let mut world = HittableList::new();
-    let texture = Arc::new(Noise::new(4.0));
+    let texture = Noise::new(4.0);
     let material: Arc<dyn Material> = Lambertian2::new(texture);
     world.push(Sphere::new(
         Vector::new(0.0, -1000.0, 0.0),

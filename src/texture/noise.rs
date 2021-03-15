@@ -1,5 +1,6 @@
 use super::Texture;
 use crate::{Colour, Perlin, Vector};
+use std::sync::Arc;
 
 #[derive(Clone, Debug)]
 pub struct Noise {
@@ -9,11 +10,11 @@ pub struct Noise {
 
 impl Noise {
     #[must_use]
-    pub fn new(scale: f64) -> Self {
-        Self {
+    pub fn new(scale: f64) -> Arc<Self> {
+        Arc::new(Self {
             noise: Perlin::new(),
             scale,
-        }
+        })
     }
 }
 

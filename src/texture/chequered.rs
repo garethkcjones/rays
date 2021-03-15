@@ -11,17 +11,13 @@ pub struct Chequered {
 
 impl Chequered {
     #[must_use]
-    pub fn new(odd: Arc<dyn Texture>, even: Arc<dyn Texture>, scale: Vector) -> Self {
-        Self { odd, even, scale }
+    pub fn new(odd: Arc<dyn Texture>, even: Arc<dyn Texture>, scale: Vector) -> Arc<Self> {
+        Arc::new(Self { odd, even, scale })
     }
 
     #[must_use]
-    pub fn with_colours(odd: Colour, even: Colour, scale: Vector) -> Self {
-        Self::new(
-            Arc::new(SolidColour::from(odd)),
-            Arc::new(SolidColour::from(even)),
-            scale,
-        )
+    pub fn with_colours(odd: Colour, even: Colour, scale: Vector) -> Arc<Self> {
+        Self::new(SolidColour::new(odd), SolidColour::new(even), scale)
     }
 }
 

@@ -19,7 +19,7 @@ impl Metal {
 
     #[must_use]
     pub fn with_colour(colour: Colour, fuzz: f64) -> Arc<Self> {
-        Self::new(Arc::new(SolidColour::from(colour)), fuzz)
+        Self::new(SolidColour::new(colour), fuzz)
     }
 }
 

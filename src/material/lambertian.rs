@@ -25,7 +25,7 @@ impl Lambertian0 {
 
     #[must_use]
     pub fn with_colour(colour: Colour) -> Arc<Self> {
-        Self::new(Arc::new(SolidColour::from(colour)))
+        Self::new(SolidColour::new(colour))
     }
 }
 
@@ -37,7 +37,7 @@ impl Lambertian1 {
 
     #[must_use]
     pub fn with_colour(colour: Colour) -> Arc<Self> {
-        Self::new(Arc::new(SolidColour::from(colour)))
+        Self::new(SolidColour::new(colour))
     }
 }
 
@@ -49,7 +49,7 @@ impl Lambertian2 {
 
     #[must_use]
     pub fn with_colour(colour: Colour) -> Arc<Self> {
-        Self::new(Arc::new(SolidColour::from(colour)))
+        Self::new(SolidColour::new(colour))
     }
 }
 
