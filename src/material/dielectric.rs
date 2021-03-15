@@ -1,5 +1,6 @@
 use super::Material;
 use crate::{random_f64, Colour, HitRecord, Ray};
+use std::sync::Arc;
 
 #[derive(Clone, Debug)]
 pub struct Dielectric {
@@ -8,8 +9,8 @@ pub struct Dielectric {
 
 impl Dielectric {
     #[must_use]
-    pub const fn new(ir: f64) -> Self {
-        Self { ir }
+    pub fn new(ir: f64) -> Arc<Self> {
+        Arc::new(Self { ir })
     }
 }
 

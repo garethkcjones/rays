@@ -19,36 +19,36 @@ pub struct Lambertian2 {
 
 impl Lambertian0 {
     #[must_use]
-    pub fn new(albedo: Arc<dyn Texture>) -> Self {
-        Self { albedo }
+    pub fn new(albedo: Arc<dyn Texture>) -> Arc<Self> {
+        Arc::new(Self { albedo })
     }
 
     #[must_use]
-    pub fn with_colour(colour: Colour) -> Self {
+    pub fn with_colour(colour: Colour) -> Arc<Self> {
         Self::new(Arc::new(SolidColour::from(colour)))
     }
 }
 
 impl Lambertian1 {
     #[must_use]
-    pub fn new(albedo: Arc<dyn Texture>) -> Self {
-        Self { albedo }
+    pub fn new(albedo: Arc<dyn Texture>) -> Arc<Self> {
+        Arc::new(Self { albedo })
     }
 
     #[must_use]
-    pub fn with_colour(colour: Colour) -> Self {
+    pub fn with_colour(colour: Colour) -> Arc<Self> {
         Self::new(Arc::new(SolidColour::from(colour)))
     }
 }
 
 impl Lambertian2 {
     #[must_use]
-    pub fn new(albedo: Arc<dyn Texture>) -> Self {
-        Self { albedo }
+    pub fn new(albedo: Arc<dyn Texture>) -> Arc<Self> {
+        Arc::new(Self { albedo })
     }
 
     #[must_use]
-    pub fn with_colour(colour: Colour) -> Self {
+    pub fn with_colour(colour: Colour) -> Arc<Self> {
         Self::new(Arc::new(SolidColour::from(colour)))
     }
 }
