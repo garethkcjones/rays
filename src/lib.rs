@@ -12,7 +12,7 @@ mod texture;
 mod triplet;
 pub use bounding::{Aabb, BvhNode};
 pub use camera::Camera;
-pub use hit::{HitRecord, Hittable, HittableList, MovingSphere, Sphere};
+pub use hit::{HitRecord, Hittable, MovingSphere, Sphere};
 pub use material::{Dielectric, Lambertian0, Lambertian1, Lambertian2, Material, Metal};
 pub use perlin::Perlin;
 pub use ray::Ray;

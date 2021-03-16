@@ -22,8 +22,6 @@ pub trait Hittable: Debug + Send + Sync {
     fn bounding_box(&self, time0: f64, time1: f64) -> Option<Aabb>;
 }
 
-pub type HittableList = Vec<Arc<dyn Hittable>>;
-
 impl HitRecord {
     #[must_use]
     pub fn new(
@@ -84,7 +82,7 @@ impl HitRecord {
     }
 }
 
-impl Hittable for HittableList {
+impl Hittable for [Arc<dyn Hittable>] {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
         let mut temp_rec = None;
         let mut closest_so_far = t_max;
@@ -113,5 +111,15 @@ impl Hittable for HittableList {
         }
 
         bounding
+    }
+}
+
+impl Hittable for Vec<Arc<dyn Hittable>> {
+    fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
+        self.as_slice().hit(r, t_min, t_max)
+    }
+
+    fn bounding_box(&self, time0: f64, time1: f64) -> Option<Aabb> {
+        self.as_slice().bounding_box(time0, time1)
     }
 }

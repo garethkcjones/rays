@@ -1,4 +1,4 @@
-use crate::{random_i32_in, Aabb, HitRecord, Hittable, HittableList, Ray};
+use crate::{random_i32_in, Aabb, HitRecord, Hittable, Ray};
 use std::{cmp::Ordering, mem, sync::Arc};
 
 #[derive(Clone, Debug)]
@@ -10,11 +10,11 @@ pub struct BvhNode {
 
 impl BvhNode {
     #[must_use]
-    pub fn new(objects: &HittableList, time0: f64, time1: f64) -> Self {
+    pub fn new(objects: &[Arc<dyn Hittable>], time0: f64, time1: f64) -> Self {
         if objects.is_empty() {
             panic!("Empty object list");
         }
-        Self::from_range(&mut objects.clone(), time0, time1)
+        Self::from_range(&mut objects.to_owned(), time0, time1)
     }
 
     #[must_use]
