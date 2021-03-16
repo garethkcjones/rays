@@ -194,8 +194,7 @@ fn render_thread(
 
 fn main() {
     let scene_choice: u32 = env::args()
-        .skip(1)
-        .next()
+        .nth(1)
         .expect("Missing command-line argument")
         .parse()
         .expect("Invalid command-line argument");
@@ -330,7 +329,7 @@ fn main() {
         print!("\rWaiting for thread {:2} of {}...", i + 2, num_threads);
         let thread_pixels = thread.join().expect("Worker thread error");
         assert_eq!(pixels.len(), thread_pixels.len());
-        for (pixel, thread_pixel) in pixels.iter_mut().zip(thread_pixels.into_iter()) {
+        for (pixel, thread_pixel) in pixels.iter_mut().zip(thread_pixels.iter()) {
             *pixel += thread_pixel;
         }
     }

@@ -65,6 +65,7 @@ impl Hittable for Sphere {
         let b = oc.dot(r.direction);
         let c = oc.dot(oc) - radius * radius;
 
+        #[allow(clippy::suspicious_operation_groupings)]
         let discriminant = b * b - a * c;
         if discriminant < 0.0 {
             return None;
@@ -112,6 +113,7 @@ impl Hittable for MovingSphere {
         let b = oc.dot(r.direction);
         let c = oc.dot(oc) - radius * radius;
 
+        #[allow(clippy::suspicious_operation_groupings)]
         let discriminant = b * b - a * c;
         if discriminant < 0.0 {
             return None;

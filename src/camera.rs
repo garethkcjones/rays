@@ -14,6 +14,7 @@ pub struct Camera {
 }
 
 impl Camera {
+    #[allow(clippy::too_many_arguments)]
     #[must_use]
     pub fn new(
         look_from: Vector,
