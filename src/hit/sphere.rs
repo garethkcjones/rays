@@ -2,14 +2,14 @@ use super::{HitRecord, Hittable};
 use crate::{Aabb, Material, Ray, Vector};
 use std::sync::Arc;
 
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub struct Sphere {
     centre: Vector,
     radius: f64,
     material: Arc<dyn Material>,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub struct MovingSphere {
     centre: (Vector, Vector),
     time: (f64, f64),

@@ -2,7 +2,7 @@ use super::{SolidColour, Texture};
 use crate::{Colour, Vector};
 use std::sync::Arc;
 
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub struct Chequered {
     odd: Arc<dyn Texture>,
     even: Arc<dyn Texture>,

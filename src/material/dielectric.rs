@@ -2,7 +2,7 @@ use super::Material;
 use crate::{random_f64, Colour, HitRecord, Ray};
 use std::sync::Arc;
 
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub struct Dielectric {
     ir: f64,
 }

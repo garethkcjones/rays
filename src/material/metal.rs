@@ -2,7 +2,7 @@ use super::Material;
 use crate::{Colour, HitRecord, Ray, SolidColour, Texture, Vector};
 use std::sync::Arc;
 
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub struct Metal {
     albedo: Arc<dyn Texture>,
     fuzz: f64,

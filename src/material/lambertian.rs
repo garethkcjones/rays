@@ -2,17 +2,17 @@ use super::Material;
 use crate::{Colour, HitRecord, Ray, SolidColour, Texture, Vector};
 use std::sync::Arc;
 
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub struct Lambertian0 {
     albedo: Arc<dyn Texture>,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub struct Lambertian1 {
     albedo: Arc<dyn Texture>,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub struct Lambertian2 {
     albedo: Arc<dyn Texture>,
 }

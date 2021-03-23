@@ -2,7 +2,7 @@ use super::Texture;
 use crate::{Colour, Perlin, Vector};
 use std::sync::Arc;
 
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub struct Noise {
     noise: Perlin,
     scale: f64,
