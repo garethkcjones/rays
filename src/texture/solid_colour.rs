@@ -24,3 +24,9 @@ impl Texture for SolidColour {
         self.colour
     }
 }
+
+impl From<Colour> for Arc<dyn Texture> {
+    fn from(colour: Colour) -> Self {
+        SolidColour::new(colour)
+    }
+}

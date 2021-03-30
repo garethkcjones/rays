@@ -1,5 +1,5 @@
 use super::Material;
-use crate::{Colour, HitRecord, Ray, SolidColour, Texture, Vector};
+use crate::{Colour, HitRecord, Ray, Texture, Vector};
 use std::sync::Arc;
 
 #[derive(Debug)]
@@ -10,16 +10,11 @@ pub struct Metal {
 
 impl Metal {
     #[must_use]
-    pub fn new(albedo: Arc<dyn Texture>, fuzz: f64) -> Arc<dyn Material> {
+    pub fn new(albedo: impl Into<Arc<dyn Texture>>, fuzz: f64) -> Arc<dyn Material> {
         Arc::new(Self {
-            albedo,
+            albedo: albedo.into(),
             fuzz: fuzz.clamp(0.0, 1.0),
         })
-    }
-
-    #[must_use]
-    pub fn with_colour(colour: Colour, fuzz: f64) -> Arc<dyn Material> {
-        Self::new(SolidColour::new(colour), fuzz)
     }
 }
 

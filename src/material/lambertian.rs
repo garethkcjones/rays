@@ -1,5 +1,5 @@
 use super::Material;
-use crate::{Colour, HitRecord, Ray, SolidColour, Texture, Vector};
+use crate::{Colour, HitRecord, Ray, Texture, Vector};
 use std::sync::Arc;
 
 #[derive(Debug)]
@@ -19,37 +19,28 @@ pub struct Lambertian2 {
 
 impl Lambertian0 {
     #[must_use]
-    pub fn new(albedo: Arc<dyn Texture>) -> Arc<dyn Material> {
-        Arc::new(Self { albedo })
-    }
-
-    #[must_use]
-    pub fn with_colour(colour: Colour) -> Arc<dyn Material> {
-        Self::new(SolidColour::new(colour))
+    pub fn new(albedo: impl Into<Arc<dyn Texture>>) -> Arc<dyn Material> {
+        Arc::new(Self {
+            albedo: albedo.into(),
+        })
     }
 }
 
 impl Lambertian1 {
     #[must_use]
-    pub fn new(albedo: Arc<dyn Texture>) -> Arc<dyn Material> {
-        Arc::new(Self { albedo })
-    }
-
-    #[must_use]
-    pub fn with_colour(colour: Colour) -> Arc<dyn Material> {
-        Self::new(SolidColour::new(colour))
+    pub fn new(albedo: impl Into<Arc<dyn Texture>>) -> Arc<dyn Material> {
+        Arc::new(Self {
+            albedo: albedo.into(),
+        })
     }
 }
 
 impl Lambertian2 {
     #[must_use]
-    pub fn new(albedo: Arc<dyn Texture>) -> Arc<dyn Material> {
-        Arc::new(Self { albedo })
-    }
-
-    #[must_use]
-    pub fn with_colour(colour: Colour) -> Arc<dyn Material> {
-        Self::new(SolidColour::new(colour))
+    pub fn new(albedo: impl Into<Arc<dyn Texture>>) -> Arc<dyn Material> {
+        Arc::new(Self {
+            albedo: albedo.into(),
+        })
     }
 }
 

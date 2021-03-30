@@ -1,4 +1,4 @@
-use super::{SolidColour, Texture};
+use super::Texture;
 use crate::{Colour, Vector};
 use std::sync::Arc;
 
@@ -11,13 +11,16 @@ pub struct Chequered {
 
 impl Chequered {
     #[must_use]
-    pub fn new(odd: Arc<dyn Texture>, even: Arc<dyn Texture>, scale: Vector) -> Arc<dyn Texture> {
-        Arc::new(Self { odd, even, scale })
-    }
-
-    #[must_use]
-    pub fn with_colours(odd: Colour, even: Colour, scale: Vector) -> Arc<dyn Texture> {
-        Self::new(SolidColour::new(odd), SolidColour::new(even), scale)
+    pub fn new(
+        odd: impl Into<Arc<dyn Texture>>,
+        even: impl Into<Arc<dyn Texture>>,
+        scale: Vector,
+    ) -> Arc<dyn Texture> {
+        Arc::new(Self {
+            odd: odd.into(),
+            even: even.into(),
+            scale,
+        })
     }
 }
 
