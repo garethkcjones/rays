@@ -147,7 +147,8 @@ fn render(
             let percent = (100.0 * j as f64 / image_height as f64).round() as usize;
             print!(
                 "\rMain thread scanlines remaining: {:5} ({:3}%)",
-                j, percent
+                image_height - j,
+                percent
             );
             io::stdout().flush().expect("Error writing to stdout");
         }
@@ -327,6 +328,7 @@ fn main() {
     // Join threads.
     for (i, thread) in threads.into_iter().enumerate() {
         print!("\rWaiting for thread {:2} of {}...", i + 2, num_threads);
+        io::stdout().flush().expect("Error writing to stdout");
         let thread_pixels = thread.join().expect("Worker thread error");
         assert_eq!(pixels.len(), thread_pixels.len());
         for (pixel, thread_pixel) in pixels.iter_mut().zip(thread_pixels.iter()) {
