@@ -9,7 +9,7 @@ pub struct Dielectric {
 
 impl Dielectric {
     #[must_use]
-    pub fn new(ir: f64) -> Arc<Self> {
+    pub fn new(ir: f64) -> Arc<dyn Material> {
         Arc::new(Self { ir })
     }
 }

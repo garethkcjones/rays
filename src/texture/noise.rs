@@ -10,7 +10,7 @@ pub struct Noise {
 
 impl Noise {
     #[must_use]
-    pub fn new(scale: f64) -> Arc<Self> {
+    pub fn new(scale: f64) -> Arc<dyn Texture> {
         Arc::new(Self {
             noise: Perlin::new(),
             scale,

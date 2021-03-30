@@ -1,6 +1,6 @@
 use rays::{
-    random_f64, random_f64_in, Camera, Chequered, Colour, Dielectric, Hittable, Lambertian2,
-    Material, Metal, MovingSphere, Noise, Ray, Sphere, Vector,
+    random_f64, random_f64_in, Camera, Chequered, Colour, Dielectric, Hittable, Lambertian2, Metal,
+    MovingSphere, Noise, Ray, Sphere, Vector,
 };
 use std::{
     env,
@@ -82,7 +82,7 @@ fn two_spheres() -> Arc<dyn Hittable> {
         Colour::new(0.2, 0.3, 0.1),
         Vector::new(10.0, 10.0, 10.0),
     );
-    let material: Arc<dyn Material> = Lambertian2::new(texture);
+    let material = Lambertian2::new(texture);
     world.push(Sphere::new(
         Vector::new(0.0, -10.0, 0.0),
         10.0,
@@ -96,7 +96,7 @@ fn two_spheres() -> Arc<dyn Hittable> {
 fn two_perlin_spheres() -> Arc<dyn Hittable> {
     let mut world = Vec::<Arc<dyn Hittable>>::new();
     let texture = Noise::new(4.0);
-    let material: Arc<dyn Material> = Lambertian2::new(texture);
+    let material = Lambertian2::new(texture);
     world.push(Sphere::new(
         Vector::new(0.0, -1000.0, 0.0),
         1000.0,

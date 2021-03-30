@@ -10,7 +10,7 @@ pub struct Metal {
 
 impl Metal {
     #[must_use]
-    pub fn new(albedo: Arc<dyn Texture>, fuzz: f64) -> Arc<Self> {
+    pub fn new(albedo: Arc<dyn Texture>, fuzz: f64) -> Arc<dyn Material> {
         Arc::new(Self {
             albedo,
             fuzz: fuzz.clamp(0.0, 1.0),
@@ -18,7 +18,7 @@ impl Metal {
     }
 
     #[must_use]
-    pub fn with_colour(colour: Colour, fuzz: f64) -> Arc<Self> {
+    pub fn with_colour(colour: Colour, fuzz: f64) -> Arc<dyn Material> {
         Self::new(SolidColour::new(colour), fuzz)
     }
 }

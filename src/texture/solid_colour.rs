@@ -9,12 +9,12 @@ pub struct SolidColour {
 
 impl SolidColour {
     #[must_use]
-    pub fn new(colour: Colour) -> Arc<Self> {
+    pub fn new(colour: Colour) -> Arc<dyn Texture> {
         Arc::new(Self { colour })
     }
 
     #[must_use]
-    pub fn from_rgb(red: f64, green: f64, blue: f64) -> Arc<Self> {
+    pub fn from_rgb(red: f64, green: f64, blue: f64) -> Arc<dyn Texture> {
         Self::new(Colour::new(red, green, blue))
     }
 }
