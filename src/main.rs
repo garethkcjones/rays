@@ -13,7 +13,7 @@ use std::{
 
 #[must_use]
 fn random_scene() -> Arc<dyn Hittable> {
-    let mut world = Vec::<Arc<dyn Hittable>>::new();
+    let mut world = Vec::new();
 
     let texture = Chequered::new(
         Colour::new(0.9, 0.9, 0.9),
@@ -76,7 +76,7 @@ fn random_scene() -> Arc<dyn Hittable> {
 
 #[must_use]
 fn two_spheres() -> Arc<dyn Hittable> {
-    let mut world = Vec::<Arc<dyn Hittable>>::new();
+    let mut world = Vec::new();
     let texture = Chequered::new(
         Colour::new(0.9, 0.9, 0.9),
         Colour::new(0.2, 0.3, 0.1),
@@ -94,7 +94,7 @@ fn two_spheres() -> Arc<dyn Hittable> {
 
 #[must_use]
 fn two_perlin_spheres() -> Arc<dyn Hittable> {
-    let mut world = Vec::<Arc<dyn Hittable>>::new();
+    let mut world = Vec::new();
     let texture = Noise::new(4.0);
     let material = Lambertian2::new(texture);
     world.push(Sphere::new(
