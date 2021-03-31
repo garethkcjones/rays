@@ -26,7 +26,7 @@ impl Texture for OpaqueImage {
 
         // Clamp input texture coordinates to [0, 1] x [1, 0]
         let u = u.clamp(0.0, 1.0);
-        let v = v.clamp(0.0, 1.0);
+        let v = 1.0 - v.clamp(0.0, 1.0);
 
         let x = (u * f64::from(width)) as u32;
         let y = (v * f64::from(height)) as u32;
