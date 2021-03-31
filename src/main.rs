@@ -1,11 +1,11 @@
+use image::{ImageResult, Rgb, RgbImage};
 use rays::{
     random_f64, random_f64_in, Camera, Chequered, Colour, Dielectric, Hittable, Lambertian2, Metal,
     MovingSphere, Noise, Ray, Sphere, Vector,
 };
 use std::{
     env,
-    fs::File,
-    io::{self, prelude::*, BufWriter},
+    io::{self, prelude::*},
     path::Path,
     sync::Arc,
     thread,
@@ -339,8 +339,8 @@ fn main() {
 
     // Output.
     println!("Writing output...");
-    write_ppm_file(
-        "out.ppm",
+    write_image_file(
+        "out.png",
         image_width,
         image_height,
         &pixels,
@@ -351,38 +351,29 @@ fn main() {
     println!("Done.");
 }
 
-fn write_ppm_file(
+fn write_image_file(
     output: impl AsRef<Path>,
     image_width: u32,
     image_height: u32,
     pixels: &[Colour],
     samples_per_pixel: u32,
-) -> io::Result<()> {
-    let output = File::create(output)?;
-    let mut output = BufWriter::new(output);
+) -> ImageResult<()> {
+    let mut buffer = RgbImage::new(image_width, image_height);
 
-    writeln!(output, "P3")?;
-    writeln!(output, "{} {}", image_width, image_height)?;
-    writeln!(output, "255")?;
-
-    let image_width = image_width as usize;
-    let image_height = image_height as usize;
-    for j in (0..image_height).rev() {
-        for i in 0..image_width {
-            let idx = j * image_width + i;
+    for y in 0..image_height {
+        let x0 = y as usize * image_width as usize;
+        let y = image_height - y - 1;
+        for x in 0..image_width {
+            let idx = x0 + x as usize;
             let pixel = pixels[idx];
-            write_ppm_pixel(&mut output, pixel, samples_per_pixel)?
+            write_pixel(&mut buffer, x, y, pixel, samples_per_pixel);
         }
     }
 
-    output.flush()
+    buffer.save(output)
 }
 
-fn write_ppm_pixel(
-    mut output: impl Write,
-    pixel: Colour,
-    samples_per_pixel: u32,
-) -> io::Result<()> {
+fn write_pixel(buffer: &mut RgbImage, x: u32, y: u32, pixel: Colour, samples_per_pixel: u32) {
     // Divide the colour by the number of samples and gamma-correct for gamma = 2.0.
     let scale = 1.0 / samples_per_pixel as f64;
     let r = (pixel.r() * scale).sqrt();
@@ -393,5 +384,6 @@ fn write_ppm_pixel(
     let r = (256.0 * r.clamp(0.0, 0.999)) as u8;
     let g = (256.0 * g.clamp(0.0, 0.999)) as u8;
     let b = (256.0 * b.clamp(0.0, 0.999)) as u8;
-    writeln!(output, "{} {} {}", r, g, b)
+
+    buffer.put_pixel(x, y, Rgb([r, g, b]));
 }
