@@ -1,6 +1,8 @@
 mod chequered;
+mod image;
 mod noise;
 mod solid_colour;
+pub use self::image::OpaqueImage;
 use crate::{Colour, Vector};
 pub use chequered::Chequered;
 pub use noise::Noise;
