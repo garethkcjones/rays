@@ -1,7 +1,7 @@
 use image::{ImageResult, Rgb, RgbImage};
 use rays::{
     random_f64, random_f64_in, Camera, Chequered, Colour, Dielectric, Hittable, Lambertian2, Metal,
-    MovingSphere, Noise, Ray, Sphere, Vector,
+    MovingSphere, Noise, OpaqueImage, Ray, Sphere, Vector,
 };
 use std::{
     env,
@@ -104,6 +104,13 @@ fn two_perlin_spheres() -> Arc<dyn Hittable> {
     ));
     world.push(Sphere::new(Vector::new(0.0, 2.0, 0.0), 2.0, material));
     Arc::new(world)
+}
+
+#[must_use]
+fn earth() -> Arc<dyn Hittable> {
+    let texture = OpaqueImage::new("earthmap.jpg");
+    let material = Lambertian2::new(texture);
+    Sphere::new(Vector::new(0.0, 0.0, 0.0), 2.0, material)
 }
 
 #[must_use]
