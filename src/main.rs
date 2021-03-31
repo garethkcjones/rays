@@ -144,7 +144,7 @@ fn render(
 
     for j in 0..image_height {
         if thread_num == 0 {
-            let percent = (100.0 * j as f64 / image_height as f64).round() as u32;
+            let percent = (100.0 * f64::from(j) / f64::from(image_height)).round() as u32;
             print!(
                 "\rMain thread scanlines remaining: {:5} ({:3}%)",
                 image_height - j,
@@ -156,8 +156,8 @@ fn render(
         for i in 0..image_width {
             let mut pixel_colour = Colour::new(0.0, 0.0, 0.0);
             for _ in 0..samples_per_pixel {
-                let u = ((i as f64) + rays::random_f64()) / (image_width - 1) as f64;
-                let v = ((j as f64) + rays::random_f64()) / (image_height - 1) as f64;
+                let u = (f64::from(i) + rays::random_f64()) / f64::from(image_width - 1);
+                let v = (f64::from(j) + rays::random_f64()) / f64::from(image_height - 1);
                 let r = cam.get_ray(u, v);
                 pixel_colour += ray_colour(&r, world, max_depth);
             }
@@ -203,7 +203,7 @@ fn main() {
     // Image.
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 400;
-    let image_height = ((image_width as f64) / aspect_ratio) as _;
+    let image_height = (f64::from(image_width) / aspect_ratio) as _;
 
     let (world, cam) = match scene_choice {
         1 => {
@@ -375,7 +375,7 @@ fn write_image_file(
 
 fn write_pixel(buffer: &mut RgbImage, x: u32, y: u32, pixel: Colour, samples_per_pixel: u32) {
     // Divide the colour by the number of samples and gamma-correct for gamma = 2.0.
-    let scale = 1.0 / samples_per_pixel as f64;
+    let scale = 1.0 / f64::from(samples_per_pixel);
     let r = (pixel.r() * scale).sqrt();
     let g = (pixel.g() * scale).sqrt();
     let b = (pixel.b() * scale).sqrt();
