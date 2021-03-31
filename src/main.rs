@@ -107,7 +107,7 @@ fn two_perlin_spheres() -> Arc<dyn Hittable> {
 }
 
 #[must_use]
-fn ray_colour(r: &Ray, world: &dyn Hittable, depth: usize) -> Colour {
+fn ray_colour(r: &Ray, world: &dyn Hittable, depth: u32) -> Colour {
     let black = Colour::new(0.0, 0.0, 0.0);
     let white = Colour::new(1.0, 1.0, 1.0);
     let blue = Colour::new(0.5, 0.7, 1.0);
@@ -132,19 +132,19 @@ fn ray_colour(r: &Ray, world: &dyn Hittable, depth: usize) -> Colour {
 
 #[must_use]
 fn render(
-    thread_num: usize,
+    thread_num: u32,
     world: &dyn Hittable,
     cam: &Camera,
-    image_width: usize,
-    image_height: usize,
-    samples_per_pixel: usize,
-    max_depth: usize,
+    image_width: u32,
+    image_height: u32,
+    samples_per_pixel: u32,
+    max_depth: u32,
 ) -> Box<[Colour]> {
-    let mut pixels = Vec::with_capacity(image_width * image_height);
+    let mut pixels = Vec::with_capacity(image_width as usize * image_height as usize);
 
     for j in 0..image_height {
         if thread_num == 0 {
-            let percent = (100.0 * j as f64 / image_height as f64).round() as usize;
+            let percent = (100.0 * j as f64 / image_height as f64).round() as u32;
             print!(
                 "\rMain thread scanlines remaining: {:5} ({:3}%)",
                 image_height - j,
@@ -174,13 +174,13 @@ fn render(
 
 #[must_use]
 fn render_thread(
-    thread_num: usize,
+    thread_num: u32,
     world: Arc<dyn Hittable>,
     cam: Arc<Camera>,
-    image_width: usize,
-    image_height: usize,
-    samples_per_pixel: usize,
-    max_depth: usize,
+    image_width: u32,
+    image_height: u32,
+    samples_per_pixel: u32,
+    max_depth: u32,
 ) -> Box<[Colour]> {
     render(
         thread_num,
@@ -292,7 +292,7 @@ fn main() {
     let remaining_samples = samples_per_pixel % num_threads;
 
     // Spawn threads.
-    let mut threads = Vec::with_capacity(num_threads - 1);
+    let mut threads = Vec::with_capacity(num_threads as usize - 1);
     for thread_num in 1..num_threads {
         let samples_per_pixel = if thread_num <= remaining_samples {
             samples_per_thread + 1
@@ -353,10 +353,10 @@ fn main() {
 
 fn write_ppm_file(
     output: impl AsRef<Path>,
-    image_width: usize,
-    image_height: usize,
+    image_width: u32,
+    image_height: u32,
     pixels: &[Colour],
-    samples_per_pixel: usize,
+    samples_per_pixel: u32,
 ) -> io::Result<()> {
     let output = File::create(output)?;
     let mut output = BufWriter::new(output);
@@ -365,6 +365,8 @@ fn write_ppm_file(
     writeln!(output, "{} {}", image_width, image_height)?;
     writeln!(output, "255")?;
 
+    let image_width = image_width as usize;
+    let image_height = image_height as usize;
     for j in (0..image_height).rev() {
         for i in 0..image_width {
             let idx = j * image_width + i;
@@ -379,7 +381,7 @@ fn write_ppm_file(
 fn write_ppm_pixel(
     mut output: impl Write,
     pixel: Colour,
-    samples_per_pixel: usize,
+    samples_per_pixel: u32,
 ) -> io::Result<()> {
     // Divide the colour by the number of samples and gamma-correct for gamma = 2.0.
     let scale = 1.0 / samples_per_pixel as f64;
