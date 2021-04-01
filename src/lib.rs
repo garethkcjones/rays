@@ -4,6 +4,7 @@ mod bounding;
 mod camera;
 mod hit;
 mod material;
+pub mod output;
 mod perlin;
 pub mod random;
 mod ray;
