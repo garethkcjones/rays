@@ -1,8 +1,10 @@
 mod dielectric;
+mod diffuse_light;
 mod lambertian;
 mod metal;
 use crate::{Colour, HitRecord, Ray, Vector};
 pub use dielectric::Dielectric;
+pub use diffuse_light::DiffuseLight;
 pub use lambertian::{Lambertian0, Lambertian1, Lambertian2};
 pub use metal::Metal;
 use std::fmt::Debug;
