@@ -1,7 +1,7 @@
 use image::{ImageResult, Rgb, RgbImage};
 use rays::{
-    random_f64, random_f64_in, Camera, Chequered, Colour, Dielectric, Hittable, Lambertian2, Metal,
-    MovingSphere, Noise, OpaqueImage, Ray, Sphere, Vector,
+    random, Camera, Chequered, Colour, Dielectric, Hittable, Lambertian2, Metal, MovingSphere,
+    Noise, OpaqueImage, Ray, Sphere, Vector,
 };
 use std::{
     env,
@@ -32,9 +32,9 @@ fn random_scene() -> Arc<dyn Hittable> {
             let a = f64::from(a);
             let b = f64::from(b);
 
-            let choose_mat = random_f64();
+            let choose_mat = random::f64();
 
-            let centre = Vector::new(a + 0.9 * random_f64(), 0.2, b + 0.9 * random_f64());
+            let centre = Vector::new(a + 0.9 * random::f64(), 0.2, b + 0.9 * random::f64());
 
             if (centre - Vector::new(4.0, 0.2, 0.0)).abs() > 0.9 {
                 match choose_mat {
@@ -42,13 +42,13 @@ fn random_scene() -> Arc<dyn Hittable> {
                         // Diffuse.
                         let albedo = Colour::random() * Colour::random();
                         let material = Lambertian2::new(albedo);
-                        let centre2 = centre + Vector::new(0.0, random_f64_in(0.0, 0.5), 0.0);
+                        let centre2 = centre + Vector::new(0.0, random::f64_in(0.0, 0.5), 0.0);
                         world.push(MovingSphere::new(centre, centre2, 0.0, 1.0, 0.2, material));
                     }
                     x if x < 0.95 => {
                         // Metal.
                         let albedo = Colour::random_in(0.5, 1.0);
-                        let fuzz = random_f64_in(0.0, 0.5);
+                        let fuzz = random::f64_in(0.0, 0.5);
                         let material = Metal::new(albedo, fuzz);
                         world.push(Sphere::new(centre, 0.2, material));
                     }
@@ -163,8 +163,8 @@ fn render(
         for i in 0..image_width {
             let mut pixel_colour = Colour::new(0.0, 0.0, 0.0);
             for _ in 0..samples_per_pixel {
-                let u = (f64::from(i) + rays::random_f64()) / f64::from(image_width - 1);
-                let v = (f64::from(j) + rays::random_f64()) / f64::from(image_height - 1);
+                let u = (f64::from(i) + random::f64()) / f64::from(image_width - 1);
+                let v = (f64::from(j) + random::f64()) / f64::from(image_height - 1);
                 let r = cam.get_ray(u, v);
                 pixel_colour += ray_colour(&r, world, max_depth);
             }

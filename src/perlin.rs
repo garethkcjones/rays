@@ -1,4 +1,4 @@
-use crate::{random_usize_in, Vector};
+use crate::{random, Vector};
 
 const POINT_COUNT: usize = 256;
 
@@ -100,7 +100,7 @@ fn perlin_generate_perm() -> [usize; POINT_COUNT] {
 
 fn permute(p: &mut [usize; POINT_COUNT]) {
     for i in (1..p.len()).rev() {
-        let target = random_usize_in(0, i);
+        let target = random::usize_in(0, i);
         p.swap(i, target);
     }
 }

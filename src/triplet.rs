@@ -1,4 +1,4 @@
-use crate::{random_f64, random_f64_in};
+use crate::random;
 use std::{fmt, marker::PhantomData, ops};
 
 pub trait Tag: Copy + Default {}
@@ -67,14 +67,16 @@ impl<T: Tag> Vec3<T> {
     #[must_use]
     pub fn random() -> Self {
         let mut u = Self::default();
-        u.data.iter_mut().for_each(|u| *u = random_f64());
+        u.data.iter_mut().for_each(|u| *u = random::f64());
         u
     }
 
     #[must_use]
     pub fn random_in(min: f64, max: f64) -> Self {
         let mut u = Self::default();
-        u.data.iter_mut().for_each(|u| *u = random_f64_in(min, max));
+        u.data
+            .iter_mut()
+            .for_each(|u| *u = random::f64_in(min, max));
         u
     }
 
@@ -119,8 +121,8 @@ impl Vector {
     #[must_use]
     pub fn random_in_unit_disk() -> Self {
         loop {
-            let x = random_f64_in(-1.0, 1.0);
-            let y = random_f64_in(-1.0, 1.0);
+            let x = random::f64_in(-1.0, 1.0);
+            let y = random::f64_in(-1.0, 1.0);
             if x * x + y * y < 1.0 {
                 return Self::new(x, y, 0.0);
             }

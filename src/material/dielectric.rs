@@ -1,5 +1,5 @@
 use super::Material;
-use crate::{random_f64, Colour, HitRecord, Ray};
+use crate::{random, Colour, HitRecord, Ray};
 use std::sync::Arc;
 
 #[derive(Debug)]
@@ -32,7 +32,7 @@ impl Material for Dielectric {
         let sin_theta = (1.0 - cos_theta * cos_theta).sqrt();
 
         let cannot_refract = refraction_ratio * sin_theta > 1.0;
-        let random_reflect = reflectance(cos_theta, refraction_ratio) > random_f64();
+        let random_reflect = reflectance(cos_theta, refraction_ratio) > random::f64();
 
         let direction = if cannot_refract || random_reflect {
             unit_direction.reflect(normal)

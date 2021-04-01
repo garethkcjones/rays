@@ -1,4 +1,4 @@
-use crate::{random_i32_in, Aabb, HitRecord, Hittable, Ray};
+use crate::{random, Aabb, HitRecord, Hittable, Ray};
 use std::{cmp::Ordering, mem, sync::Arc};
 
 #[derive(Clone, Debug)]
@@ -19,7 +19,7 @@ impl BvhNode {
 
     #[must_use]
     fn from_range(objects: &mut [Arc<dyn Hittable>], time0: f64, time1: f64) -> Self {
-        let axis = random_i32_in(0, 2);
+        let axis = random::i32_in(0, 2);
         let comparator = match axis {
             0 => box_x_cmp,
             1 => box_y_cmp,

@@ -1,4 +1,4 @@
-use crate::{random_f64_in, Ray, Vector};
+use crate::{random, Ray, Vector};
 
 #[derive(Clone, Debug)]
 pub struct Camera {
@@ -62,7 +62,7 @@ impl Camera {
         let offset = self.u * rd.x() + self.v * rd.y();
         let origin = self.origin + offset;
         let direction = self.lower_left_corner + s * self.horizontal + t * self.vertical - origin;
-        let time = random_f64_in(self.time.0, self.time.1);
+        let time = random::f64_in(self.time.0, self.time.1);
         Ray::new(origin, direction, time)
     }
 }
