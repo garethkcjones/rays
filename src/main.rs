@@ -1,6 +1,6 @@
 use rays::{
-    output, random, Camera, Chequered, Colour, Dielectric, Hittable, Lambertian2, Metal,
-    MovingSphere, Noise, OpaqueImage, Sphere, Vector,
+    output, random, Camera, Chequered, Colour, Dielectric, DiffuseLight, Hittable, Lambertian2,
+    Metal, MovingSphere, Noise, OpaqueImage, Sphere, Vector, XyRect,
 };
 use std::{env, sync::Arc};
 
@@ -104,6 +104,22 @@ fn earth() -> Arc<dyn Hittable> {
     let texture = OpaqueImage::new("earthmap.jpg");
     let material = Lambertian2::new(texture);
     Sphere::new(Vector::new(0.0, 0.0, 0.0), 2.0, material)
+}
+
+#[must_use]
+fn simple_light() -> Arc<dyn Hittable> {
+    let mut world = Vec::new();
+    let texture = Noise::new(4.0);
+    let material = Lambertian2::new(texture);
+    world.push(Sphere::new(
+        Vector::new(0.0, -1000.0, 0.0),
+        1000.0,
+        Arc::clone(&material),
+    ));
+    world.push(Sphere::new(Vector::new(0.0, 2.0, 0.0), 2.0, material));
+    let material = DiffuseLight::new(Colour::new(4.0, 4.0, 4.0));
+    world.push(XyRect::new(3.0, 5.0, 1.0, 3.0, -2.0, material));
+    Arc::new(world)
 }
 
 fn main() {
