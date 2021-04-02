@@ -239,11 +239,37 @@ fn main() {
 
             (world, background, cam)
         }
+        5 => {
+            // World.
+            let world = simple_light();
+            let background = Colour::new(0.0, 0.0, 0.0);
+
+            // Camera.
+            let look_from = Vector::new(26.0, 3.0, 6.0);
+            let look_at = Vector::new(0.0, 2.0, 0.0);
+            let vup = Vector::new(0.0, 1.0, 0.0);
+            let vfov = 20.0;
+            let aperture = 0.0;
+            let dist_to_focus = 10.0;
+            let cam = Arc::new(Camera::new(
+                look_from,
+                look_at,
+                vup,
+                vfov,
+                aspect_ratio,
+                aperture,
+                dist_to_focus,
+                0.0,
+                1.0,
+            ));
+
+            (world, background, cam)
+        }
         _ => panic!("Invalid command-line argument"),
     };
 
     // Render.
-    let samples_per_pixel = 100;
+    let samples_per_pixel = 400;
     let max_depth = 50;
     let num_threads = 32;
     let pixels = rays::run(
