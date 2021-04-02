@@ -27,33 +27,31 @@ pub use texture::{Chequered, Noise, OpaqueImage, SolidColour, Texture};
 pub use triplet::{Colour, Vector};
 
 #[must_use]
-fn ray_colour(r: &Ray, world: &dyn Hittable, depth: u32) -> Colour {
-    let black = Colour::new(0.0, 0.0, 0.0);
-    let white = Colour::new(1.0, 1.0, 1.0);
-    let blue = Colour::new(0.5, 0.7, 1.0);
-
+fn ray_colour(r: &Ray, background: Colour, world: &dyn Hittable, depth: u32) -> Colour {
     // If we’ve exceeded the ray bounce limit, no more light is gathered.
     if depth == 0 {
-        return black;
+        return Colour::new(0.0, 0.0, 0.0);
     }
 
     if let Some(rec) = world.hit(r, 0.001, f64::INFINITY) {
-        if let Some((scattered, attenuation)) = rec.material().scatter(&r, &rec) {
-            return attenuation * ray_colour(&scattered, world, depth - 1);
-        } else {
-            return black;
-        }
-    }
+        let emitted = rec.material().emitted(rec.u(), rec.v(), rec.p());
 
-    let unit_direction = r.direction.unit();
-    let t = 0.5 * (unit_direction.y() + 1.0);
-    (1.0 - t) * white + t * blue
+        if let Some((scattered, attenuation)) = rec.material().scatter(&r, &rec) {
+            emitted + attenuation * ray_colour(&scattered, background, world, depth - 1)
+        } else {
+            emitted
+        }
+    } else {
+        // If the ray hits nothing, return the background colour.
+        background
+    }
 }
 
 #[must_use]
 fn render(
     thread_num: u32,
     world: &dyn Hittable,
+    background: Colour,
     cam: &Camera,
     image_width: u32,
     image_height: u32,
@@ -79,7 +77,7 @@ fn render(
                 let u = (f64::from(i) + random::f64()) / f64::from(image_width - 1);
                 let v = (f64::from(j) + random::f64()) / f64::from(image_height - 1);
                 let r = cam.get_ray(u, v);
-                pixel_colour += ray_colour(&r, world, max_depth);
+                pixel_colour += ray_colour(&r, background, world, max_depth);
             }
             pixels.push(pixel_colour);
         }
@@ -96,6 +94,7 @@ fn render(
 fn render_thread(
     thread_num: u32,
     world: Arc<dyn Hittable>,
+    background: Colour,
     cam: Arc<Camera>,
     image_width: u32,
     image_height: u32,
@@ -105,6 +104,7 @@ fn render_thread(
     render(
         thread_num,
         world.as_ref(),
+        background,
         cam.as_ref(),
         image_width,
         image_height,
@@ -121,6 +121,7 @@ pub fn run(
     image_width: u32,
     image_height: u32,
     world: Arc<dyn Hittable>,
+    background: Colour,
     cam: Arc<Camera>,
 ) -> Box<[Colour]> {
     let samples_per_thread = samples_per_pixel / num_threads;
@@ -140,6 +141,7 @@ pub fn run(
             render_thread(
                 thread_num,
                 world,
+                background,
                 cam,
                 image_width,
                 image_height,
@@ -153,6 +155,7 @@ pub fn run(
     let mut pixels = render(
         0,
         world.as_ref(),
+        background,
         cam.as_ref(),
         image_width,
         image_height,

@@ -118,10 +118,11 @@ fn main() {
     let image_width = 400;
     let image_height = (f64::from(image_width) / aspect_ratio) as _;
 
-    let (world, cam) = match scene_choice {
+    let (world, background, cam) = match scene_choice {
         1 => {
             // World.
             let world = random_scene();
+            let background = Colour::new(0.7, 0.8, 1.0);
 
             // Camera.
             let look_from = Vector::new(13.0, 2.0, 3.0);
@@ -142,11 +143,12 @@ fn main() {
                 1.0,
             ));
 
-            (world, cam)
+            (world, background, cam)
         }
         2 => {
             // World.
             let world = two_spheres();
+            let background = Colour::new(0.7, 0.8, 1.0);
 
             // Camera.
             let look_from = Vector::new(13.0, 2.0, 3.0);
@@ -167,11 +169,12 @@ fn main() {
                 1.0,
             ));
 
-            (world, cam)
+            (world, background, cam)
         }
         3 => {
             // World.
             let world = two_perlin_spheres();
+            let background = Colour::new(0.7, 0.8, 1.0);
 
             // Camera.
             let look_from = Vector::new(13.0, 2.0, 3.0);
@@ -192,11 +195,12 @@ fn main() {
                 1.0,
             ));
 
-            (world, cam)
+            (world, background, cam)
         }
         4 => {
             // World.
             let world = earth();
+            let background = Colour::new(0.7, 0.8, 1.0);
 
             // Camera.
             let look_from = Vector::new(13.0, 2.0, 3.0);
@@ -217,7 +221,7 @@ fn main() {
                 1.0,
             ));
 
-            (world, cam)
+            (world, background, cam)
         }
         _ => panic!("Invalid command-line argument"),
     };
@@ -233,6 +237,7 @@ fn main() {
         image_width,
         image_height,
         world,
+        background,
         cam,
     );
 
