@@ -1,5 +1,7 @@
+mod rect;
 mod sphere;
 use crate::{Aabb, Material, Ray, Vector};
+pub use rect::XyRect;
 pub use sphere::{MovingSphere, Sphere};
 use std::{fmt::Debug, sync::Arc};
 
