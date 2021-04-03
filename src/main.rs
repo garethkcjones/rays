@@ -149,8 +149,8 @@ fn main() {
         .expect("Invalid command-line argument");
 
     // Image.
-    let aspect_ratio = 16.0 / 9.0;
-    let image_width = 400;
+    let aspect_ratio = 1.0;
+    let image_width = 600;
     let image_height = (f64::from(image_width) / aspect_ratio) as _;
 
     let (world, background, cam) = match scene_choice {
@@ -284,11 +284,37 @@ fn main() {
 
             (world, background, cam)
         }
+        6 => {
+            // World.
+            let world = cornell_box();
+            let background = Colour::new(0.0, 0.0, 0.0);
+
+            // Camera.
+            let look_from = Vector::new(278.0, 278.0, -800.0);
+            let look_at = Vector::new(278.0, 278.0, 0.0);
+            let vup = Vector::new(0.0, 1.0, 0.0);
+            let vfov = 40.0;
+            let aperture = 0.0;
+            let dist_to_focus = 10.0;
+            let cam = Arc::new(Camera::new(
+                look_from,
+                look_at,
+                vup,
+                vfov,
+                aspect_ratio,
+                aperture,
+                dist_to_focus,
+                0.0,
+                1.0,
+            ));
+
+            (world, background, cam)
+        }
         _ => panic!("Invalid command-line argument"),
     };
 
     // Render.
-    let samples_per_pixel = 400;
+    let samples_per_pixel = 200;
     let max_depth = 50;
     let num_threads = 32;
     let pixels = rays::run(
