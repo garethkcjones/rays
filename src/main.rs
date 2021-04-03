@@ -79,7 +79,7 @@ fn two_spheres() -> Arc<dyn Hittable> {
     world.push(Sphere::new(
         Vector::new(0.0, -10.0, 0.0),
         10.0,
-        Arc::clone(&material),
+        material.clone(),
     ));
     world.push(Sphere::new(Vector::new(0.0, 10.0, 0.0), 10.0, material));
     Arc::new(world)
@@ -93,7 +93,7 @@ fn two_perlin_spheres() -> Arc<dyn Hittable> {
     world.push(Sphere::new(
         Vector::new(0.0, -1000.0, 0.0),
         1000.0,
-        Arc::clone(&material),
+        material.clone(),
     ));
     world.push(Sphere::new(Vector::new(0.0, 2.0, 0.0), 2.0, material));
     Arc::new(world)
@@ -114,7 +114,7 @@ fn simple_light() -> Arc<dyn Hittable> {
     world.push(Sphere::new(
         Vector::new(0.0, -1000.0, 0.0),
         1000.0,
-        Arc::clone(&material),
+        material.clone(),
     ));
     world.push(Sphere::new(Vector::new(0.0, 2.0, 0.0), 2.0, material));
     let material = DiffuseLight::new(Colour::new(4.0, 4.0, 4.0));
