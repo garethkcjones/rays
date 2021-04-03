@@ -12,7 +12,7 @@ mod texture;
 mod triplet;
 pub use bounding::{Aabb, BvhNode};
 pub use camera::Camera;
-pub use hit::{HitRecord, Hittable, MovingSphere, Sphere, XyRect, XzRect, YzRect};
+pub use hit::{Cuboid, HitRecord, Hittable, MovingSphere, Sphere, XyRect, XzRect, YzRect};
 pub use material::{
     Dielectric, DiffuseLight, Lambertian0, Lambertian1, Lambertian2, Material, Metal,
 };

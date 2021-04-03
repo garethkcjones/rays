@@ -1,6 +1,8 @@
+mod cuboid;
 mod rect;
 mod sphere;
 use crate::{Aabb, Material, Ray, Vector};
+pub use cuboid::Cuboid;
 pub use rect::{XyRect, XzRect, YzRect};
 pub use sphere::{MovingSphere, Sphere};
 use std::{fmt::Debug, sync::Arc};
