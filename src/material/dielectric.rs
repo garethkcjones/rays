@@ -1,3 +1,5 @@
+#![allow(clippy::new_ret_no_self)]
+
 use super::Material;
 use crate::{random, Colour, HitRecord, Ray};
 use std::sync::Arc;

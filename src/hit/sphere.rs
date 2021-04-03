@@ -1,3 +1,5 @@
+#![allow(clippy::new_ret_no_self)]
+
 use super::{HitRecord, Hittable};
 use crate::{Aabb, Material, Ray, Vector};
 use std::sync::Arc;

@@ -47,6 +47,7 @@ fn ray_colour(r: &Ray, background: Colour, world: &dyn Hittable, depth: u32) -> 
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 #[must_use]
 fn render(
     thread_num: u32,
@@ -90,6 +91,7 @@ fn render(
     pixels.into_boxed_slice()
 }
 
+#[allow(clippy::too_many_arguments)]
 #[must_use]
 fn render_thread(
     thread_num: u32,
@@ -113,6 +115,7 @@ fn render_thread(
     )
 }
 
+#[allow(clippy::too_many_arguments)]
 #[must_use]
 pub fn run(
     num_threads: u32,

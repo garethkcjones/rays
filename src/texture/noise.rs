@@ -1,3 +1,5 @@
+#![allow(clippy::new_ret_no_self)]
+
 use super::Texture;
 use crate::{Colour, Perlin, Vector};
 use std::sync::Arc;
