@@ -1,6 +1,6 @@
 use rays::{
     output, random, Camera, Chequered, Colour, Dielectric, DiffuseLight, Hittable, Lambertian2,
-    Metal, MovingSphere, Noise, OpaqueImage, Sphere, Vector, XyRect,
+    Metal, MovingSphere, Noise, OpaqueImage, Sphere, Vector, XyRect, XzRect, YzRect,
 };
 use std::{env, sync::Arc};
 
@@ -119,6 +119,25 @@ fn simple_light() -> Arc<dyn Hittable> {
     world.push(Sphere::new(Vector::new(0.0, 2.0, 0.0), 2.0, material));
     let material = DiffuseLight::new(Colour::new(4.0, 4.0, 4.0));
     world.push(XyRect::new(3.0, 5.0, 1.0, 3.0, -2.0, material));
+    Arc::new(world)
+}
+
+#[must_use]
+fn cornell_box() -> Arc<dyn Hittable> {
+    let mut world = Vec::new();
+
+    let red = Lambertian2::new(Colour::new(0.65, 0.05, 0.05));
+    let white = Lambertian2::new(Colour::new(0.73, 0.73, 0.73));
+    let green = Lambertian2::new(Colour::new(0.12, 0.45, 0.15));
+    let light = DiffuseLight::new(Colour::new(15.0, 15.0, 15.0));
+
+    world.push(XyRect::new(0.0, 555.0, 0.0, 555.0, 555.0, white.clone()));
+    world.push(XzRect::new(0.0, 555.0, 0.0, 555.0, 0.0, white.clone()));
+    world.push(XzRect::new(0.0, 555.0, 0.0, 555.0, 555.0, white));
+    world.push(YzRect::new(0.0, 555.0, 0.0, 555.0, 555.0, green));
+    world.push(YzRect::new(0.0, 555.0, 0.0, 555.0, 0.0, red));
+    world.push(XzRect::new(213.0, 343.0, 227.0, 332.0, 554.0, light));
+
     Arc::new(world)
 }
 
