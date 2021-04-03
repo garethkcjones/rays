@@ -1,6 +1,6 @@
 use rays::{
-    output, random, Camera, Chequered, Colour, Dielectric, DiffuseLight, Hittable, Lambertian2,
-    Metal, MovingSphere, Noise, OpaqueImage, Sphere, Vector, XyRect, XzRect, YzRect,
+    output, random, Camera, Chequered, Colour, Cuboid, Dielectric, DiffuseLight, Hittable,
+    Lambertian2, Metal, MovingSphere, Noise, OpaqueImage, Sphere, Vector, XyRect, XzRect, YzRect,
 };
 use std::{env, sync::Arc};
 
@@ -131,12 +131,27 @@ fn cornell_box() -> Arc<dyn Hittable> {
     let green = Lambertian2::new(Colour::new(0.12, 0.45, 0.15));
     let light = DiffuseLight::new(Colour::new(15.0, 15.0, 15.0));
 
+    // Cornell Box.
     world.push(XyRect::new(0.0, 555.0, 0.0, 555.0, 555.0, white.clone()));
     world.push(XzRect::new(0.0, 555.0, 0.0, 555.0, 0.0, white.clone()));
-    world.push(XzRect::new(0.0, 555.0, 0.0, 555.0, 555.0, white));
+    world.push(XzRect::new(0.0, 555.0, 0.0, 555.0, 555.0, white.clone()));
     world.push(YzRect::new(0.0, 555.0, 0.0, 555.0, 555.0, green));
     world.push(YzRect::new(0.0, 555.0, 0.0, 555.0, 0.0, red));
+
+    // Light.
     world.push(XzRect::new(213.0, 343.0, 227.0, 332.0, 554.0, light));
+
+    // Contents.
+    world.push(Cuboid::new(
+        Vector::new(130.0, 0.0, 65.0),
+        Vector::new(295.0, 165.0, 230.0),
+        white.clone(),
+    ));
+    world.push(Cuboid::new(
+        Vector::new(265.0, 0.0, 295.0),
+        Vector::new(430.0, 330.0, 460.0),
+        white,
+    ));
 
     Arc::new(world)
 }
