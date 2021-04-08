@@ -3,5 +3,5 @@
 #include <ostream>
 
 namespace rays {
-	void run(std::ostream &output);
+	void run(std::ostream &output, bool log);
 }
