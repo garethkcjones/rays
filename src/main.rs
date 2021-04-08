@@ -15,7 +15,7 @@ fn run(args: &[OsString]) -> Result<(), Box<dyn Error>> {
     match args.len() {
         0 | 1 => {
             // No output file name specified on command-line.  Use stdout.
-            rays::run(&mut io::stdout().lock())?;
+            rays::run(&mut io::stdout().lock(), true)?;
         }
 
         2 => {
@@ -31,7 +31,7 @@ fn run(args: &[OsString]) -> Result<(), Box<dyn Error>> {
                 }
             };
 
-            rays::run(&mut output)?;
+            rays::run(&mut output, true)?;
 
             if let Err(x) = output.flush() {
                 return Err(format!("error writing to “{}”: {}", filename.display(), x).into());
