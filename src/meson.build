@@ -1,4 +1,5 @@
 src = [
+  'lib.cc',
   'main.cc'
 ]
 
