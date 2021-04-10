@@ -47,7 +47,7 @@ auto Sphere::hit(Ray const &r, double const t_min, double const t_max) const
 
 	auto const t = root;
 	auto const p = r.at(t);
-	auto const normal = (p - centre_) / radius_;
+	auto const outward_normal = (p - centre_) / radius_;
 
-	return std::make_optional<HitRecord>(p, normal, t);
+	return std::make_optional<HitRecord>(r, p, outward_normal, t);
 }
