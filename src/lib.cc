@@ -13,24 +13,30 @@ using namespace rays;
 
 namespace {
 	auto hit_sphere(Vec3 const centre, double const radius, Ray const &r)
-		noexcept -> bool
+		noexcept -> double
 	{
 		auto const oc = r.origin() - centre;
 		auto const a = dot(r.direction(), r.direction());
 		auto const b = 2.0 * dot(oc, r.direction());
 		auto const c = dot(oc, oc) - radius * radius;
 		auto const discriminant = b * b - 4.0 * a * c;
-		return discriminant > 0.0;
+		if (discriminant < 0.0)
+			return -1.0;
+		else
+			return (-b - std::sqrt(discriminant)) / (2.0 * a);
 	}
 
 	/*
 	 * Calculates the colour of a ray of light.
 	 */
 	auto ray_colour(Ray const &r) noexcept -> Colour {
-		if (hit_sphere(Vec3{0.0 ,0.0, -1.0}, 0.5, r))
-			return Colour{1.0, 0.0, 0.0};
+		auto t = hit_sphere(Vec3{0.0, 0.0, -1.0}, 0.5, r);
+		if (t > 0.0) {
+			auto const n = (r.at(t) - Vec3{0.0, 0.0, -1.0}).unit();
+			return 0.5 * Colour{n.x + 1.0, n.y + 1.0, n.z + 1.0};
+		}
 		auto const unit_direction = r.direction().unit();
-		auto const t = 0.5 * (unit_direction.y + 1.0);
+		t = 0.5 * (unit_direction.y + 1.0);
 		return (1.0 - t) * Colour{1.0, 1.0, 1.0} + t * Colour{0.5, 0.7, 1.0};
 	}
 }
