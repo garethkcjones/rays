@@ -5,6 +5,8 @@
 #include <iostream>
 #include <ostream>
 
+#include "colour.hh"
+
 /*
  * Runs the program.
  *
@@ -38,11 +40,10 @@ void rays::run(std::ostream &output, bool const log) {
 			auto const g = static_cast<double>(j) / (image_height - 1);
 			auto const b = 0.25;
 
-			auto const ir = static_cast<int>(255.999 * r);
-			auto const ig = static_cast<int>(255.999 * g);
-			auto const ib = static_cast<int>(255.999 * b);
+			auto const pixel_colour = Colour{r, g, b};
+			auto const [ir, ig, ib] = pixel_colour.to_rgb8();
 
-			output << ir << ' ' << ig << ' ' << ib << '\n';
+			output << int{ir} << ' ' << int{ig} << ' ' << int{ib} << '\n';
 		}
 	}
 
