@@ -42,7 +42,7 @@ struct rays::Vec3 final {
 	constexpr Vec3 &operator*=(double s) noexcept;
 	constexpr Vec3 &operator/=(double s) noexcept;
 
-	constexpr Vec3 operator-() noexcept;
+	constexpr Vec3 operator-() const noexcept;
 
 	double length() const noexcept;
 	Vec3 unit() const noexcept;
@@ -108,7 +108,7 @@ inline constexpr auto rays::Vec3::operator/=(double const s) noexcept -> Vec3 &
 	return *this;
 }
 
-inline constexpr auto rays::Vec3::operator-() noexcept -> Vec3 {
+inline constexpr auto rays::Vec3::operator-() const noexcept -> Vec3 {
 	return {-x, -y, -z};
 }
 
