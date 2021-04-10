@@ -1,6 +1,8 @@
 mod hitrecord;
+mod sphere;
 use crate::Ray;
 pub use hitrecord::HitRecord;
+pub use sphere::Sphere;
 use std::fmt::Debug;
 
 /**

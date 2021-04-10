@@ -3,7 +3,7 @@ mod hittable;
 mod ray;
 mod vec3;
 pub use colour::Colour;
-pub use hittable::Hittable;
+pub use hittable::{Hittable, Sphere};
 use ray::Ray;
 use std::{error::Error, io::prelude::*};
 pub use vec3::Vec3;
