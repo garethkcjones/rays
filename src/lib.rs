@@ -6,21 +6,27 @@ use ray::Ray;
 use std::{error::Error, io::prelude::*};
 pub use vec3::Vec3;
 
-fn hit_sphere(centre: Vec3, radius: f64, r: &Ray) -> bool {
+fn hit_sphere(centre: Vec3, radius: f64, r: &Ray) -> f64 {
     let oc = r.origin() - centre;
     let a = r.direction().dot(r.direction());
     let b = 2.0 * oc.dot(r.direction());
     let c = oc.dot(oc) - radius * radius;
     let discriminant = b * b - 4.0 * a * c;
-    discriminant > 0.0
+    if discriminant < 0.0 {
+        -1.0
+    } else {
+        (-b - discriminant.sqrt()) / (2.0 * a)
+    }
 }
 
 /**
  * Calculates the colour of a ray of light.
  */
 fn ray_colour(r: &Ray) -> Colour {
-    if hit_sphere(Vec3(0.0, 0.0, -1.0), 0.5, &r) {
-        return Colour(1.0, 0.0, 0.0);
+    let t = hit_sphere(Vec3(0.0, 0.0, -1.0), 0.5, &r);
+    if t > 0.0 {
+        let n = (r.at(t) - Vec3(0.0, 0.0, -1.0)).unit();
+        return 0.5 * Colour(n.x() + 1.0, n.y() + 1.0, n.z() + 1.0);
     }
     let unit_direction = r.direction().unit();
     let t = 0.5 * (unit_direction.y() + 1.0);
