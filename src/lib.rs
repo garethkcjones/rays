@@ -1,6 +1,8 @@
 mod colour;
+mod ray;
 mod vec3;
 pub use colour::Colour;
+pub use ray::Ray;
 use std::{error::Error, io::prelude::*};
 pub use vec3::Vec3;
 
