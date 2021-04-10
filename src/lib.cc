@@ -17,13 +17,13 @@ namespace {
 	{
 		auto const oc = r.origin() - centre;
 		auto const a = dot(r.direction(), r.direction());
-		auto const b = 2.0 * dot(oc, r.direction());
+		auto const half_b = dot(oc, r.direction());
 		auto const c = dot(oc, oc) - radius * radius;
-		auto const discriminant = b * b - 4.0 * a * c;
+		auto const discriminant = half_b * half_b - a * c;
 		if (discriminant < 0.0)
 			return -1.0;
 		else
-			return (-b - std::sqrt(discriminant)) / (2.0 * a);
+			return (-half_b - std::sqrt(discriminant)) / a;
 	}
 
 	/*
