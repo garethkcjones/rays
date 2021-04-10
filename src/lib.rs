@@ -1,4 +1,8 @@
+mod colour;
+mod vec3;
+pub use colour::Colour;
 use std::{error::Error, io::prelude::*};
+pub use vec3::Vec3;
 
 /**
  * Runs the program.
@@ -32,9 +36,8 @@ pub fn run(output: &mut dyn Write, log: bool) -> Result<(), Box<dyn Error>> {
             let g = f64::from(j) / f64::from(image_height - 1);
             let b = 0.25;
 
-            let ir = (255.999 * r) as u32;
-            let ig = (255.999 * g) as u32;
-            let ib = (255.999 * b) as u32;
+            let pixel_colour = Colour(r, g, b);
+            let (ir, ig, ib) = pixel_colour.to_rgb8();
 
             writeln!(output, "{} {} {}", ir, ig, ib)?;
         }
