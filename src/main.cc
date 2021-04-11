@@ -6,7 +6,10 @@
 #include <stdexcept>
 #include <string>
 
+#include "hittable.hh"
+#include "hittable_sphere.hh"
 #include "lib.hh"
+#include "vec3.hh"
 
 namespace fs = std::filesystem;
 
@@ -15,12 +18,22 @@ namespace {
 	 * Builds and renders a scene.
 	 */
 	void render(std::ostream &output) {
-		// Image
+		using rays::hittable::HittableList;
+		using rays::hittable::Sphere;
+		using rays::Vec3;
+
+		// Image.
 
 		constexpr auto image_aspect_ratio = 16.0 / 9.0;
 		constexpr auto image_width = 400;
 		constexpr auto image_height =
 			static_cast<int>(image_width / image_aspect_ratio);
+
+		// World.
+
+		HittableList world;
+		world.push_back(Sphere::new_hittable(Vec3{0.0, 0.0, -1.0}, 0.5));
+		world.push_back(Sphere::new_hittable(Vec3{0.0, -100.5, -1.0}, 100.0));
 
 		// Camera
 
@@ -32,8 +45,8 @@ namespace {
 
 		// Render.
 
-		rays::render(image_width, image_height, viewport_width, viewport_height,
-		             focal_length, output, true);
+		rays::render(world, image_width, image_height, viewport_width,
+		             viewport_height, focal_length, output, true);
 	}
 
 	/*

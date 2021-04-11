@@ -3,40 +3,31 @@
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 #include <ostream>
 
 #include "colour.hh"
+#include "hittable.hh"
 #include "ray.hh"
 #include "vec3.hh"
 
 using namespace rays;
+using hittable::Hittable;
 
 namespace {
-	auto hit_sphere(Vec3 const centre, double const radius, Ray const &r)
-		noexcept -> double
-	{
-		auto const oc = r.origin() - centre;
-		auto const a = dot(r.direction(), r.direction());
-		auto const half_b = dot(oc, r.direction());
-		auto const c = dot(oc, oc) - radius * radius;
-		auto const discriminant = half_b * half_b - a * c;
-		if (discriminant < 0.0)
-			return -1.0;
-		else
-			return (-half_b - std::sqrt(discriminant)) / a;
-	}
-
 	/*
 	 * Calculates the colour of a ray of light.
 	 */
-	auto ray_colour(Ray const &r) noexcept -> Colour {
-		auto t = hit_sphere(Vec3{0.0, 0.0, -1.0}, 0.5, r);
-		if (t > 0.0) {
-			auto const n = (r.at(t) - Vec3{0.0, 0.0, -1.0}).unit();
-			return 0.5 * Colour{n.x + 1.0, n.y + 1.0, n.z + 1.0};
+	auto ray_colour(Ray const &r, Hittable const &world) noexcept -> Colour {
+		constexpr auto infinity = std::numeric_limits<double>::infinity();
+
+		if (auto const rec = world.hit(r, 0.0, infinity); rec) {
+			auto const [x, y, z] = rec->normal();
+			return 0.5 * Colour{x + 1.0, y + 1.0, z + 1.0};
 		}
+
 		auto const unit_direction = r.direction().unit();
-		t = 0.5 * (unit_direction.y + 1.0);
+		auto const t = 0.5 * (unit_direction.y + 1.0);
 		return (1.0 - t) * Colour{1.0, 1.0, 1.0} + t * Colour{0.5, 0.7, 1.0};
 	}
 }
@@ -46,6 +37,7 @@ namespace {
  *
  * # Parameters
  *
+ * * `world` contains the hittable objects in the scene.
  * * `image_width` and `image_height` are the image dimesions, in pixels.
  * * `viewport_width` and `viewport_height` are the viewport dimensions, in
  *    virtual co-ordinates.
@@ -53,7 +45,8 @@ namespace {
  * * `output` is the stream to write the generated image to.
  * * If `log` is `true`, progress is reported to the standard error stream.
  */
-void rays::render(int const image_width,
+void rays::render(Hittable const &world,
+                  int const image_width,
                   int const image_height,
                   double const viewport_width,
                   double const viewport_height,
@@ -69,7 +62,7 @@ void rays::render(int const image_width,
 	auto const lower_left_corner =
 		origin - 0.5 * (horizontal + vertical) - Vec3{0.0, 0.0, focal_length};
 
-	// Render
+	// Render.
 
 	output << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
@@ -92,7 +85,7 @@ void rays::render(int const image_width,
 				lower_left_corner + u * horizontal + v * vertical - origin
 			};
 
-			auto const pixel_colour = ray_colour(r);
+			auto const pixel_colour = ray_colour(r, world);
 			auto const [ir, ig, ib] = pixel_colour.to_rgb8();
 
 			output << int{ir} << ' ' << int{ig} << ' ' << int{ib} << '\n';
