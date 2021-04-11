@@ -1,3 +1,4 @@
+use rays::{Sphere, Vec3};
 use std::{
     env,
     error::Error,
@@ -12,13 +13,20 @@ use std::{
  * Builds and renders a scene.
  */
 fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error>> {
-    // Image
+    // Image.
 
     let image_aspect_ratio = 16.0 / 9.0;
     let image_width = 400;
     let image_height = (f64::from(image_width) / image_aspect_ratio) as _;
 
-    // Camera
+    // World.
+
+    let world = vec![
+        Sphere::new_hittable(Vec3(0.0, 0.0, -1.0), 0.5),
+        Sphere::new_hittable(Vec3(0.0, -100.5, -1.0), 100.0),
+    ];
+
+    // Camera.
 
     let viewport_aspect_ratio = f64::from(image_width) / f64::from(image_height);
     let viewport_height = 2.0;
@@ -28,6 +36,7 @@ fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error>> {
     // Render.
 
     rays::render(
+        &world,
         image_width,
         image_height,
         viewport_width,
