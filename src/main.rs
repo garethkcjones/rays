@@ -9,13 +9,43 @@ use std::{
 };
 
 /**
+ * Builds and renders a scene.
+ */
+fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error>> {
+    // Image
+
+    let image_aspect_ratio = 16.0 / 9.0;
+    let image_width = 400;
+    let image_height = (f64::from(image_width) / image_aspect_ratio) as _;
+
+    // Camera
+
+    let viewport_aspect_ratio = f64::from(image_width) / f64::from(image_height);
+    let viewport_height = 2.0;
+    let viewport_width = viewport_aspect_ratio * viewport_height;
+    let focal_length = 1.0;
+
+    // Render.
+
+    rays::render(
+        image_width,
+        image_height,
+        viewport_width,
+        viewport_height,
+        focal_length,
+        output,
+        true,
+    )
+}
+
+/**
  * Runs the program.
  */
 fn run(args: &[OsString]) -> Result<(), Box<dyn Error>> {
     match args.len() {
         0 | 1 => {
             // No output file name specified on command-line.  Use stdout.
-            rays::render(&mut io::stdout().lock(), true)?;
+            render(&mut io::stdout().lock())?;
         }
 
         2 => {
@@ -31,7 +61,7 @@ fn run(args: &[OsString]) -> Result<(), Box<dyn Error>> {
                 }
             };
 
-            rays::render(&mut output, true)?;
+            render(&mut output)?;
 
             if let Err(x) = output.flush() {
                 return Err(format!("error writing to “{}”: {}", filename.display(), x).into());

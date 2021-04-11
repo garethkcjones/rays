@@ -41,22 +41,23 @@ fn ray_colour(r: &Ray) -> Colour {
  *
  * # Parameters
  *
+ * * * `image_width` and `image_height` are the image dimesions, in pixels.
+ * * `viewport_width` and `viewport_height` are the viewport dimensions, in
+ *    virtual co-ordinates.
+ * * `focal_length` is the camera focal length.
  * * `output` is the stream to write the generated image to.
  * * If `log` is `true`, progress is reported to the standard error stream.
  */
-pub fn render(output: &mut dyn Write, log: bool) -> Result<(), Box<dyn Error>> {
-    // Image
-
-    let image_aspect_ratio = 16.0 / 9.0;
-    let image_width: u32 = 400;
-    let image_height = (f64::from(image_width) / image_aspect_ratio) as u32;
-
-    // Camera
-
-    let viewport_aspect_ratio = f64::from(image_width) / f64::from(image_height);
-    let viewport_height = 2.0;
-    let viewport_width = viewport_aspect_ratio * viewport_height;
-    let focal_length = 1.0;
+pub fn render(
+    image_width: u32,
+    image_height: u32,
+    viewport_width: f64,
+    viewport_height: f64,
+    focal_length: f64,
+    output: &mut dyn Write,
+    log: bool,
+) -> Result<(), Box<dyn Error>> {
+    // Geometry.
 
     let origin = Vec3(0.0, 0.0, 0.0);
     let horizontal = Vec3(viewport_width, 0.0, 0.0);
