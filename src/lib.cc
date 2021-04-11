@@ -46,29 +46,27 @@ namespace {
  *
  * # Parameters
  *
+ * * `image_width` and `image_height` are the image dimesions, in pixels.
+ * * `viewport_width` and `viewport_height` are the viewport dimensions, in
+ *    virtual co-ordinates.
+ * * `focal_length` is the camera focal length.
  * * `output` is the stream to write the generated image to.
  * * If `log` is `true`, progress is reported to the standard error stream.
  */
-void rays::render(std::ostream &output, bool const log) {
-	// Image
-
-	constexpr auto image_aspect_ratio = 16.0 / 9.0;
-	constexpr auto image_width = 400;
-	constexpr auto image_height =
-		static_cast<int>(image_width / image_aspect_ratio);
-
-	// Camera
-
-	constexpr auto viewport_aspect_ratio =
-		static_cast<double>(image_width) / image_height;
-	constexpr auto viewport_height = 2.0;
-	constexpr auto viewport_width = viewport_aspect_ratio * viewport_height;
-	constexpr auto focal_length = 1.0;
+void rays::render(int const image_width,
+                  int const image_height,
+                  double const viewport_width,
+                  double const viewport_height,
+                  double const focal_length,
+                  std::ostream &output,
+                  bool const log)
+{
+	// Geometry.
 
 	constexpr auto origin = Vec3{0.0, 0.0, 0.0};
-	constexpr auto horizontal = Vec3{viewport_width, 0.0, 0.0};
-	constexpr auto vertical = Vec3{0.0, viewport_height, 0.0};
-	constexpr auto lower_left_corner =
+	auto const horizontal = Vec3{viewport_width, 0.0, 0.0};
+	auto const vertical = Vec3{0.0, viewport_height, 0.0};
+	auto const lower_left_corner =
 		origin - 0.5 * (horizontal + vertical) - Vec3{0.0, 0.0, focal_length};
 
 	// Render

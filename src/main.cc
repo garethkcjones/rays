@@ -12,6 +12,31 @@ namespace fs = std::filesystem;
 
 namespace {
 	/*
+	 * Builds and renders a scene.
+	 */
+	void render(std::ostream &output) {
+		// Image
+
+		constexpr auto image_aspect_ratio = 16.0 / 9.0;
+		constexpr auto image_width = 400;
+		constexpr auto image_height =
+			static_cast<int>(image_width / image_aspect_ratio);
+
+		// Camera
+
+		constexpr auto viewport_aspect_ratio =
+			static_cast<double>(image_width) / image_height;
+		constexpr auto viewport_height = 2.0;
+		constexpr auto viewport_width = viewport_aspect_ratio * viewport_height;
+		constexpr auto focal_length = 1.0;
+
+		// Render.
+
+		rays::render(image_width, image_height, viewport_width, viewport_height,
+		             focal_length, output, true);
+	}
+
+	/*
 	 * Runs the program.
 	 */
 	void run(int const argc, char const *const *const argv) {
@@ -20,7 +45,7 @@ namespace {
 			case 1:
 				// No output file name specified on command-line.  Use stdout.
 				std::ios::sync_with_stdio(false);
-				rays::render(std::cout, true);
+				render(std::cout);
 				break;
 
 			case 2: {
@@ -34,7 +59,7 @@ namespace {
 					};
 				}
 
-				rays::render(output, true);
+				render(output);
 
 				if (!output.flush()) {
 					throw std::runtime_error {
