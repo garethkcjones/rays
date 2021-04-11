@@ -51,8 +51,8 @@ impl Hittable for Sphere {
 
         let t = root;
         let p = r.at(t);
-        let normal = (p - self.centre) / self.radius;
+        let outward_normal = (p - self.centre) / self.radius;
 
-        Some(HitRecord::new(p, normal, t))
+        Some(HitRecord::new(r, p, outward_normal, t))
     }
 }
