@@ -20,7 +20,7 @@ class rays::hittable::Sphere final:
 {
 	public:
 		static std::shared_ptr<Hittable> new_hittable(Vec3 centre,
-		                                              double radius);
+			double radius);
 
 		explicit Sphere(Vec3 centre, double radius) noexcept;
 

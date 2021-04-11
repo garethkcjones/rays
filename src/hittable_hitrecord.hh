@@ -14,7 +14,7 @@ class rays::hittable::HitRecord final {
 	public:
 
 		constexpr explicit HitRecord(Ray const &r, Vec3 p, Vec3 normal,
-		                             double t) noexcept;
+			double t) noexcept;
 
 		constexpr auto p() const noexcept {return p_;}
 		constexpr auto normal() const noexcept {return normal_;}

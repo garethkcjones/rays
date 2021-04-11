@@ -21,7 +21,7 @@ class rays::hittable::Hittable {
 		virtual ~Hittable() noexcept = default;
 
 		virtual std::optional<HitRecord> hit(Ray const &r, double t_min,
-		                                     double t_max) const noexcept = 0;
+			double t_max) const noexcept = 0;
 };
 
 /*
