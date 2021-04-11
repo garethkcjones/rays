@@ -37,14 +37,14 @@ fn ray_colour(r: &Ray) -> Colour {
 }
 
 /**
- * Runs the program.
+ * Renders a scene.
  *
  * # Parameters
  *
  * * `output` is the stream to write the generated image to.
  * * If `log` is `true`, progress is reported to the standard error stream.
  */
-pub fn run(output: &mut dyn Write, log: bool) -> Result<(), Box<dyn Error>> {
+pub fn render(output: &mut dyn Write, log: bool) -> Result<(), Box<dyn Error>> {
     // Image
 
     let image_aspect_ratio = 16.0 / 9.0;

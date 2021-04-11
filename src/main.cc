@@ -20,7 +20,7 @@ namespace {
 			case 1:
 				// No output file name specified on command-line.  Use stdout.
 				std::ios::sync_with_stdio(false);
-				rays::run(std::cout, true);
+				rays::render(std::cout, true);
 				break;
 
 			case 2: {
@@ -34,7 +34,7 @@ namespace {
 					};
 				}
 
-				rays::run(output, true);
+				rays::render(output, true);
 
 				if (!output.flush()) {
 					throw std::runtime_error {

@@ -8,7 +8,7 @@ namespace rays {
 	constexpr double degrees_to_radians(double degrees) noexcept;
 
 	// Main raytracer function.
-	void run(std::ostream &output, bool log);
+	void render(std::ostream &output, bool log);
 }
 
 inline constexpr auto rays::degrees_to_radians(double const degrees) noexcept

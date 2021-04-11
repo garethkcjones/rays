@@ -42,14 +42,14 @@ namespace {
 }
 
 /*
- * Runs the program.
+ * Renders a scene.
  *
  * # Parameters
  *
  * * `output` is the stream to write the generated image to.
  * * If `log` is `true`, progress is reported to the standard error stream.
  */
-void rays::run(std::ostream &output, bool const log) {
+void rays::render(std::ostream &output, bool const log) {
 	// Image
 
 	constexpr auto image_aspect_ratio = 16.0 / 9.0;
