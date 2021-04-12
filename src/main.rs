@@ -1,4 +1,4 @@
-use rays::{Sphere, Vec3};
+use rays::{Camera, Sphere, Vec3};
 use std::{
     env,
     error::Error,
@@ -18,6 +18,7 @@ fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error>> {
     let image_aspect_ratio = 16.0 / 9.0;
     let image_width = 400;
     let image_height = (f64::from(image_width) / image_aspect_ratio) as _;
+    let samples_per_pixel = 100;
 
     // World.
 
@@ -32,6 +33,12 @@ fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error>> {
     let viewport_height = 2.0;
     let viewport_width = viewport_aspect_ratio * viewport_height;
     let focal_length = 1.0;
+    let cam = Camera::new(
+        Vec3(0.0, 0.0, 0.0),
+        viewport_width,
+        viewport_height,
+        focal_length,
+    );
 
     // Render.
 
@@ -39,9 +46,8 @@ fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error>> {
         &world,
         image_width,
         image_height,
-        viewport_width,
-        viewport_height,
-        focal_length,
+        samples_per_pixel,
+        &cam,
         output,
         true,
     )

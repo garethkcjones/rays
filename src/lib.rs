@@ -6,6 +6,7 @@ mod vec3;
 pub use camera::Camera;
 pub use colour::Colour;
 pub use hittable::{Hittable, Sphere};
+use rand::prelude::*;
 use ray::Ray;
 use std::{error::Error, io::prelude::*};
 pub use vec3::Vec3;
@@ -31,31 +32,32 @@ fn ray_colour(r: &Ray, world: &dyn Hittable) -> Colour {
  *
  * * `world` contains the hittable objects in the scene.
  * * `image_width` and `image_height` are the image dimesions, in pixels.
- * * `viewport_width` and `viewport_height` are the viewport dimensions, in
- *    virtual co-ordinates.
- * * `focal_length` is the camera focal length.
+ * * `samples_per_pixel` is the number of samples per pixel.
+ * * `cam` is the camera.
  * * `output` is the stream to write the generated image to.
  * * If `log` is `true`, progress is reported to the standard error stream.
  */
-#[allow(clippy::too_many_arguments)]
 pub fn render(
     world: &dyn Hittable,
     image_width: u32,
     image_height: u32,
-    viewport_width: f64,
-    viewport_height: f64,
-    focal_length: f64,
+    samples_per_pixel: u32,
+    cam: &Camera,
     output: &mut dyn Write,
     log: bool,
 ) -> Result<(), Box<dyn Error>> {
-    // Geometry.
+    assert!(image_width > 1);
+    assert!(image_height > 1);
+    assert!(samples_per_pixel > 0);
 
-    let origin = Vec3(0.0, 0.0, 0.0);
-    let horizontal = Vec3(viewport_width, 0.0, 0.0);
-    let vertical = Vec3(0.0, viewport_height, 0.0);
-    let lower_left_corner = origin - 0.5 * (horizontal + vertical) - Vec3(0.0, 0.0, focal_length);
+    // Initialize random number generator.
+    let mut rand_eng = thread_rng();
+    let rand_dst = rand::distributions::Uniform::new(0.0, 1.0);
 
     // Render.
+
+    let width_scale = f64::from(image_width - 1);
+    let height_scale = f64::from(image_height - 1);
 
     write!(output, "P3\n{} {}\n255\n", image_width, image_height)?;
 
@@ -69,16 +71,21 @@ pub fn render(
         }
 
         for i in 0..image_width {
-            let u = f64::from(i) / f64::from(image_width - 1);
-            let v = f64::from(j) / f64::from(image_height - 1);
+            let mut pixel_colour = Colour(0.0, 0.0, 0.0);
 
-            let r = Ray::new(
-                origin,
-                lower_left_corner + u * horizontal + v * vertical - origin,
-            );
+            for _ in 0..samples_per_pixel {
+                let ur = rand_eng.sample(rand_dst);
+                let vr = rand_eng.sample(rand_dst);
 
-            let pixel_colour = ray_colour(&r, world);
-            let (ir, ig, ib) = pixel_colour.to_rgb8(1);
+                let u = (f64::from(i) + ur) / width_scale;
+                let v = (f64::from(j) + vr) / height_scale;
+
+                let r = cam.get_ray(u, v);
+
+                pixel_colour += ray_colour(&r, world);
+            }
+
+            let (ir, ig, ib) = pixel_colour.to_rgb8(samples_per_pixel);
 
             writeln!(output, "{} {} {}", ir, ig, ib)?;
         }
