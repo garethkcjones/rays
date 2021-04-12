@@ -16,7 +16,7 @@ class rays::Camera final {
 		constexpr explicit Camera(Vec3 origin, double viewport_width,
 			double viewport_height, double focal_length) noexcept;
 
-		constexpr Ray get_ray(double u, double v) noexcept;
+		constexpr Ray get_ray(double u, double v) const noexcept;
 
 	private:
 
@@ -40,7 +40,7 @@ inline constexpr rays::Camera::Camera(Vec3 const origin,
 }
 
 inline constexpr auto rays::Camera::get_ray(double const u, double const v)
-	noexcept -> Ray
+	const noexcept -> Ray
 {
 	return Ray {
 		origin_,
