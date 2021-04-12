@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <algorithm>
 #include <cstdint>
 #include <tuple>
@@ -89,6 +90,8 @@ inline constexpr auto rays::operator*(double const s, Colour const c) noexcept
 inline constexpr auto rays::Colour::to_rgb8(int const samples_per_pixel) const
 	noexcept -> std::tuple<std::uint8_t, std::uint8_t, std::uint8_t>
 {
+	assert(samples_per_pixel > 0);
+
 	// Divide the colour by the number of samples.
 	auto const scale = 1.0 / samples_per_pixel;
 	auto [r, g, b] = *this * scale;
