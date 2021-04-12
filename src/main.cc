@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <string>
 
+#include "camera.hh"
 #include "hittable.hh"
 #include "hittable_sphere.hh"
 #include "lib.hh"
@@ -18,6 +19,7 @@ namespace {
 	 * Builds and renders a scene.
 	 */
 	void render(std::ostream &output) {
+		using rays::Camera;
 		using rays::hittable::HittableList;
 		using rays::hittable::Sphere;
 		using rays::Vec3;
@@ -28,6 +30,7 @@ namespace {
 		constexpr auto image_width = 400;
 		constexpr auto image_height =
 			static_cast<int>(image_width / image_aspect_ratio);
+		constexpr auto samples_per_pixel = 100;
 
 		// World.
 
@@ -42,11 +45,17 @@ namespace {
 		constexpr auto viewport_height = 2.0;
 		constexpr auto viewport_width = viewport_aspect_ratio * viewport_height;
 		constexpr auto focal_length = 1.0;
+		constexpr auto cam = Camera {
+			Vec3{0.0, 0.0, 0.0},
+			viewport_width,
+			viewport_height,
+			focal_length
+		};
 
 		// Render.
 
-		rays::render(world, image_width, image_height, viewport_width,
-		             viewport_height, focal_length, output, true);
+		rays::render(world, image_width, image_height, samples_per_pixel, cam,
+		             output, true);
 	}
 
 	/*

@@ -3,6 +3,7 @@
 #include <numbers>
 #include <ostream>
 
+#include "camera.hh"
 #include "hittable.hh"
 
 namespace rays {
@@ -11,8 +12,8 @@ namespace rays {
 
 	// Main raytracer function.
 	void render(hittable::Hittable const &world, int image_width,
-		int image_height, double viewport_width, double viewport_height,
-		double focal_length, std::ostream &output, bool log);
+		int image_height, int samples_per_pixel, Camera const &cam,
+		std::ostream &output, bool log);
 }
 
 inline constexpr auto rays::degrees_to_radians(double const degrees) noexcept
