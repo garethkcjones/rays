@@ -78,7 +78,7 @@ pub fn render(
             );
 
             let pixel_colour = ray_colour(&r, world);
-            let (ir, ig, ib) = pixel_colour.to_rgb8();
+            let (ir, ig, ib) = pixel_colour.to_rgb8(1);
 
             writeln!(output, "{} {} {}", ir, ig, ib)?;
         }
