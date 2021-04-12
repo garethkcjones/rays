@@ -86,7 +86,7 @@ void rays::render(Hittable const &world,
 			};
 
 			auto const pixel_colour = ray_colour(r, world);
-			auto const [ir, ig, ib] = pixel_colour.to_rgb8();
+			auto const [ir, ig, ib] = pixel_colour.to_rgb8(1);
 
 			output << int{ir} << ' ' << int{ig} << ' ' << int{ib} << '\n';
 		}

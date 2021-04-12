@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cstdint>
 #include <tuple>
 
@@ -28,7 +29,7 @@ struct rays::Colour final {
 	constexpr Colour &operator/=(double s) noexcept;
 
 	constexpr std::tuple<std::uint8_t, std::uint8_t, std::uint8_t>
-		to_rgb8() const noexcept;
+		to_rgb8(int samples_per_pixel) const noexcept;
 };
 
 inline constexpr auto rays::Colour::operator+=(Colour const c) noexcept
@@ -85,11 +86,21 @@ inline constexpr auto rays::operator*(double const s, Colour const c) noexcept
 	return {r, g, b};
 }
 
-inline constexpr auto rays::Colour::to_rgb8() const noexcept
-	-> std::tuple<std::uint8_t, std::uint8_t, std::uint8_t>
+inline constexpr auto rays::Colour::to_rgb8(int const samples_per_pixel) const
+	noexcept -> std::tuple<std::uint8_t, std::uint8_t, std::uint8_t>
 {
-	auto const ir = static_cast<std::uint8_t>(255.999 * r);
-	auto const ig = static_cast<std::uint8_t>(255.999 * g);
-	auto const ib = static_cast<std::uint8_t>(255.999 * b);
+	// Divide the colour by the number of samples.
+	auto const scale = 1.0 / samples_per_pixel;
+	auto const c = *this * scale;
+	auto [r, g, b] = c;
+
+	r = std::clamp(r, 0.0, 0.999);
+	g = std::clamp(g, 0.0, 0.999);
+	b = std::clamp(b, 0.0, 0.999);
+
+	auto const ir = static_cast<std::uint8_t>(256.0 * r);
+	auto const ig = static_cast<std::uint8_t>(256.0 * g);
+	auto const ib = static_cast<std::uint8_t>(256.0 * b);
+
 	return {ir, ig, ib};
 }
