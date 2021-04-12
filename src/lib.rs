@@ -1,7 +1,9 @@
+mod camera;
 mod colour;
 mod hittable;
 mod ray;
 mod vec3;
+pub use camera::Camera;
 pub use colour::Colour;
 pub use hittable::{Hittable, Sphere};
 use ray::Ray;
