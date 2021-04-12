@@ -91,8 +91,7 @@ inline constexpr auto rays::Colour::to_rgb8(int const samples_per_pixel) const
 {
 	// Divide the colour by the number of samples.
 	auto const scale = 1.0 / samples_per_pixel;
-	auto const c = *this * scale;
-	auto [r, g, b] = c;
+	auto [r, g, b] = *this * scale;
 
 	r = std::clamp(r, 0.0, 0.999);
 	g = std::clamp(g, 0.0, 0.999);

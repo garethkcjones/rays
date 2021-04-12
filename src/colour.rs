@@ -26,8 +26,7 @@ impl Colour {
     pub fn to_rgb8(self, samples_per_pixel: u32) -> (u8, u8, u8) {
         // Divide the colour by the number of samples.
         let scale = f64::from(samples_per_pixel).recip();
-        let c = self * scale;
-        let Colour(mut r, mut g, mut b) = c;
+        let Colour(mut r, mut g, mut b) = self * scale;
 
         r = r.clamp(0.0, 0.999);
         g = g.clamp(0.0, 0.999);
