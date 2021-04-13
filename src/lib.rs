@@ -1,11 +1,13 @@
 mod camera;
 mod colour;
 mod hittable;
+mod material;
 mod ray;
 mod vec3;
 pub use camera::Camera;
 pub use colour::Colour;
 pub use hittable::{Hittable, Sphere};
+pub use material::Material;
 use rand::prelude::*;
 use ray::Ray;
 use std::{error::Error, io::prelude::*};
