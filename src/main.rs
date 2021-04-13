@@ -19,6 +19,7 @@ fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error>> {
     let image_width = 400;
     let image_height = (f64::from(image_width) / image_aspect_ratio) as _;
     let samples_per_pixel = 100;
+    let max_depth = 50;
 
     // World.
 
@@ -47,6 +48,7 @@ fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error>> {
         image_width,
         image_height,
         samples_per_pixel,
+        max_depth,
         &cam,
         output,
         true,

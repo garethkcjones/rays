@@ -14,10 +14,15 @@ pub use vec3::Vec3;
 /**
  * Calculates the colour of a ray of light.
  */
-fn ray_colour(r: &Ray, world: &dyn Hittable) -> Colour {
+fn ray_colour(r: &Ray, world: &dyn Hittable, depth: u32) -> Colour {
+    // If we’ve exceeded the ray bounce limit, no more light is gathered.
+    if depth == 0 {
+        return Colour(0.0, 0.0, 0.0);
+    }
+
     if let Some(rec) = world.hit(r, 0.0, f64::INFINITY) {
         let target = rec.p() + rec.normal() + Vec3::new_random_in_unit_sphere();
-        return 0.5 * ray_colour(&Ray::new(rec.p(), target - rec.p()), world);
+        return 0.5 * ray_colour(&Ray::new(rec.p(), target - rec.p()), world, depth - 1);
     }
 
     let unit_direction = r.direction().unit();
@@ -33,15 +38,18 @@ fn ray_colour(r: &Ray, world: &dyn Hittable) -> Colour {
  * * `world` contains the hittable objects in the scene.
  * * `image_width` and `image_height` are the image dimesions, in pixels.
  * * `samples_per_pixel` is the number of samples per pixel.
+ * * `max_depth` is the recursion limit for ray reflections.
  * * `cam` is the camera.
  * * `output` is the stream to write the generated image to.
  * * If `log` is `true`, progress is reported to the standard error stream.
  */
+#[allow(clippy::too_many_arguments)]
 pub fn render(
     world: &dyn Hittable,
     image_width: u32,
     image_height: u32,
     samples_per_pixel: u32,
+    max_depth: u32,
     cam: &Camera,
     output: &mut dyn Write,
     log: bool,
@@ -49,6 +57,7 @@ pub fn render(
     assert!(image_width > 1);
     assert!(image_height > 1);
     assert!(samples_per_pixel > 0);
+    assert!(max_depth > 0);
 
     // Initialize random number generator.
     let mut rand_eng = thread_rng();
@@ -82,7 +91,7 @@ pub fn render(
 
                 let r = cam.get_ray(u, v);
 
-                pixel_colour += ray_colour(&r, world);
+                pixel_colour += ray_colour(&r, world, max_depth);
             }
 
             let (ir, ig, ib) = pixel_colour.to_rgb8(samples_per_pixel);
