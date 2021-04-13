@@ -1,3 +1,4 @@
+use rand::prelude::*;
 use std::ops;
 
 /**
@@ -7,6 +8,34 @@ use std::ops;
 pub struct Vec3(pub f64, pub f64, pub f64);
 
 impl Vec3 {
+    /**
+     * Creates a random vector with components in the range [min, max).
+     */
+    #[must_use]
+    pub fn new_random(min: f64, max: f64) -> Self {
+        let mut rand_eng = thread_rng();
+        let rand_dst = rand::distributions::Uniform::new(min, max);
+
+        let x = rand_eng.sample(rand_dst);
+        let y = rand_eng.sample(rand_dst);
+        let z = rand_eng.sample(rand_dst);
+
+        Vec3(x, y, z)
+    }
+
+    /**
+     * Creates a random vector inside a unit sphere.
+     */
+    #[must_use]
+    pub fn new_random_in_unit_sphere() -> Self {
+        loop {
+            let p = Self::new_random(-1.0, 1.0);
+            if p.dot(p) < 1.0 {
+                return p;
+            }
+        }
+    }
+
     #[must_use]
     pub const fn x(self) -> f64 {
         self.0
