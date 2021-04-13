@@ -31,6 +31,7 @@ namespace {
 		constexpr auto image_height =
 			static_cast<int>(image_width / image_aspect_ratio);
 		constexpr auto samples_per_pixel = 100;
+		constexpr auto max_depth = 50;
 
 		// World.
 
@@ -54,8 +55,8 @@ namespace {
 
 		// Render.
 
-		rays::render(world, image_width, image_height, samples_per_pixel, cam,
-		             output, true);
+		rays::render(world, image_width, image_height, samples_per_pixel,
+		             max_depth, cam, output, true);
 	}
 
 	/*

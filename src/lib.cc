@@ -23,16 +23,21 @@ namespace {
 	 */
 	auto ray_colour(Ray const &r,
 	                Hittable const &world,
+	                int const depth,
 	                std::default_random_engine &rand_eng)
 		-> Colour
 	{
 		constexpr auto infinity = std::numeric_limits<double>::infinity();
 
+		// If we’ve exceeded the ray bounce limit, no more light is gathered.
+		if (depth <= 0)
+			return Colour{0.0, 0.0, 0.0};
+
 		if (auto const rec = world.hit(r, 0.0, infinity); rec) {
 			auto const target = rec->p() + rec->normal()
 			                   + Vec3::new_random_in_unit_sphere(rand_eng);
 			return 0.5 * ray_colour(Ray{rec->p(), target - rec->p()}, world,
-			                        rand_eng);
+			                        depth - 1, rand_eng);
 		}
 
 		auto const unit_direction = r.direction().unit();
@@ -49,6 +54,7 @@ namespace {
  * * `world` contains the hittable objects in the scene.
  * * `image_width` and `image_height` are the image dimesions, in pixels.
  * * `samples_per_pixel` is the number of samples per pixel.
+ * * `max_depth` is the recursion limit for ray reflections.
  * * `cam` is the camera.
  * * `output` is the stream to write the generated image to.
  * * If `log` is `true`, progress is reported to the standard error stream.
@@ -57,6 +63,7 @@ void rays::render(Hittable const &world,
                   int const image_width,
                   int const image_height,
                   int const samples_per_pixel,
+                  int const max_depth,
                   Camera const &cam,
                   std::ostream &output,
                   bool const log)
@@ -64,6 +71,7 @@ void rays::render(Hittable const &world,
 	assert(image_width > 1);
 	assert(image_height > 1);
 	assert(samples_per_pixel > 0);
+	assert(max_depth > 0);
 
 	// Initialize random number generator.
 	auto rand_dev = std::random_device{};
@@ -99,7 +107,7 @@ void rays::render(Hittable const &world,
 
 				auto const r = cam.get_ray(u, v);
 
-				pixel_colour += ray_colour(r, world, rand_eng);
+				pixel_colour += ray_colour(r, world, max_depth, rand_eng);
 			}
 
 			auto const [ir, ig, ib] = pixel_colour.to_rgb8(samples_per_pixel);
