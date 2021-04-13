@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <random>
 
 namespace rays {
 	struct Vec3;
@@ -28,6 +29,10 @@ namespace rays {
  * Type for representing vectors in 3-D space.
  */
 struct rays::Vec3 final {
+	static Vec3 new_random(std::default_random_engine &rand_eng, double min,
+		double max);
+	static Vec3 new_random_in_unit_sphere(std::default_random_engine &rand_eng);
+
 	double x = 0.0;
 	double y = 0.0;
 	double z = 0.0;

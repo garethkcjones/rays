@@ -3,7 +3,8 @@ src = [
   'hittable.cc',
   'hittable_sphere.cc',
   'lib.cc',
-  'main.cc'
+  'main.cc',
+  'vec3.cc'
 ]
 
 executable('rays', src)
