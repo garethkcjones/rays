@@ -33,3 +33,10 @@ auto Vec3::new_random_in_unit_sphere(std::default_random_engine &rand_eng)
 			return p;
 	}
 }
+
+/*
+ * Creates a random unit vector.
+ */
+auto Vec3::new_random_unit(std::default_random_engine &rand_eng) -> Vec3 {
+	return new_random_in_unit_sphere(rand_eng).unit();
+}
