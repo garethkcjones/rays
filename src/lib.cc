@@ -21,12 +21,18 @@ namespace {
 	/*
 	 * Calculates the colour of a ray of light.
 	 */
-	auto ray_colour(Ray const &r, Hittable const &world) noexcept -> Colour {
+	auto ray_colour(Ray const &r,
+	                Hittable const &world,
+	                std::default_random_engine &rand_eng)
+		-> Colour
+	{
 		constexpr auto infinity = std::numeric_limits<double>::infinity();
 
 		if (auto const rec = world.hit(r, 0.0, infinity); rec) {
-			auto const [x, y, z] = rec->normal();
-			return 0.5 * Colour{x + 1.0, y + 1.0, z + 1.0};
+			auto const target = rec->p() + rec->normal()
+			                   + Vec3::new_random_in_unit_sphere(rand_eng);
+			return 0.5 * ray_colour(Ray{rec->p(), target - rec->p()}, world,
+			                        rand_eng);
 		}
 
 		auto const unit_direction = r.direction().unit();
@@ -93,7 +99,7 @@ void rays::render(Hittable const &world,
 
 				auto const r = cam.get_ray(u, v);
 
-				pixel_colour += ray_colour(r, world);
+				pixel_colour += ray_colour(r, world, rand_eng);
 			}
 
 			auto const [ir, ig, ib] = pixel_colour.to_rgb8(samples_per_pixel);
