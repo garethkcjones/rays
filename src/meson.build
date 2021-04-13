@@ -5,6 +5,7 @@ src = [
   'hittable_sphere.cc',
   'lib.cc',
   'main.cc',
+  'material_lambertian.cc',
   'vec3.cc'
 ]
 
