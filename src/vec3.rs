@@ -36,6 +36,14 @@ impl Vec3 {
         }
     }
 
+    /**
+     * Creates a random unit vector.
+     */
+    #[must_use]
+    pub fn new_random_unit() -> Self {
+        Self::new_random_in_unit_sphere().unit()
+    }
+
     #[must_use]
     pub const fn x(self) -> f64 {
         self.0
