@@ -34,8 +34,10 @@ namespace {
 			return Colour{0.0, 0.0, 0.0};
 
 		if (auto const rec = world.hit(r, 0.001, infinity); rec) {
+			// auto const target = rec->p() + rec->normal()
+			//                    + Vec3::new_random_in_unit_sphere(rand_eng);
 			auto const target = rec->p() + rec->normal()
-			                   + Vec3::new_random_in_unit_sphere(rand_eng);
+			                   + Vec3::new_random_unit(rand_eng);
 			return 0.5 * ray_colour(Ray{rec->p(), target - rec->p()}, world,
 			                        depth - 1, rand_eng);
 		}
