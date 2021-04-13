@@ -36,8 +36,8 @@ namespace {
 		// World.
 
 		HittableList world;
-		world.push_back(Sphere::new_hittable(Vec3{0.0, 0.0, -1.0}, 0.5));
-		world.push_back(Sphere::new_hittable(Vec3{0.0, -100.5, -1.0}, 100.0));
+		world.push_back(Sphere::new_hittable(Vec3{0.0, 0.0, -1.0}, 0.5, nullptr));
+		world.push_back(Sphere::new_hittable(Vec3{0.0, -100.5, -1.0}, 100.0, nullptr));
 
 		// Camera
 

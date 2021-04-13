@@ -3,24 +3,31 @@
 #include <cmath>
 #include <memory>
 #include <optional>
+#include <utility>
 
 #include "hittable.hh"
 #include "hittable_hitrecord.hh"
+#include "material.hh"
 #include "ray.hh"
 #include "vec3.hh"
 
 using namespace rays::hittable;
 
-Sphere::Sphere(Vec3 const centre, double const radius) noexcept:
+Sphere::Sphere(Vec3 const centre,
+               double const radius,
+               std::shared_ptr<material::Material> material) noexcept:
 	centre_{centre},
-	radius_{radius}
+	radius_{radius},
+	material_{std::move(material)}
 {
 }
 
-auto Sphere::new_hittable(Vec3 const centre, double const radius)
+auto Sphere::new_hittable(Vec3 const centre,
+                          double const radius,
+                          std::shared_ptr<material::Material> material)
 	-> std::shared_ptr<Hittable>
 {
-	return std::make_shared<Sphere>(centre, radius);
+	return std::make_shared<Sphere>(centre, radius, std::move(material));
 }
 
 auto Sphere::hit(Ray const &r, double const t_min, double const t_max) const
@@ -49,5 +56,5 @@ auto Sphere::hit(Ray const &r, double const t_min, double const t_max) const
 	auto const p = r.at(t);
 	auto const outward_normal = (p - centre_) / radius_;
 
-	return std::make_optional<HitRecord>(r, p, outward_normal, t, nullptr);
+	return std::make_optional<HitRecord>(r, p, outward_normal, t, material_);
 }
