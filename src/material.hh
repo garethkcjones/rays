@@ -1,6 +1,7 @@
 #pragma once
 
 #include <optional>
+#include <random>
 #include <utility>
 
 #include "colour.hh"
@@ -19,6 +20,7 @@ class rays::material::Material {
 
 		virtual ~Material() noexcept = default;
 
-		virtual std::optional<std::pair<Colour, Ray>>
-			scatter(Ray const &r_in, hittable::HitRecord const &rec) const = 0;
+		virtual std::optional<std::pair<Colour, Ray>> scatter(Ray const &r_in,
+			hittable::HitRecord const &rec,
+			std::default_random_engine &rand_eng) const = 0;
 };
