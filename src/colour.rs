@@ -30,6 +30,11 @@ impl Colour {
         let scale = f64::from(samples_per_pixel).recip();
         let Colour(mut r, mut g, mut b) = self * scale;
 
+        // Gamma-correct for 𝛾 = 2.0.
+        r = r.sqrt();
+        g = g.sqrt();
+        b = b.sqrt();
+
         r = r.clamp(0.0, 0.999);
         g = g.clamp(0.0, 0.999);
         b = b.clamp(0.0, 0.999);
