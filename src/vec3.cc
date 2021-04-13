@@ -40,3 +40,17 @@ auto Vec3::new_random_in_unit_sphere(std::default_random_engine &rand_eng)
 auto Vec3::new_random_unit(std::default_random_engine &rand_eng) -> Vec3 {
 	return new_random_in_unit_sphere(rand_eng).unit();
 }
+
+/*
+ * Creates a random vector inside a hemisphere.
+ */
+auto Vec3::new_random_in_hemisphere(std::default_random_engine &rand_eng,
+                                    Vec3 const normal)
+	-> Vec3
+{
+	auto const in_unit_sphere = new_random_in_unit_sphere(rand_eng);
+	if (dot(in_unit_sphere, normal) > 0.0) // In same hemisphere as normal.
+		return in_unit_sphere;
+	else
+		return -in_unit_sphere;
+}

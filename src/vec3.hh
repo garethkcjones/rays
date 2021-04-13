@@ -33,6 +33,8 @@ struct rays::Vec3 final {
 		double max);
 	static Vec3 new_random_in_unit_sphere(std::default_random_engine &rand_eng);
 	static Vec3 new_random_unit(std::default_random_engine &rand_eng);
+	static Vec3 new_random_in_hemisphere(std::default_random_engine &rand_eng,
+		Vec3 normal);
 
 	double x = 0.0;
 	double y = 0.0;
