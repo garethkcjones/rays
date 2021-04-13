@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 #include <cstdint>
 #include <tuple>
 
@@ -15,6 +16,11 @@ auto Colour::to_rgb8(int const samples_per_pixel) const noexcept
 	// Divide the colour by the number of samples.
 	auto const scale = 1.0 / samples_per_pixel;
 	auto [r, g, b] = *this * scale;
+
+	// Gamma-correct for 𝛾 = 2.0.
+	r = std::sqrt(r);
+	g = std::sqrt(g);
+	b = std::sqrt(b);
 
 	r = std::clamp(r, 0.0, 0.999);
 	g = std::clamp(g, 0.0, 0.999);
