@@ -52,7 +52,8 @@ namespace {
 
 		world.push_back(Sphere::new_hittable(Vec3{ 0.0, -100.5, -1.0}, 100.0, std::move(material_ground)));
 		world.push_back(Sphere::new_hittable(Vec3{ 0.0,    0.0, -1.0},   0.5, std::move(material_center)));
-		world.push_back(Sphere::new_hittable(Vec3{-1.0,    0.0, -1.0},   0.5, std::move(material_left)));
+		world.push_back(Sphere::new_hittable(Vec3{-1.0,    0.0, -1.0},   0.5,           material_left));
+		world.push_back(Sphere::new_hittable(Vec3{-1.0,    0.0, -1.0},  -0.4, std::move(material_left)));
 		world.push_back(Sphere::new_hittable(Vec3{ 1.0,    0.0, -1.0},   0.5, std::move(material_right)));
 
 		// Camera
