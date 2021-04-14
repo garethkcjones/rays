@@ -11,6 +11,7 @@
 #include "camera.hh"
 #include "colour.hh"
 #include "hittable.hh"
+#include "material.hh"
 #include "ray.hh"
 #include "vec3.hh"
 
@@ -34,14 +35,14 @@ namespace {
 			return Colour{0.0, 0.0, 0.0};
 
 		if (auto const rec = world.hit(r, 0.001, infinity); rec) {
-			auto const target = rec->p()
-			          + Vec3::new_random_in_hemisphere(rand_eng, rec->normal());
-			// auto const target = rec->p() + rec->normal()
-			//                    + Vec3::new_random_in_unit_sphere(rand_eng);
-			// auto const target = rec->p() + rec->normal()
-			//                    + Vec3::new_random_unit(rand_eng);
-			return 0.5 * ray_colour(Ray{rec->p(), target - rec->p()}, world,
-			                        depth - 1, rand_eng);
+			auto const material = rec->material();
+			assert(material);
+			if (auto const s = material->scatter(r, *rec, rand_eng); s) {
+				auto const [attenuation, scattered] = *s;
+				return attenuation
+				       * ray_colour(scattered, world, depth - 1, rand_eng);
+			}
+			return Colour{0.0, 0.0, 0.0};
 		}
 
 		auto const unit_direction = r.direction().unit();
