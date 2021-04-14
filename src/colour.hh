@@ -7,6 +7,7 @@ namespace rays {
 	struct Colour;
 
 	constexpr Colour operator+(Colour c1, Colour c2) noexcept;
+	constexpr Colour operator*(Colour c1, Colour c2) noexcept;
 
 	constexpr Colour operator*(Colour c, double s) noexcept;
 	constexpr Colour operator/(Colour c, double s) noexcept;
@@ -23,6 +24,7 @@ struct rays::Colour final {
 	double b = 0.0;
 
 	constexpr Colour &operator+=(Colour c) noexcept;
+	constexpr Colour &operator*=(Colour c) noexcept;
 
 	constexpr Colour &operator*=(double s) noexcept;
 	constexpr Colour &operator/=(double s) noexcept;
@@ -37,6 +39,15 @@ inline constexpr auto rays::Colour::operator+=(Colour const c) noexcept
 	r += c.r;
 	g += c.g;
 	b += c.b;
+	return *this;
+}
+
+inline constexpr auto rays::Colour::operator*=(Colour const c) noexcept
+	-> Colour &
+{
+	r *= c.r;
+	g *= c.g;
+	b *= c.b;
 	return *this;
 }
 
@@ -62,6 +73,12 @@ inline constexpr auto rays::operator+(Colour c1, Colour const c2) noexcept
 	-> Colour
 {
 	return c1 += c2;
+}
+
+inline constexpr auto rays::operator*(Colour c1, Colour const c2) noexcept
+	-> Colour
+{
+	return c1 *= c2;
 }
 
 inline constexpr auto rays::operator*(Colour c, double const s) noexcept
