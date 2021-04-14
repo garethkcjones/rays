@@ -25,9 +25,15 @@ impl Colour {
     #[must_use]
     pub fn to_rgb8(self) -> (u8, u8, u8) {
         let Colour(r, g, b) = self;
+
+        let r = r.clamp(0.0, 1.0);
+        let g = g.clamp(0.0, 1.0);
+        let b = b.clamp(0.0, 1.0);
+
         let ir = (255.999 * r) as u8;
         let ig = (255.999 * g) as u8;
         let ib = (255.999 * b) as u8;
+
         (ir, ig, ib)
     }
 }
