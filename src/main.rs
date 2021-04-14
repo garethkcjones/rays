@@ -1,4 +1,4 @@
-use rays::{Camera, Colour, Lambertian2, Metal, Sphere, Vec3};
+use rays::{Camera, Colour, Dielectric, Lambertian2, Metal, Sphere, Vec3};
 use std::{
     env,
     error::Error,
@@ -24,8 +24,8 @@ fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error>> {
     // World.
 
     let material_ground = Lambertian2::new_material(Colour(0.8, 0.8, 0.0));
-    let material_center = Lambertian2::new_material(Colour(0.7, 0.3, 0.3));
-    let material_left = Metal::new_material(Colour(0.8, 0.8, 0.8), 0.3);
+    let material_center = Dielectric::new_material(1.5);
+    let material_left = Dielectric::new_material(1.5);
     let material_right = Metal::new_material(Colour(0.8, 0.6, 0.2), 1.0);
 
     let world = vec![
