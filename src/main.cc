@@ -11,6 +11,7 @@
 #include "hittable.hh"
 #include "hittable_sphere.hh"
 #include "lib.hh"
+#include "material_dielectric.hh"
 #include "material_lambertian.hh"
 #include "material_metal.hh"
 #include "vec3.hh"
@@ -26,6 +27,7 @@ namespace {
 		using rays::Colour;
 		using rays::hittable::HittableList;
 		using rays::hittable::Sphere;
+		using rays::material::Dielectric;
 		using rays::material::Lambertian2;
 		using rays::material::Metal;
 		using rays::Vec3;
@@ -44,8 +46,8 @@ namespace {
 		HittableList world;
 
 		auto material_ground = Lambertian2::new_material(Colour{0.8, 0.8, 0.0});
-		auto material_center = Lambertian2::new_material(Colour{0.7, 0.3, 0.3});
-		auto material_left   = Metal::new_material(Colour{0.8, 0.8, 0.8}, 0.3);
+		auto material_center = Dielectric::new_material(1.5);
+		auto material_left   = Dielectric::new_material(1.5);
 		auto material_right  = Metal::new_material(Colour{0.8, 0.6, 0.2}, 1.0);
 
 		world.push_back(Sphere::new_hittable(Vec3{ 0.0, -100.5, -1.0}, 100.0, std::move(material_ground)));
