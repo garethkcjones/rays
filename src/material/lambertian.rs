@@ -64,7 +64,12 @@ impl Lambertian2 {
 
 impl Material for Lambertian0 {
     fn scatter(&self, _r_in: &Ray, rec: &HitRecord) -> Option<(Colour, Ray)> {
-        let scatter_direction = Vec3::new_random_in_hemisphere(rec.normal());
+        let mut scatter_direction = Vec3::new_random_in_hemisphere(rec.normal());
+
+        // Catch degenerate scatter direction.
+        if scatter_direction.is_near_zero() {
+            scatter_direction = rec.normal();
+        }
 
         let attenuation = self.albedo;
         let scattered = Ray::new(rec.p(), scatter_direction);
@@ -75,7 +80,12 @@ impl Material for Lambertian0 {
 
 impl Material for Lambertian1 {
     fn scatter(&self, _r_in: &Ray, rec: &HitRecord) -> Option<(Colour, Ray)> {
-        let scatter_direction = rec.normal() + Vec3::new_random_in_unit_sphere();
+        let mut scatter_direction = rec.normal() + Vec3::new_random_in_unit_sphere();
+
+        // Catch degenerate scatter direction.
+        if scatter_direction.is_near_zero() {
+            scatter_direction = rec.normal();
+        }
 
         let attenuation = self.albedo;
         let scattered = Ray::new(rec.p(), scatter_direction);
@@ -86,7 +96,12 @@ impl Material for Lambertian1 {
 
 impl Material for Lambertian2 {
     fn scatter(&self, _r_in: &Ray, rec: &HitRecord) -> Option<(Colour, Ray)> {
-        let scatter_direction = rec.normal() + Vec3::new_random_unit();
+        let mut scatter_direction = rec.normal() + Vec3::new_random_unit();
+
+        // Catch degenerate scatter direction.
+        if scatter_direction.is_near_zero() {
+            scatter_direction = rec.normal();
+        }
 
         let attenuation = self.albedo;
         let scattered = Ray::new(rec.p(), scatter_direction);
