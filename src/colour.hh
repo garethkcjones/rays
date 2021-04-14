@@ -29,8 +29,8 @@ struct rays::Colour final {
 	constexpr Colour &operator*=(double s) noexcept;
 	constexpr Colour &operator/=(double s) noexcept;
 
-	constexpr std::tuple<std::uint8_t, std::uint8_t, std::uint8_t>
-		to_rgb8() const noexcept;
+	std::tuple<std::uint8_t, std::uint8_t, std::uint8_t> to_rgb8() const
+		noexcept;
 };
 
 inline constexpr auto rays::Colour::operator+=(Colour const c) noexcept
@@ -100,13 +100,4 @@ inline constexpr auto rays::operator*(double const s, Colour const c) noexcept
 	auto const g = s * c.g;
 	auto const b = s * c.b;
 	return {r, g, b};
-}
-
-inline constexpr auto rays::Colour::to_rgb8() const noexcept
-	-> std::tuple<std::uint8_t, std::uint8_t, std::uint8_t>
-{
-	auto const ir = static_cast<std::uint8_t>(255.999 * r);
-	auto const ig = static_cast<std::uint8_t>(255.999 * g);
-	auto const ib = static_cast<std::uint8_t>(255.999 * b);
-	return {ir, ig, ib};
 }
