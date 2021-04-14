@@ -1,4 +1,4 @@
-use rays::{Camera, Sphere, Vec3};
+use rays::{Camera, Colour, Lambertian2, Metal, Sphere, Vec3};
 use std::{
     env,
     error::Error,
@@ -23,9 +23,16 @@ fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error>> {
 
     // World.
 
+    let material_ground = Lambertian2::new_material(Colour(0.8, 0.8, 0.0));
+    let material_center = Lambertian2::new_material(Colour(0.7, 0.3, 0.3));
+    let material_left = Metal::new_material(Colour(0.8, 0.8, 0.8));
+    let material_right = Metal::new_material(Colour(0.8, 0.6, 0.2));
+
     let world = vec![
-        Sphere::new_hittable(Vec3(0.0, 0.0, -1.0), 0.5),
-        Sphere::new_hittable(Vec3(0.0, -100.5, -1.0), 100.0),
+        Sphere::new_hittable(Vec3(0.0, -100.5, -1.0), 100.0, material_ground),
+        Sphere::new_hittable(Vec3(0.0, 0.0, -1.0), 0.5, material_center),
+        Sphere::new_hittable(Vec3(-1.0, 0.0, -1.0), 0.5, material_left),
+        Sphere::new_hittable(Vec3(1.0, 0.0, -1.0), 0.5, material_right),
     ];
 
     // Camera.
