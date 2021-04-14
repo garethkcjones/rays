@@ -24,9 +24,9 @@ fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error>> {
     // World.
 
     let material_ground = Lambertian2::new_material(Colour(0.8, 0.8, 0.0));
-    let material_center = Dielectric::new_material(1.5);
+    let material_center = Lambertian2::new_material(Colour(0.1, 0.2, 0.5));
     let material_left = Dielectric::new_material(1.5);
-    let material_right = Metal::new_material(Colour(0.8, 0.6, 0.2), 1.0);
+    let material_right = Metal::new_material(Colour(0.8, 0.6, 0.2), 0.0);
 
     let world = vec![
         Sphere::new_hittable(Vec3(0.0, -100.5, -1.0), 100.0, material_ground),
