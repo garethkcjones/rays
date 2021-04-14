@@ -6,6 +6,7 @@ src = [
   'lib.cc',
   'main.cc',
   'material_lambertian.cc',
+  'material_metal.cc',
   'vec3.cc'
 ]
 
