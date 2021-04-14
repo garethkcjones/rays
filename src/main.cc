@@ -5,11 +5,14 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 #include "camera.hh"
 #include "hittable.hh"
 #include "hittable_sphere.hh"
 #include "lib.hh"
+#include "material_lambertian.hh"
+#include "material_metal.hh"
 #include "vec3.hh"
 
 namespace fs = std::filesystem;
@@ -20,8 +23,11 @@ namespace {
 	 */
 	void render(std::ostream &output) {
 		using rays::Camera;
+		using rays::Colour;
 		using rays::hittable::HittableList;
 		using rays::hittable::Sphere;
+		using rays::material::Lambertian2;
+		using rays::material::Metal;
 		using rays::Vec3;
 
 		// Image.
@@ -36,8 +42,16 @@ namespace {
 		// World.
 
 		HittableList world;
-		world.push_back(Sphere::new_hittable(Vec3{0.0, 0.0, -1.0}, 0.5, nullptr));
-		world.push_back(Sphere::new_hittable(Vec3{0.0, -100.5, -1.0}, 100.0, nullptr));
+
+		auto material_ground = Lambertian2::new_material(Colour{0.8, 0.8, 0.0});
+		auto material_center = Lambertian2::new_material(Colour{0.7, 0.3, 0.3});
+		auto material_left   =       Metal::new_material(Colour{0.8, 0.8, 0.8});
+		auto material_right  =       Metal::new_material(Colour{0.8, 0.6, 0.2});
+
+		world.push_back(Sphere::new_hittable(Vec3{ 0.0, -100.5, -1.0}, 100.0, std::move(material_ground)));
+		world.push_back(Sphere::new_hittable(Vec3{ 0.0,    0.0, -1.0},   0.5, std::move(material_center)));
+		world.push_back(Sphere::new_hittable(Vec3{-1.0,    0.0, -1.0},   0.5, std::move(material_left)));
+		world.push_back(Sphere::new_hittable(Vec3{ 1.0,    0.0, -1.0},   0.5, std::move(material_right)));
 
 		// Camera
 
