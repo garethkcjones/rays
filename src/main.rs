@@ -1,7 +1,8 @@
-use rays::{Camera, Colour, Dielectric, Lambertian2, Metal, Sphere, Vec3};
+use rays::{Camera, Colour, Lambertian2, Sphere, Vec3};
 use std::{
     env,
     error::Error,
+    f64::consts,
     ffi::OsString,
     fs::File,
     io::{self, prelude::*, BufWriter},
@@ -23,30 +24,25 @@ fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error>> {
 
     // World.
 
-    let material_ground = Lambertian2::new_material(Colour(0.8, 0.8, 0.0));
-    let material_center = Lambertian2::new_material(Colour(0.1, 0.2, 0.5));
-    let material_left = Dielectric::new_material(1.5);
-    let material_right = Metal::new_material(Colour(0.8, 0.6, 0.2), 0.0);
+    let r = consts::FRAC_PI_4.cos();
+
+    let material_left = Lambertian2::new_material(Colour(0.0, 0.0, 1.0));
+    let material_right = Lambertian2::new_material(Colour(1.0, 0.0, 0.0));
 
     let world = vec![
-        Sphere::new_hittable(Vec3(0.0, -100.5, -1.0), 100.0, material_ground),
-        Sphere::new_hittable(Vec3(0.0, 0.0, -1.0), 0.5, material_center),
-        Sphere::new_hittable(Vec3(-1.0, 0.0, -1.0), 0.5, material_left.clone()),
-        Sphere::new_hittable(Vec3(-1.0, 0.0, -1.0), -0.4, material_left),
-        Sphere::new_hittable(Vec3(1.0, 0.0, -1.0), 0.5, material_right),
+        Sphere::new_hittable(Vec3(-r, 0.0, -1.0), r, material_left),
+        Sphere::new_hittable(Vec3(r, 0.0, -1.0), r, material_right),
     ];
 
     // Camera.
 
     let viewport_aspect_ratio = f64::from(image_width) / f64::from(image_height);
-    let viewport_height = 2.0;
-    let viewport_width = viewport_aspect_ratio * viewport_height;
     let focal_length = 1.0;
 
     let cam = Camera::new(
+        90.0,
+        viewport_aspect_ratio,
         Vec3(0.0, 0.0, 0.0),
-        viewport_width,
-        viewport_height,
         focal_length,
     );
 
