@@ -46,9 +46,9 @@ namespace {
 		HittableList world;
 
 		auto material_ground = Lambertian2::new_material(Colour{0.8, 0.8, 0.0});
-		auto material_center = Dielectric::new_material(1.5);
+		auto material_center = Lambertian2::new_material(Colour{0.1, 0.2, 0.5});
 		auto material_left   = Dielectric::new_material(1.5);
-		auto material_right  = Metal::new_material(Colour{0.8, 0.6, 0.2}, 1.0);
+		auto material_right  = Metal::new_material(Colour{0.8, 0.6, 0.2}, 0.0);
 
 		world.push_back(Sphere::new_hittable(Vec3{ 0.0, -100.5, -1.0}, 100.0, std::move(material_ground)));
 		world.push_back(Sphere::new_hittable(Vec3{ 0.0,    0.0, -1.0},   0.5, std::move(material_center)));
