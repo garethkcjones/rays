@@ -13,8 +13,8 @@ namespace rays {
 class rays::Camera final {
 	public:
 
-		explicit Camera(Vec3 origin, double viewport_width,
-			double viewport_height, double focal_length) noexcept;
+		explicit Camera(double vfov, double aspect_ratio, Vec3 origin,
+			double focal_length) noexcept;
 
 		constexpr Ray get_ray(double u, double v) const noexcept;
 
