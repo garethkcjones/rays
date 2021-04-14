@@ -16,13 +16,13 @@ auto Colour::to_rgb8(int const samples_per_pixel) const noexcept
 	auto const scale = 1.0 / samples_per_pixel;
 	auto [r, g, b] = *this * scale;
 
-	r = std::clamp(r, 0.0, 0.999);
-	g = std::clamp(g, 0.0, 0.999);
-	b = std::clamp(b, 0.0, 0.999);
+	r = std::clamp(r, 0.0, 1.0);
+	g = std::clamp(g, 0.0, 1.0);
+	b = std::clamp(b, 0.0, 1.0);
 
-	auto const ir = static_cast<std::uint8_t>(256.0 * r);
-	auto const ig = static_cast<std::uint8_t>(256.0 * g);
-	auto const ib = static_cast<std::uint8_t>(256.0 * b);
+	auto const ir = static_cast<std::uint8_t>(255.999 * r);
+	auto const ig = static_cast<std::uint8_t>(255.999 * g);
+	auto const ib = static_cast<std::uint8_t>(255.999 * b);
 
 	return {ir, ig, ib};
 }

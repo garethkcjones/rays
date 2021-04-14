@@ -30,13 +30,13 @@ impl Colour {
         let scale = f64::from(samples_per_pixel).recip();
         let Colour(mut r, mut g, mut b) = self * scale;
 
-        r = r.clamp(0.0, 0.999);
-        g = g.clamp(0.0, 0.999);
-        b = b.clamp(0.0, 0.999);
+        r = r.clamp(0.0, 1.0);
+        g = g.clamp(0.0, 1.0);
+        b = b.clamp(0.0, 1.0);
 
-        let ir = (256.0 * r) as u8;
-        let ig = (256.0 * g) as u8;
-        let ib = (256.0 * b) as u8;
+        let ir = (255.999 * r) as u8;
+        let ig = (255.999 * g) as u8;
+        let ib = (255.999 * b) as u8;
 
         (ir, ig, ib)
     }
