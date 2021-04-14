@@ -94,7 +94,7 @@ impl Vec3 {
     }
 
     #[must_use]
-    pub fn unit(self) -> Vec3 {
+    pub fn unit(self) -> Self {
         self / self.length()
     }
 }
