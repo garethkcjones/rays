@@ -48,8 +48,12 @@ auto Lambertian0::scatter(Ray const &/*r_in*/,
                           std::default_random_engine &rand_eng) const
 	-> std::optional<std::pair<Colour, Ray>>
 {
-	auto const scatter_direction =
+	auto scatter_direction =
 		Vec3::new_random_in_hemisphere(rand_eng, rec.normal());
+
+	// Catch degenerate scatter direction.
+	if (scatter_direction.near_zero())
+		scatter_direction = rec.normal();
 
 	auto const attenuation = albedo_;
 	auto const scattered = Ray{rec.p(), scatter_direction};
@@ -62,8 +66,12 @@ auto Lambertian1::scatter(Ray const &/*r_in*/,
                           std::default_random_engine &rand_eng) const
 	-> std::optional<std::pair<Colour, Ray>>
 {
-	auto const scatter_direction =
+	auto scatter_direction =
 		rec.normal() + Vec3::new_random_in_unit_sphere(rand_eng);
+
+	// Catch degenerate scatter direction.
+	if (scatter_direction.near_zero())
+		scatter_direction = rec.normal();
 
 	auto const attenuation = albedo_;
 	auto const scattered = Ray{rec.p(), scatter_direction};
@@ -76,8 +84,11 @@ auto Lambertian2::scatter(Ray const &/*r_in*/,
                           std::default_random_engine &rand_eng) const
 	-> std::optional<std::pair<Colour, Ray>>
 {
-	auto const scatter_direction =
-		rec.normal() + Vec3::new_random_unit(rand_eng);
+	auto scatter_direction = rec.normal() + Vec3::new_random_unit(rand_eng);
+
+	// Catch degenerate scatter direction.
+	if (scatter_direction.near_zero())
+		scatter_direction = rec.normal();
 
 	auto const attenuation = albedo_;
 	auto const scattered = Ray{rec.p(), scatter_direction};
