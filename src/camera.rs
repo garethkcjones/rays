@@ -13,7 +13,12 @@ pub struct Camera {
 
 impl Camera {
     #[must_use]
-    pub fn new(origin: Vec3, viewport_width: f64, viewport_height: f64, focal_length: f64) -> Self {
+    pub fn new(vfov: f64, aspect_ratio: f64, origin: Vec3, focal_length: f64) -> Self {
+        let theta = vfov.to_radians();
+        let h = (0.5 * theta).tan();
+        let viewport_height = 2.0 * h;
+        let viewport_width = aspect_ratio * viewport_height;
+
         let horizontal = Vec3(viewport_width, 0.0, 0.0);
         let vertical = Vec3(0.0, viewport_height, 0.0);
         let lower_left_corner =
