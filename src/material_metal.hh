@@ -22,9 +22,10 @@ class rays::material::Metal final:
 {
 	public:
 
-		static std::shared_ptr<Material> new_material(Colour albedo);
+		static std::shared_ptr<Material>
+			new_material(Colour albedo, double fuzz);
 
-		explicit Metal(Colour albedo) noexcept;
+		explicit Metal(Colour albedo, double fuzz) noexcept;
 
 		std::optional<std::pair<Colour, Ray>> scatter(Ray const &r_in,
 			hittable::HitRecord const &rec,
@@ -33,4 +34,5 @@ class rays::material::Metal final:
 	private:
 
 		Colour albedo_;
+		double fuzz_;
 };
