@@ -23,6 +23,8 @@ namespace rays {
 
 	constexpr Vec3 cross(Vec3 v1, Vec3 v2) noexcept;
 	constexpr double dot(Vec3 v1, Vec3 v2) noexcept;
+
+	constexpr Vec3 reflect(Vec3 v, Vec3 n) noexcept;
 }
 
 /*
@@ -217,4 +219,13 @@ inline auto rays::Vec3::unit() const noexcept -> Vec3 {
 inline constexpr auto rays::Vec3::near_zero() const noexcept -> bool {
 	constexpr auto s = 1e-8;
 	return std::abs(x) < s && std::abs(y) < s && std::abs(z) < s;
+}
+
+/*
+ * Reflects `v` from surface with normal `n`.
+ */
+inline constexpr auto rays::reflect(Vec3 const v, Vec3 const n) noexcept
+	-> Vec3
+{
+	return v - 2.0 * dot(v, n) * n;
 }
