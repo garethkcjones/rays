@@ -8,7 +8,7 @@ pub use camera::Camera;
 pub use colour::Colour;
 use hittable::HitRecord;
 pub use hittable::{Hittable, Sphere};
-pub use material::{Lambertian0, Lambertian1, Lambertian2, Material, Metal};
+pub use material::{Dielectric, Lambertian0, Lambertian1, Lambertian2, Material, Metal};
 use rand::prelude::*;
 use ray::Ray;
 use std::{error::Error, io::prelude::*};
