@@ -1,5 +1,7 @@
 #include "material_dielectric.hh"
 
+#include <algorithm>
+#include <cmath>
 #include <memory>
 #include <optional>
 #include <random>
@@ -31,10 +33,16 @@ auto Dielectric::scatter(Ray const &r_in,
 	auto const refraction_ratio = rec.front_face() ? (1.0 / ir_) : ir_;
 
 	auto const unit_direction = r_in.direction().unit();
-	auto const refracted =
-		refract(unit_direction, rec.normal(), refraction_ratio);
+	auto const cos_theta =
+		std::clamp(dot(-unit_direction, rec.normal()), -1.0, 1.0);
+	auto const sin_theta = std::sqrt(1.0 - cos_theta * cos_theta);
 
-	auto const scattered = Ray{rec.p(), refracted};
+	auto const cannot_refract = refraction_ratio * sin_theta > 1.0;
+	auto const direction = cannot_refract
+		? reflect(unit_direction, rec.normal())
+		: refract(unit_direction, rec.normal(), refraction_ratio);
+
+	auto const scattered = Ray{rec.p(), direction};
 
 	return std::make_optional(std::make_pair(attenuation, scattered));
 }
