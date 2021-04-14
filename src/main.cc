@@ -1,8 +1,10 @@
+#include <cmath>
 #include <cstdlib>
 #include <exception>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <numbers>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -43,31 +45,26 @@ namespace {
 
 		// World.
 
+		auto const r = std::cos(0.25 * std::numbers::pi);
+
 		HittableList world;
 
-		auto material_ground = Lambertian2::new_material(Colour{0.8, 0.8, 0.0});
-		auto material_center = Lambertian2::new_material(Colour{0.1, 0.2, 0.5});
-		auto material_left   = Dielectric::new_material(1.5);
-		auto material_right  = Metal::new_material(Colour{0.8, 0.6, 0.2}, 0.0);
+		auto material_left  = Lambertian2::new_material(Colour{0.0, 0.0, 1.0});
+		auto material_right = Lambertian2::new_material(Colour{1.0, 0.0, 0.0});
 
-		world.push_back(Sphere::new_hittable(Vec3{ 0.0, -100.5, -1.0}, 100.0, std::move(material_ground)));
-		world.push_back(Sphere::new_hittable(Vec3{ 0.0,    0.0, -1.0},   0.5, std::move(material_center)));
-		world.push_back(Sphere::new_hittable(Vec3{-1.0,    0.0, -1.0},   0.5,           material_left));
-		world.push_back(Sphere::new_hittable(Vec3{-1.0,    0.0, -1.0},  -0.4, std::move(material_left)));
-		world.push_back(Sphere::new_hittable(Vec3{ 1.0,    0.0, -1.0},   0.5, std::move(material_right)));
+		world.push_back(Sphere::new_hittable(Vec3{-r, 0.0, -1.0}, r, std::move(material_left)));
+		world.push_back(Sphere::new_hittable(Vec3{ r, 0.0, -1.0}, r, std::move(material_right)));
 
 		// Camera
 
 		constexpr auto viewport_aspect_ratio =
 			static_cast<double>(image_width) / image_height;
-		constexpr auto viewport_height = 2.0;
-		constexpr auto viewport_width = viewport_aspect_ratio * viewport_height;
 		constexpr auto focal_length = 1.0;
 
 		auto const cam = Camera {
+			90.0,
+			viewport_aspect_ratio,
 			Vec3{0.0, 0.0, 0.0},
-			viewport_width,
-			viewport_height,
 			focal_length
 		};
 
