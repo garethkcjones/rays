@@ -25,6 +25,7 @@ namespace rays {
 	constexpr double dot(Vec3 v1, Vec3 v2) noexcept;
 
 	constexpr Vec3 reflect(Vec3 v, Vec3 n) noexcept;
+	Vec3 refract(Vec3 uv, Vec3 n, double etai_over_etat) noexcept;
 }
 
 /*

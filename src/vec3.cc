@@ -1,5 +1,7 @@
 #include "vec3.hh"
 
+#include <algorithm>
+#include <cmath>
 #include <random>
 
 using namespace rays;
@@ -53,4 +55,18 @@ auto Vec3::new_random_in_hemisphere(std::default_random_engine &rand_eng,
 		return in_unit_sphere;
 	else
 		return -in_unit_sphere;
+}
+
+/*
+ * Refracts `uv` through surface with normal `n` and refractive index ratio
+ * `etai_over_etat`.
+ */
+auto rays::refract(Vec3 const uv, Vec3 const n, double const etai_over_etat)
+	noexcept -> Vec3
+{
+	auto const cos_theta = std::clamp(dot(-uv, n), -1.0, 1.0);
+	auto const r_out_perp = etai_over_etat * (uv + cos_theta * n);
+	auto const r_out_parallel =
+		-std::sqrt(std::abs(1.0 - dot(r_out_perp, r_out_perp))) * n;
+	return r_out_perp + r_out_parallel;
 }
