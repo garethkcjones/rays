@@ -42,6 +42,7 @@ fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error>> {
     let viewport_height = 2.0;
     let viewport_width = viewport_aspect_ratio * viewport_height;
     let focal_length = 1.0;
+
     let cam = Camera::new(
         Vec3(0.0, 0.0, 0.0),
         viewport_width,

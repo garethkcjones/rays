@@ -13,7 +13,7 @@ namespace rays {
 class rays::Camera final {
 	public:
 
-		constexpr explicit Camera(Vec3 origin, double viewport_width,
+		explicit Camera(Vec3 origin, double viewport_width,
 			double viewport_height, double focal_length) noexcept;
 
 		constexpr Ray get_ray(double u, double v) const noexcept;
@@ -25,19 +25,6 @@ class rays::Camera final {
 		Vec3 vertical_;
 		Vec3 lower_left_corner_;
 };
-
-inline constexpr rays::Camera::Camera(Vec3 const origin,
-                                      double const viewport_width,
-                                      double const viewport_height,
-                                      double const focal_length) noexcept:
-	origin_{origin},
-	horizontal_{viewport_width, 0.0, 0.0},
-	vertical_{0.0, viewport_height, 0.0},
-	lower_left_corner_ {
-		origin - 0.5 * (horizontal_ + vertical_) - Vec3{0.0, 0.0, focal_length}
-	}
-{
-}
 
 inline constexpr auto rays::Camera::get_ray(double const u, double const v)
 	const noexcept -> Ray

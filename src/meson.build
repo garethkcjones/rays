@@ -1,4 +1,5 @@
 src = [
+  'camera.cc',
   'colour.cc',
   'hittable.cc',
   'hittable_hitrecord.cc',

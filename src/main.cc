@@ -63,7 +63,8 @@ namespace {
 		constexpr auto viewport_height = 2.0;
 		constexpr auto viewport_width = viewport_aspect_ratio * viewport_height;
 		constexpr auto focal_length = 1.0;
-		constexpr auto cam = Camera {
+
+		auto const cam = Camera {
 			Vec3{0.0, 0.0, 0.0},
 			viewport_width,
 			viewport_height,
