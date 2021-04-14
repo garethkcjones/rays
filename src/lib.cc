@@ -35,9 +35,9 @@ namespace {
 			return Colour{0.0, 0.0, 0.0};
 
 		if (auto const rec = world.hit(r, 0.001, infinity); rec) {
-			auto const material = rec->material();
-			assert(material);
-			if (auto const s = material->scatter(r, *rec, rand_eng); s) {
+			if (auto const s = rec->material_ref().scatter(r, *rec, rand_eng);
+			    s)
+			{
 				auto const [attenuation, scattered] = *s;
 				return attenuation
 				       * ray_colour(scattered, world, depth - 1, rand_eng);

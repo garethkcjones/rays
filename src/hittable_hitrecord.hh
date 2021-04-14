@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <memory>
 
 #include "ray.hh"
@@ -25,8 +26,10 @@ class rays::hittable::HitRecord final {
 		constexpr auto p() const noexcept {return p_;}
 		constexpr auto normal() const noexcept {return normal_;}
 		constexpr auto t() const noexcept {return t_;}
-		auto material() const noexcept {return material_;}
 		constexpr auto front_face() const noexcept {return front_face_;}
+
+		auto material() const noexcept {return material_;}
+		material::Material &material_ref() const noexcept;
 
 	private:
 
@@ -36,3 +39,10 @@ class rays::hittable::HitRecord final {
 		std::shared_ptr<material::Material> material_;
 		bool front_face_;
 };
+
+inline auto rays::hittable::HitRecord::material_ref() const noexcept
+	-> material::Material &
+{
+	assert(material_);
+	return *material_;
+}

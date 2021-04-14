@@ -54,12 +54,17 @@ impl HitRecord {
     }
 
     #[must_use]
+    pub const fn front_face(&self) -> bool {
+        self.front_face
+    }
+
+    #[must_use]
     pub fn material(&self) -> Arc<dyn Material> {
         Arc::clone(&self.material)
     }
 
     #[must_use]
-    pub const fn front_face(&self) -> bool {
-        self.front_face
+    pub fn material_ref(&self) -> &dyn Material {
+        self.material.as_ref()
     }
 }
