@@ -31,7 +31,8 @@ fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error>> {
     let world = vec![
         Sphere::new_hittable(Vec3(0.0, -100.5, -1.0), 100.0, material_ground),
         Sphere::new_hittable(Vec3(0.0, 0.0, -1.0), 0.5, material_center),
-        Sphere::new_hittable(Vec3(-1.0, 0.0, -1.0), 0.5, material_left),
+        Sphere::new_hittable(Vec3(-1.0, 0.0, -1.0), 0.5, material_left.clone()),
+        Sphere::new_hittable(Vec3(-1.0, 0.0, -1.0), -0.4, material_left),
         Sphere::new_hittable(Vec3(1.0, 0.0, -1.0), 0.5, material_right),
     ];
 
