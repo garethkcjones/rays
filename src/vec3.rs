@@ -97,6 +97,15 @@ impl Vec3 {
     pub fn unit(self) -> Vec3 {
         self / self.length()
     }
+
+    /**
+     * Returns `true` if the vector is close to zero in all dimensions.
+     */
+    pub fn is_near_zero(self) -> bool {
+        const S: f64 = 1e-8;
+        let Vec3(x, y, z) = self;
+        x.abs() < S && y.abs() < S && z.abs() < S
+    }
 }
 
 impl ops::Neg for Vec3 {
