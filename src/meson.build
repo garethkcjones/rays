@@ -1,4 +1,5 @@
 src = [
+  'colour.cc',
   'lib.cc',
   'main.cc'
 ]
