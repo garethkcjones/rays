@@ -6,6 +6,7 @@ mod ray;
 mod vec3;
 pub use camera::Camera;
 pub use colour::Colour;
+use hittable::HitRecord;
 pub use hittable::{Hittable, Sphere};
 pub use material::{Lambertian0, Lambertian1, Lambertian2, Material, Metal};
 use rand::prelude::*;

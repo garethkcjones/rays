@@ -1,5 +1,5 @@
 use super::Material;
-use crate::{hittable::HitRecord, Colour, Ray, Vec3};
+use crate::{Colour, HitRecord, Ray, Vec3};
 use std::sync::Arc;
 
 /**

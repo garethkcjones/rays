@@ -1,6 +1,6 @@
 mod lambertian;
 mod metal;
-use crate::{hittable::HitRecord, Colour, Ray};
+use crate::{Colour, HitRecord, Ray};
 pub use lambertian::{Lambertian0, Lambertian1, Lambertian2};
 pub use metal::Metal;
 use std::fmt::Debug;
