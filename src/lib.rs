@@ -7,7 +7,7 @@ mod vec3;
 pub use camera::Camera;
 pub use colour::Colour;
 pub use hittable::{Hittable, Sphere};
-pub use material::{Lambertian0, Lambertian1, Lambertian2, Material};
+pub use material::{Lambertian0, Lambertian1, Lambertian2, Material, Metal};
 use rand::prelude::*;
 use ray::Ray;
 use std::{error::Error, io::prelude::*};
