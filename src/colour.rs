@@ -54,6 +54,18 @@ impl ops::Add for Colour {
     }
 }
 
+impl ops::Mul for Colour {
+    type Output = Self;
+    fn mul(self, c: Self) -> Self::Output {
+        let Colour(r1, g1, b1) = self;
+        let Colour(r2, g2, b2) = c;
+        let r = r1 * r2;
+        let g = g1 * g2;
+        let b = b1 * b2;
+        Self(r, g, b)
+    }
+}
+
 impl ops::Mul<f64> for Colour {
     type Output = Self;
     fn mul(self, s: f64) -> Self::Output {
@@ -90,6 +102,12 @@ impl ops::Mul<Colour> for f64 {
 impl ops::AddAssign for Colour {
     fn add_assign(&mut self, c: Self) {
         *self = *self + c;
+    }
+}
+
+impl ops::MulAssign for Colour {
+    fn mul_assign(&mut self, c: Self) {
+        *self = *self * c;
     }
 }
 
