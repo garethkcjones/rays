@@ -99,6 +99,14 @@ impl Vec3 {
     }
 
     /**
+     * Reflects from surface with normal `n`.
+     */
+    #[must_use]
+    pub fn reflect(self, n: Self) -> Self {
+        self - 2.0 * self.dot(n) * n
+    }
+
+    /**
      * Returns `true` if the vector is close to zero in all dimensions.
      */
     pub fn is_near_zero(self) -> bool {
