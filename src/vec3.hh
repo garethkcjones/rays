@@ -54,6 +54,8 @@ struct rays::Vec3 final {
 
 	double length() const noexcept;
 	Vec3 unit() const noexcept;
+
+	constexpr bool near_zero() const noexcept;
 };
 
 inline constexpr auto rays::Vec3::operator+=(Vec3 const v) noexcept -> Vec3 & {
@@ -207,4 +209,12 @@ inline auto rays::Vec3::length() const noexcept -> double {
 
 inline auto rays::Vec3::unit() const noexcept -> Vec3 {
 	return *this / length();
+}
+
+/*
+ * Returns `true` if the vector is close to zero in all dimensions.
+ */
+inline constexpr auto rays::Vec3::near_zero() const noexcept -> bool {
+	constexpr auto s = 1e-8;
+	return std::abs(x) < s && std::abs(y) < s && std::abs(z) < s;
 }
