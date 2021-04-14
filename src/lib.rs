@@ -24,10 +24,10 @@ fn ray_colour(r: &Ray, world: &dyn Hittable, depth: u32) -> Colour {
     }
 
     if let Some(rec) = world.hit(r, 0.001, f64::INFINITY) {
-        let target = rec.p() + Vec3::new_random_in_hemisphere(rec.normal());
-        // let target = rec.p() + rec.normal() + Vec3::new_random_in_unit_sphere();
-        // let target = rec.p() + rec.normal() + Vec3::new_random_unit();
-        return 0.5 * ray_colour(&Ray::new(rec.p(), target - rec.p()), world, depth - 1);
+        if let Some((attenuation, scattered)) = rec.material().scatter(r, &rec) {
+            return attenuation * ray_colour(&scattered, world, depth - 1);
+        }
+        return Colour(0.0, 0.0, 0.0);
     }
 
     let unit_direction = r.direction().unit();
