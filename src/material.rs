@@ -1,4 +1,6 @@
+mod lambertian;
 use crate::{hittable::HitRecord, Colour, Ray};
+pub use lambertian::{Lambertian0, Lambertian1, Lambertian2};
 use std::fmt::Debug;
 
 /**
