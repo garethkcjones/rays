@@ -107,6 +107,17 @@ impl Vec3 {
     }
 
     /**
+     * Refracts through surface with normal `n` and refractive index ratio `etai_over_etat`.
+     */
+    #[must_use]
+    pub fn refract(self, n: Self, etai_over_etat: f64) -> Self {
+        let cos_theta = (-self).dot(n).clamp(-1.0, 1.0);
+        let r_out_perp = etai_over_etat * (self + cos_theta * n);
+        let r_out_parallel = -(1.0 - r_out_perp.dot(r_out_perp)).abs().sqrt() * n;
+        r_out_perp + r_out_parallel
+    }
+
+    /**
      * Returns `true` if the vector is close to zero in all dimensions.
      */
     #[must_use]
