@@ -14,6 +14,7 @@ pub use vec3::Vec3;
 /**
  * Calculates the colour of a ray of light.
  */
+#[must_use]
 fn ray_colour(r: &Ray, world: &dyn Hittable, depth: u32) -> Colour {
     // If we’ve exceeded the ray bounce limit, no more light is gathered.
     if depth == 0 {
