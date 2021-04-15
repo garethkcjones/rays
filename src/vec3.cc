@@ -58,6 +58,24 @@ auto Vec3::new_random_in_hemisphere(std::default_random_engine &rand_eng,
 }
 
 /*
+ * Creates a random vector inside a unit disk.
+ */
+auto Vec3::new_random_in_unit_disk(std::default_random_engine &rand_eng) -> Vec3
+{
+	auto rand_dst = std::uniform_real_distribution{-1.0, 1.0};
+
+	while (true) {
+		auto const x = rand_dst(rand_eng);
+		auto const y = rand_dst(rand_eng);
+
+		auto const p = Vec3{x, y, 0.0};
+
+		if (dot(p, p) < 1.0)
+			return p;
+	}
+}
+
+/*
  * Refracts `uv` through surface with normal `n` and refractive index ratio
  * `etai_over_etat`.
  */
