@@ -18,6 +18,7 @@ fn hit_sphere(centre: Vec3, radius: f64, r: &Ray) -> bool {
 /**
  * Calculates the colour of a ray of light.
  */
+#[must_use]
 fn ray_colour(r: &Ray) -> Colour {
     if hit_sphere(Vec3(0.0, 0.0, -1.0), 0.5, &r) {
         return Colour(1.0, 0.0, 0.0);
