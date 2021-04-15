@@ -7,6 +7,7 @@
 #include <limits>
 #include <ostream>
 #include <random>
+#include <vector>
 
 #include "camera.hh"
 #include "colour.hh"
@@ -60,17 +61,16 @@ namespace {
 	 * * `samples_per_pixel` is the number of samples per pixel.
 	 * * `max_depth` is the recursion limit for ray reflections.
 	 * * `cam` is the camera.
-	 * * `output` is the stream to write the generated image to.
 	 * * If `log` is `true`, progress is reported to the standard error stream.
 	 */
-	void render(Hittable const &world,
+	auto render(Hittable const &world,
 	            int const image_width,
 	            int const image_height,
 	            int const samples_per_pixel,
 	            int const max_depth,
 	            Camera const &cam,
-	            std::ostream &output,
 	            bool const log)
+		-> std::vector<Colour>
 	{
 		assert(image_width > 1);
 		assert(image_height > 1);
@@ -84,10 +84,11 @@ namespace {
 
 		// Render.
 
+		std::vector<Colour> pixels;
+		pixels.reserve(image_width * image_height);
+
 		auto const width_scale = static_cast<double>(image_width - 1);
 		auto const height_scale = static_cast<double>(image_height - 1);
-
-		output << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
 		for (auto j = image_height - 1; j >= 0; --j) {
 			if (log) {
@@ -106,23 +107,57 @@ namespace {
 					auto const ur = rand_dst(rand_eng);
 					auto const vr = rand_dst(rand_eng);
 
-					auto const u = (static_cast<double>(i) + ur) / width_scale;
-					auto const v = (static_cast<double>(j) + vr) / height_scale;
+					auto const u = (i + ur) / width_scale;
+					auto const v = (j + vr) / height_scale;
 
 					auto const r = cam.get_ray(u, v, rand_eng);
 
 					pixel_colour += ray_colour(r, world, max_depth, rand_eng);
 				}
 
-				auto const [ir, ig, ib] =
-					pixel_colour.to_rgb8(samples_per_pixel);
-
-				output << int{ir} << ' ' << int{ig} << ' ' << int{ib} << '\n';
+				pixels.push_back(pixel_colour);
 			}
 		}
 
 		if (log)
-			std::cerr << "\nDone.\n";
+			std::cerr << '\n';
+
+		return pixels;
+	}
+
+	/*
+	 * Writes an image file.
+	 *
+	 * # Parameters
+	 *
+	 * * `output` is the stream to write the generated image to.
+	 * * `pixels` is the image data.
+	 * * `image_width` and `image_height` are the image dimesions, in pixels.
+	 * * `samples_per_pixel` is the number of samples per pixel.
+	 * * If `log` is `true`, progress is reported to the standard error stream.
+	 */
+	void write_file(std::ostream &output,
+	                std::vector<Colour> const &pixels,
+	                int const image_width,
+	                int const image_height,
+	                int const samples_per_pixel,
+	                bool const log)
+	{
+		assert(image_width > 1);
+		assert(image_height > 1);
+		assert(samples_per_pixel > 0);
+
+		if (log)
+			std::cerr << "Writing output...\n";
+
+		output << "P3\n" << image_width << ' ' << image_height << "\n255\n";
+		for (auto &&pixel_colour : pixels) {
+			auto const [ir, ig, ib] = pixel_colour.to_rgb8(samples_per_pixel);
+			output << int{ir} << ' ' << int{ig} << ' ' << int{ib} << '\n';
+		}
+
+		if (log)
+			std::cerr << "Done.\n";
 	}
 }
 
@@ -148,12 +183,22 @@ void rays::run(Hittable const &world,
                std::ostream &output,
                bool const log)
 {
-	render(world,
-	       image_width,
-	       image_height,
-	       samples_per_pixel,
-	       max_depth,
-	       cam,
-	       output,
-	       log);
+	auto const pixels = render(
+		world,
+		image_width,
+		image_height,
+		samples_per_pixel,
+		max_depth,
+		cam,
+		log
+	);
+
+	write_file(
+		output,
+		pixels,
+		image_width,
+		image_height,
+		samples_per_pixel,
+		log
+	);
 }

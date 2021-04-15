@@ -11,7 +11,7 @@ pub use hittable::{Hittable, Sphere};
 pub use material::{Dielectric, Lambertian0, Lambertian1, Lambertian2, Material, Metal};
 use rand::prelude::*;
 use ray::Ray;
-use std::{error::Error, io::prelude::*};
+use std::{convert::TryFrom, error::Error, io::prelude::*};
 pub use vec3::Vec3;
 
 /**
@@ -46,10 +46,8 @@ fn ray_colour(r: &Ray, world: &dyn Hittable, depth: u32) -> Colour {
  * * `samples_per_pixel` is the number of samples per pixel.
  * * `max_depth` is the recursion limit for ray reflections.
  * * `cam` is the camera.
- * * `output` is the stream to write the generated image to.
  * * If `log` is `true`, progress is reported to the standard error stream.
  */
-#[allow(clippy::too_many_arguments)]
 fn render(
     world: &dyn Hittable,
     image_width: u32,
@@ -57,9 +55,10 @@ fn render(
     samples_per_pixel: u32,
     max_depth: u32,
     cam: &Camera,
-    output: &mut dyn Write,
     log: bool,
-) -> Result<(), Box<dyn Error>> {
+) -> Result<Box<[Colour]>, Box<dyn Error>> {
+    #![allow(clippy::many_single_char_names)]
+
     assert!(image_width > 1);
     assert!(image_height > 1);
     assert!(samples_per_pixel > 0);
@@ -71,10 +70,11 @@ fn render(
 
     // Render.
 
+    let mut pixels =
+        Vec::with_capacity(usize::try_from(image_width)? * usize::try_from(image_height)?);
+
     let width_scale = f64::from(image_width - 1);
     let height_scale = f64::from(image_height - 1);
-
-    write!(output, "P3\n{} {}\n255\n", image_width, image_height)?;
 
     for j in (0..image_height).rev() {
         if log {
@@ -85,29 +85,70 @@ fn render(
             );
         }
 
-        for i in 0..image_width {
-            let mut pixel_colour = Colour(0.0, 0.0, 0.0);
+        let j = f64::from(j);
 
+        for i in 0..image_width {
+            let i = f64::from(i);
+
+            let mut pixel_colour = Colour(0.0, 0.0, 0.0);
             for _ in 0..samples_per_pixel {
                 let ur = rand_eng.sample(rand_dst);
                 let vr = rand_eng.sample(rand_dst);
 
-                let u = (f64::from(i) + ur) / width_scale;
-                let v = (f64::from(j) + vr) / height_scale;
+                let u = (i + ur) / width_scale;
+                let v = (j + vr) / height_scale;
 
                 let r = cam.get_ray(u, v);
 
                 pixel_colour += ray_colour(&r, world, max_depth);
             }
 
-            let (ir, ig, ib) = pixel_colour.to_rgb8(samples_per_pixel);
-
-            writeln!(output, "{} {} {}", ir, ig, ib)?;
+            pixels.push(pixel_colour);
         }
     }
 
     if log {
-        eprint!("\nDone.\n");
+        eprintln!();
+    }
+
+    Ok(pixels.into_boxed_slice())
+}
+
+/**
+ * Writes an image file.
+ *
+ * # Parameters
+ *
+ * * `output` is the stream to write the generated image to.
+ * * `pixels` is the image data.
+ * * `image_width` and `image_height` are the image dimesions, in pixels.
+ * * `samples_per_pixel` is the number of samples per pixel.
+ * * If `log` is `true`, progress is reported to the standard error stream.
+ */
+fn write_file(
+    output: &mut dyn Write,
+    pixels: &[Colour],
+    image_width: u32,
+    image_height: u32,
+    samples_per_pixel: u32,
+    log: bool,
+) -> Result<(), Box<dyn Error>> {
+    assert!(image_width > 1);
+    assert!(image_height > 1);
+    assert!(samples_per_pixel > 0);
+
+    if log {
+        eprintln!("Writing output...");
+    }
+
+    write!(output, "P3\n{} {}\n255\n", image_width, image_height)?;
+    for pixel_colour in pixels {
+        let (ir, ig, ib) = pixel_colour.to_rgb8(samples_per_pixel);
+        writeln!(output, "{} {} {}", ir, ig, ib)?;
+    }
+
+    if log {
+        eprintln!("Done.");
     }
 
     Ok(())
@@ -137,14 +178,22 @@ pub fn run(
     output: &mut dyn Write,
     log: bool,
 ) -> Result<(), Box<dyn Error>> {
-    render(
+    let pixels = render(
         world,
         image_width,
         image_height,
         samples_per_pixel,
         max_depth,
         cam,
+        log,
+    )?;
+
+    write_file(
         output,
+        &pixels,
+        image_width,
+        image_height,
+        samples_per_pixel,
         log,
     )
 }
