@@ -27,3 +27,11 @@ Camera::Camera(Vec3 const lookfrom,
 	vertical_ = viewport_height * v;
 	lower_left_corner_ = origin_ - 0.5 * (horizontal_ + vertical_) - w;
 }
+
+auto Camera::get_ray(double const s, double const t) const noexcept -> Ray
+{
+	return Ray {
+		origin_,
+		lower_left_corner_ + s * horizontal_ + t * vertical_ - origin_
+	};
+}
