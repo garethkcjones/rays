@@ -8,7 +8,7 @@ use std::{fmt::Debug, sync::Arc};
 /**
  * Trait for hittable objects.
  */
-pub trait Hittable: Debug {
+pub trait Hittable: Debug + Send + Sync {
     #[must_use]
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord>;
 }

@@ -11,7 +11,7 @@ pub use hittable::{Hittable, Sphere};
 pub use material::{Dielectric, Lambertian0, Lambertian1, Lambertian2, Material, Metal};
 use rand::prelude::*;
 use ray::Ray;
-use std::{convert::TryFrom, error::Error, io::prelude::*};
+use std::{convert::TryFrom, error::Error, io::prelude::*, panic, sync::Arc, thread};
 pub use vec3::Vec3;
 
 /**
@@ -49,14 +49,14 @@ fn ray_colour(r: &Ray, world: &dyn Hittable, depth: u32) -> Colour {
  * * If `log` is `true`, progress is reported to the standard error stream.
  */
 fn render(
-    world: &dyn Hittable,
+    world: Arc<dyn Hittable>,
     image_width: u32,
     image_height: u32,
     samples_per_pixel: u32,
     max_depth: u32,
-    cam: &Camera,
+    cam: Arc<Camera>,
     log: bool,
-) -> Result<Box<[Colour]>, Box<dyn Error>> {
+) -> Result<Box<[Colour]>, Box<dyn Error + Send + Sync>> {
     #![allow(clippy::many_single_char_names)]
 
     assert!(image_width > 1);
@@ -100,7 +100,7 @@ fn render(
 
                 let r = cam.get_ray(u, v);
 
-                pixel_colour += ray_colour(&r, world, max_depth);
+                pixel_colour += ray_colour(&r, world.as_ref(), max_depth);
             }
 
             pixels.push(pixel_colour);
@@ -132,7 +132,7 @@ fn write_file(
     image_height: u32,
     samples_per_pixel: u32,
     log: bool,
-) -> Result<(), Box<dyn Error>> {
+) -> Result<(), Box<dyn Error + Send + Sync>> {
     assert!(image_width > 1);
     assert!(image_height > 1);
     assert!(samples_per_pixel > 0);
@@ -159,6 +159,7 @@ fn write_file(
  *
  * # Parameters
  *
+ * * `num_threads` is the number of threads to distribute rendering over.
  * * `world` contains the hittable objects in the scene.
  * * `image_width` and `image_height` are the image dimesions, in pixels.
  * * `samples_per_pixel` is the number of samples per pixel.
@@ -169,24 +170,70 @@ fn write_file(
  */
 #[allow(clippy::too_many_arguments)]
 pub fn run(
-    world: &dyn Hittable,
+    num_threads: u32,
+    world: Arc<dyn Hittable>,
     image_width: u32,
     image_height: u32,
     samples_per_pixel: u32,
     max_depth: u32,
-    cam: &Camera,
+    cam: Arc<Camera>,
     output: &mut dyn Write,
     log: bool,
-) -> Result<(), Box<dyn Error>> {
-    let pixels = render(
+) -> Result<(), Box<dyn Error + Send + Sync>> {
+    let samples_per_thread = samples_per_pixel / num_threads;
+    let remaining_samples = samples_per_pixel % num_threads;
+
+    // Spawn threads.
+    let mut threads = Vec::with_capacity(num_threads as usize - 1);
+    for thread_num in 1..num_threads {
+        let samples_per_pixel = if thread_num <= remaining_samples {
+            samples_per_thread + 1
+        } else {
+            samples_per_thread
+        };
+        let world = Arc::clone(&world);
+        let cam = Arc::clone(&cam);
+        threads.push(thread::spawn(move || {
+            render(
+                world,
+                image_width,
+                image_height,
+                samples_per_pixel,
+                max_depth,
+                cam,
+                false,
+            )
+        }));
+    }
+
+    // This thread.
+    let mut pixels = render(
         world,
         image_width,
         image_height,
-        samples_per_pixel,
+        samples_per_thread,
         max_depth,
         cam,
         log,
     )?;
+
+    // Join threads.
+    for (i, thread) in threads.into_iter().enumerate() {
+        if log {
+            eprint!("\rWaiting for thread {:2} of {}...", i + 2, num_threads);
+        }
+        let thread_pixels = match thread.join() {
+            Ok(pixels) => pixels?,
+            Err(x) => panic::resume_unwind(x),
+        };
+        assert_eq!(pixels.len(), thread_pixels.len());
+        for (pixel, thread_pixel) in pixels.iter_mut().zip(thread_pixels.iter()) {
+            *pixel += *thread_pixel;
+        }
+    }
+    if log {
+        eprintln!();
+    }
 
     write_file(
         output,

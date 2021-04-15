@@ -12,7 +12,7 @@ use std::{
 };
 
 #[must_use]
-fn random_scene() -> Vec<Arc<dyn Hittable>> {
+fn random_scene() -> Arc<dyn Hittable> {
     let mut rand_eng = thread_rng();
     let rand_dst = rand::distributions::Uniform::new(0.0, 1.0);
 
@@ -67,13 +67,13 @@ fn random_scene() -> Vec<Arc<dyn Hittable>> {
     let material3 = Metal::new_material(Colour(0.7, 0.6, 0.5), 0.0);
     world.push(Sphere::new_hittable(Vec3(4.0, 1.0, 0.0), 1.0, material3));
 
-    world
+    Arc::new(world)
 }
 
 /**
  * Builds and renders a scene.
  */
-fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error>> {
+fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error + Send + Sync>> {
     // Image.
 
     let image_aspect_ratio = 3.0 / 2.0;
@@ -105,16 +105,20 @@ fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error>> {
         aperture,
         dist_to_focus,
     );
+    let cam = Arc::new(cam);
 
     // Render.
 
+    let num_threads = 32;
+
     rays::run(
-        &world,
+        num_threads,
+        world,
         image_width,
         image_height,
         samples_per_pixel,
         max_depth,
-        &cam,
+        cam,
         output,
         true,
     )
@@ -123,7 +127,7 @@ fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error>> {
 /**
  * Runs the program.
  */
-fn run(args: &[OsString]) -> Result<(), Box<dyn Error>> {
+fn run(args: &[OsString]) -> Result<(), Box<dyn Error + Send + Sync>> {
     match args.len() {
         0 | 1 => {
             // No output file name specified on command-line.  Use stdout.
