@@ -14,6 +14,7 @@ pub use vec3::Vec3;
 /**
  * Calculates the colour of a ray of light.
  */
+#[must_use]
 fn ray_colour(r: &Ray, world: &dyn Hittable) -> Colour {
     if let Some(rec) = world.hit(r, 0.0, f64::INFINITY) {
         let Vec3(x, y, z) = rec.normal();
