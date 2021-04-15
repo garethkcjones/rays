@@ -108,7 +108,7 @@ fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error>> {
 
     // Render.
 
-    rays::render(
+    rays::run(
         &world,
         image_width,
         image_height,

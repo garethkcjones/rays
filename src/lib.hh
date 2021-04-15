@@ -11,9 +11,9 @@ namespace rays {
 	constexpr double degrees_to_radians(double degrees) noexcept;
 
 	// Main raytracer function.
-	void render(hittable::Hittable const &world, int image_width,
-		int image_height, int samples_per_pixel, int max_depth,
-		Camera const &cam, std::ostream &output, bool log);
+	void run(hittable::Hittable const &world, int image_width, int image_height,
+		int samples_per_pixel, int max_depth, Camera const &cam,
+		std::ostream &output, bool log);
 }
 
 inline constexpr auto rays::degrees_to_radians(double const degrees) noexcept

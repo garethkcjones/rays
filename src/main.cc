@@ -136,8 +136,8 @@ namespace {
 
 		// Render.
 
-		rays::render(world, image_width, image_height, samples_per_pixel,
-		             max_depth, cam, output, true);
+		rays::run(world, image_width, image_height, samples_per_pixel,
+		          max_depth, cam, output, true);
 	}
 
 	/*

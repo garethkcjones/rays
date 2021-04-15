@@ -50,7 +50,7 @@ fn ray_colour(r: &Ray, world: &dyn Hittable, depth: u32) -> Colour {
  * * If `log` is `true`, progress is reported to the standard error stream.
  */
 #[allow(clippy::too_many_arguments)]
-pub fn render(
+fn render(
     world: &dyn Hittable,
     image_width: u32,
     image_height: u32,
@@ -111,4 +111,40 @@ pub fn render(
     }
 
     Ok(())
+}
+
+/**
+ * Runs the program.
+ *
+ * # Parameters
+ *
+ * * `world` contains the hittable objects in the scene.
+ * * `image_width` and `image_height` are the image dimesions, in pixels.
+ * * `samples_per_pixel` is the number of samples per pixel.
+ * * `max_depth` is the recursion limit for ray reflections.
+ * * `cam` is the camera.
+ * * `output` is the stream to write the generated image to.
+ * * If `log` is `true`, progress is reported to the standard error stream.
+ */
+#[allow(clippy::too_many_arguments)]
+pub fn run(
+    world: &dyn Hittable,
+    image_width: u32,
+    image_height: u32,
+    samples_per_pixel: u32,
+    max_depth: u32,
+    cam: &Camera,
+    output: &mut dyn Write,
+    log: bool,
+) -> Result<(), Box<dyn Error>> {
+    render(
+        world,
+        image_width,
+        image_height,
+        samples_per_pixel,
+        max_depth,
+        cam,
+        output,
+        log,
+    )
 }
