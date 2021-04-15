@@ -1,4 +1,5 @@
-use rays::{Camera, Colour, Dielectric, Lambertian2, Metal, Sphere, Vec3};
+use rand::prelude::*;
+use rays::{Camera, Colour, Dielectric, Hittable, Lambertian2, Metal, Sphere, Vec3};
 use std::{
     env,
     error::Error,
@@ -7,7 +8,67 @@ use std::{
     io::{self, prelude::*, BufWriter},
     path::Path,
     process,
+    sync::Arc,
 };
+
+#[must_use]
+fn random_scene() -> Vec<Arc<dyn Hittable>> {
+    let mut rand_eng = thread_rng();
+    let rand_dst = rand::distributions::Uniform::new(0.0, 1.0);
+
+    let mut world = Vec::new();
+
+    let ground_material = Lambertian2::new_material(Colour(0.5, 0.5, 0.5));
+    world.push(Sphere::new_hittable(
+        Vec3(0.0, -1000.0, 0.0),
+        1000.0,
+        ground_material,
+    ));
+
+    for a in -11..11 {
+        let a = f64::from(a);
+        for b in -11..11 {
+            let b = f64::from(b);
+
+            let choose_mat = rand_eng.sample(rand_dst);
+            let centre = Vec3(
+                a + 0.9 * rand_eng.sample(rand_dst),
+                0.2,
+                b + 0.9 * rand_eng.sample(rand_dst),
+            );
+
+            if (centre - Vec3(4.0, 0.2, 0.0)).length() > 0.9 {
+                if choose_mat < 0.8 {
+                    // Diffuse.
+                    let albedo = Colour::new_random(0.0, 1.0) * Colour::new_random(0.0, 1.0);
+                    let sphere_material = Lambertian2::new_material(albedo);
+                    world.push(Sphere::new_hittable(centre, 0.2, sphere_material));
+                } else if choose_mat < 0.95 {
+                    // Metal.
+                    let albedo = Colour::new_random(0.5, 1.0);
+                    let fuzz = 0.5 * rand_eng.sample(rand_dst);
+                    let sphere_material = Metal::new_material(albedo, fuzz);
+                    world.push(Sphere::new_hittable(centre, 0.2, sphere_material));
+                } else {
+                    // Glass.
+                    let sphere_material = Dielectric::new_material(1.5);
+                    world.push(Sphere::new_hittable(centre, 0.2, sphere_material));
+                }
+            }
+        }
+    }
+
+    let material1 = Dielectric::new_material(1.5);
+    world.push(Sphere::new_hittable(Vec3(0.0, 1.0, 0.0), 1.0, material1));
+
+    let material2 = Lambertian2::new_material(Colour(0.4, 0.2, 0.1));
+    world.push(Sphere::new_hittable(Vec3(-4.0, 1.0, 0.0), 1.0, material2));
+
+    let material3 = Metal::new_material(Colour(0.7, 0.6, 0.5), 0.0);
+    world.push(Sphere::new_hittable(Vec3(4.0, 1.0, 0.0), 1.0, material3));
+
+    world
+}
 
 /**
  * Builds and renders a scene.
@@ -15,36 +76,25 @@ use std::{
 fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error>> {
     // Image.
 
-    let image_aspect_ratio = 16.0 / 9.0;
-    let image_width = 400;
+    let image_aspect_ratio = 3.0 / 2.0;
+    let image_width = 1200;
     let image_height = (f64::from(image_width) / image_aspect_ratio) as _;
-    let samples_per_pixel = 100;
+    let samples_per_pixel = 500;
     let max_depth = 50;
 
     // World.
 
-    let material_ground = Lambertian2::new_material(Colour(0.8, 0.8, 0.0));
-    let material_centre = Lambertian2::new_material(Colour(0.1, 0.2, 0.5));
-    let material_left = Dielectric::new_material(1.5);
-    let material_right = Metal::new_material(Colour(0.8, 0.6, 0.2), 0.0);
-
-    let world = vec![
-        Sphere::new_hittable(Vec3(0.0, -100.5, -1.0), 100.0, material_ground),
-        Sphere::new_hittable(Vec3(0.0, 0.0, -1.0), 0.5, material_centre),
-        Sphere::new_hittable(Vec3(-1.0, 0.0, -1.0), 0.5, material_left.clone()),
-        Sphere::new_hittable(Vec3(-1.0, 0.0, -1.0), -0.45, material_left),
-        Sphere::new_hittable(Vec3(1.0, 0.0, -1.0), 0.5, material_right),
-    ];
+    let world = random_scene();
 
     // Camera.
 
-    let lookfrom = Vec3(3.0, 3.0, 2.0);
-    let lookat = Vec3(0.0, 0.0, -1.0);
+    let lookfrom = Vec3(13.0, 2.0, 3.0);
+    let lookat = Vec3(0.0, 0.0, 0.0);
     let vup = Vec3(0.0, 1.0, 0.0);
     let vfov = 20.0;
     let aspect_ratio = f64::from(image_width) / f64::from(image_height);
-    let aperture = 2.0;
-    let dist_to_focus = (lookfrom - lookat).length();
+    let aperture = 0.1;
+    let dist_to_focus = 10.0;
 
     let cam = Camera::new(
         lookfrom,
