@@ -9,6 +9,7 @@ pub use vec3::Vec3;
 /**
  * Calculates the colour of a ray of light.
  */
+#[must_use]
 fn ray_colour(r: &Ray) -> Colour {
     let unit_direction = r.direction().unit();
     let t = 0.5 * (unit_direction.y() + 1.0);
