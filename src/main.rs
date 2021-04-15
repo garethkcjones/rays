@@ -44,7 +44,7 @@ fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error>> {
         Vec3(-2.0, 2.0, 1.0),
         Vec3(0.0, 0.0, -1.0),
         Vec3(0.0, 1.0, 0.0),
-        90.0,
+        20.0,
         viewport_aspect_ratio,
     );
 
