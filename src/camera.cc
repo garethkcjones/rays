@@ -7,19 +7,23 @@
 
 using namespace rays;
 
-Camera::Camera(double const vfov, // Vertical field-of-view in degrees.
-               double const aspect_ratio,
-               Vec3 const origin,
-               double const focal_length) noexcept:
-	origin_{origin}
+Camera::Camera(Vec3 const lookfrom,
+               Vec3 const lookat,
+               Vec3 const vup,
+               double const vfov, // Vertical field-of-view in degrees.
+               double const aspect_ratio) noexcept
 {
 	auto const theta = degrees_to_radians(vfov);
 	auto const h = std::tan(0.5 * theta);
 	auto const viewport_height = 2.0 * h;
 	auto const viewport_width = aspect_ratio * viewport_height;
 
-	horizontal_ = Vec3{viewport_width, 0.0, 0.0};
-	vertical_ = Vec3{0.0, viewport_height, 0.0};
-	lower_left_corner_ =
-	   origin_ - 0.5 * (horizontal_ + vertical_) - Vec3{0.0, 0.0, focal_length};
+	auto const w = (lookfrom - lookat).unit();
+	auto const u = cross(vup, w).unit();
+	auto const v = cross(w, u);
+
+	origin_ = lookfrom;
+	horizontal_ = viewport_width * u;
+	vertical_ = viewport_height * v;
+	lower_left_corner_ = origin_ - 0.5 * (horizontal_ + vertical_) - w;
 }
