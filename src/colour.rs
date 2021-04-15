@@ -1,3 +1,4 @@
+use rand::prelude::*;
 use std::ops;
 
 /**
@@ -7,6 +8,21 @@ use std::ops;
 pub struct Colour(pub f64, pub f64, pub f64);
 
 impl Colour {
+    /**
+     * Creates a random colour.
+     */
+    #[must_use]
+    pub fn new_random(min: f64, max: f64) -> Self {
+        let mut rand_eng = thread_rng();
+        let rand_dst = rand::distributions::Uniform::new(min, max);
+
+        let r = rand_eng.sample(rand_dst);
+        let g = rand_eng.sample(rand_dst);
+        let b = rand_eng.sample(rand_dst);
+
+        Colour(r, g, b)
+    }
+
     #[must_use]
     pub const fn r(self) -> f64 {
         self.0
