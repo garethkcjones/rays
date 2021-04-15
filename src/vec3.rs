@@ -57,6 +57,26 @@ impl Vec3 {
         }
     }
 
+    /**
+     * Creates a random vector inside a unit disk.
+     */
+    #[must_use]
+    pub fn new_random_in_unit_disk() -> Self {
+        let mut rand_eng = thread_rng();
+        let rand_dst = rand::distributions::Uniform::new(-1.0, 1.0);
+
+        loop {
+            let x = rand_eng.sample(rand_dst);
+            let y = rand_eng.sample(rand_dst);
+
+            let p = Vec3(x, y, 0.0);
+
+            if p.dot(p) < 1.0 {
+                return p;
+            }
+        }
+    }
+
     #[must_use]
     pub const fn x(self) -> f64 {
         self.0
