@@ -4,9 +4,27 @@
 #include <cassert>
 #include <cmath>
 #include <cstdint>
+#include <random>
 #include <tuple>
 
 using namespace rays;
+
+/*
+ * Creates a random colour.
+ */
+auto Colour::new_random(std::default_random_engine &rand_eng,
+                        double const min,
+                        double const max)
+	-> Colour
+{
+	auto rand_dst = std::uniform_real_distribution{min, max};
+
+	auto const r = rand_dst(rand_eng);
+	auto const g = rand_dst(rand_eng);
+	auto const b = rand_dst(rand_eng);
+
+	return Colour{r, g, b};
+}
 
 auto Colour::to_rgb8(int const samples_per_pixel) const noexcept
 	-> std::tuple<std::uint8_t, std::uint8_t, std::uint8_t>

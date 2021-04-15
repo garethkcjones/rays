@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <random>
 #include <tuple>
 
 namespace rays {
@@ -19,6 +20,9 @@ namespace rays {
  * Type for representing colours.
  */
 struct rays::Colour final {
+	static Colour new_random(std::default_random_engine &rand_eng, double min,
+		double max);
+
 	double r = 0.0;
 	double g = 0.0;
 	double b = 0.0;
