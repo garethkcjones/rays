@@ -58,15 +58,23 @@ namespace {
 
 		// Camera
 
-		constexpr auto viewport_aspect_ratio =
+		constexpr auto lookfrom = Vec3{3.0, 3.0,  2.0};
+		constexpr auto lookat   = Vec3{0.0, 0.0, -1.0};
+		constexpr auto vup      = Vec3{0.0, 1.0,  0.0};
+		constexpr auto vfov = 20.0;
+		constexpr auto aspect_ratio =
 			static_cast<double>(image_width) / image_height;
+		constexpr auto aperture = 2.0;
+		auto const dist_to_focus = (lookfrom - lookat).length();
 
 		auto const cam = Camera {
-			Vec3{-2.0, 2.0, 1.0},
-			Vec3{0.0, 0.0, -1.0},
-			Vec3{0.0, 1.0, 0.0},
-			20.0,
-			viewport_aspect_ratio
+			lookfrom,
+			lookat,
+			vup,
+			vfov,
+			aspect_ratio,
+			aperture,
+			dist_to_focus
 		};
 
 		// Render.

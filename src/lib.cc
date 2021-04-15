@@ -110,7 +110,7 @@ void rays::render(Hittable const &world,
 				auto const u = (static_cast<double>(i) + ur) / width_scale;
 				auto const v = (static_cast<double>(j) + vr) / height_scale;
 
-				auto const r = cam.get_ray(u, v);
+				auto const r = cam.get_ray(u, v, rand_eng);
 
 				pixel_colour += ray_colour(r, world, max_depth, rand_eng);
 			}
