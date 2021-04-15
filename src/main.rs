@@ -38,14 +38,22 @@ fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error>> {
 
     // Camera.
 
-    let viewport_aspect_ratio = f64::from(image_width) / f64::from(image_height);
+    let lookfrom = Vec3(3.0, 3.0, 2.0);
+    let lookat = Vec3(0.0, 0.0, -1.0);
+    let vup = Vec3(0.0, 1.0, 0.0);
+    let vfov = 20.0;
+    let aspect_ratio = f64::from(image_width) / f64::from(image_height);
+    let aperture = 2.0;
+    let dist_to_focus = (lookfrom - lookat).length();
 
     let cam = Camera::new(
-        Vec3(-2.0, 2.0, 1.0),
-        Vec3(0.0, 0.0, -1.0),
-        Vec3(0.0, 1.0, 0.0),
-        20.0,
-        viewport_aspect_ratio,
+        lookfrom,
+        lookat,
+        vup,
+        vfov,
+        aspect_ratio,
+        aperture,
+        dist_to_focus,
     );
 
     // Render.
