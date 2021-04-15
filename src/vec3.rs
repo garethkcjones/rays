@@ -47,6 +47,7 @@ impl Vec3 {
     /**
      * Creates a random vector inside a hemisphere.
      */
+    #[must_use]
     pub fn new_random_in_hemisphere(normal: Self) -> Self {
         let in_unit_sphere = Self::new_random_in_unit_sphere();
         if in_unit_sphere.dot(normal) > 0.0 {
