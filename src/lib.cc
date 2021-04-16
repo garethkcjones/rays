@@ -5,8 +5,10 @@
 #include <iomanip>
 #include <iostream>
 #include <limits>
+#include <memory>
 #include <ostream>
 #include <random>
+#include <utility>
 #include <vector>
 
 #include "camera.hh"
@@ -63,19 +65,21 @@ namespace {
 	 * * `cam` is the camera.
 	 * * If `log` is `true`, progress is reported to the standard error stream.
 	 */
-	auto render(Hittable const &world,
+	auto render(std::shared_ptr<Hittable const> world,
 	            int const image_width,
 	            int const image_height,
 	            int const samples_per_pixel,
 	            int const max_depth,
-	            Camera const &cam,
+	            std::shared_ptr<Camera const> cam,
 	            bool const log)
 		-> std::vector<Colour>
 	{
+		assert(world);
 		assert(image_width > 1);
 		assert(image_height > 1);
 		assert(samples_per_pixel > 0);
 		assert(max_depth > 0);
+		assert(cam);
 
 		// Initialize random number generator.
 		auto rand_dev = std::random_device{};
@@ -110,9 +114,9 @@ namespace {
 					auto const u = (i + ur) / width_scale;
 					auto const v = (j + vr) / height_scale;
 
-					auto const r = cam.get_ray(u, v, rand_eng);
+					auto const r = cam->get_ray(u, v, rand_eng);
 
-					pixel_colour += ray_colour(r, world, max_depth, rand_eng);
+					pixel_colour += ray_colour(r, *world, max_depth, rand_eng);
 				}
 
 				pixels.push_back(pixel_colour);
@@ -166,6 +170,7 @@ namespace {
  *
  * # Parameters
  *
+ * * `num_threads` is the number of threads to distribute rendering over.
  * * `world` contains the hittable objects in the scene.
  * * `image_width` and `image_height` are the image dimesions, in pixels.
  * * `samples_per_pixel` is the number of samples per pixel.
@@ -174,22 +179,23 @@ namespace {
  * * `output` is the stream to write the generated image to.
  * * If `log` is `true`, progress is reported to the standard error stream.
  */
-void rays::run(Hittable const &world,
+void rays::run(int const /*num_threads*/,
+               std::shared_ptr<Hittable const> world,
                int const image_width,
                int const image_height,
                int const samples_per_pixel,
                int const max_depth,
-               Camera const &cam,
+               std::shared_ptr<Camera const> cam,
                std::ostream &output,
                bool const log)
 {
 	auto const pixels = render(
-		world,
+		std::move(world),
 		image_width,
 		image_height,
 		samples_per_pixel,
 		max_depth,
-		cam,
+		std::move(cam),
 		log
 	);
 

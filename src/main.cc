@@ -21,7 +21,7 @@
 namespace fs = std::filesystem;
 
 namespace {
-	auto random_scene() -> rays::hittable::HittableList {
+	auto random_scene() -> std::shared_ptr<rays::hittable::HittableList> {
 		using rays::Colour;
 		using rays::hittable::HittableList;
 		using rays::hittable::Sphere;
@@ -34,10 +34,10 @@ namespace {
 		auto rand_eng = std::default_random_engine{rand_dev()};
 		auto rand_dst = std::uniform_real_distribution{0.0, 1.0};
 
-		HittableList world;
+		auto const world = std::make_shared<HittableList>();
 
 		auto ground_material = Lambertian2::new_material(Colour{0.5, 0.5, 0.5});
-		world.push_back(Sphere::new_hittable(Vec3{0.0, -1000.0, 0.0}, 1000.0,
+		world->push_back(Sphere::new_hittable(Vec3{0.0, -1000.0, 0.0}, 1000.0,
 			std::move(ground_material)));
 
 		for (auto a = -11; a < 11; ++a) {
@@ -57,7 +57,7 @@ namespace {
 							* Colour::new_random(rand_eng, 0.0, 1.0);
 						auto sphere_material =
 							Lambertian2::new_material(albedo);
-						world.push_back(Sphere::new_hittable(centre, 0.2,
+						world->push_back(Sphere::new_hittable(centre, 0.2,
 							std::move(sphere_material)));
 					} else if (choose_mat < 0.95) {
 						// Metal.
@@ -66,12 +66,12 @@ namespace {
 						auto const fuzz = 0.5 * rand_dst(rand_eng);
 						auto sphere_material =
 							Metal::new_material(albedo, fuzz);
-						world.push_back(Sphere::new_hittable(centre, 0.2,
+						world->push_back(Sphere::new_hittable(centre, 0.2,
 							std::move(sphere_material)));
 					} else {
 						// Glass.
 						auto sphere_material = Dielectric::new_material(1.5);
-						world.push_back(Sphere::new_hittable(centre, 0.2,
+						world->push_back(Sphere::new_hittable(centre, 0.2,
 							std::move(sphere_material)));
 					}
 				}
@@ -79,15 +79,15 @@ namespace {
 		}
 
 		auto material1 = Dielectric::new_material(1.5);
-		world.push_back(Sphere::new_hittable(Vec3{0.0, 1.0, 0.0}, 1.0,
+		world->push_back(Sphere::new_hittable(Vec3{0.0, 1.0, 0.0}, 1.0,
 			std::move(material1)));
 
 		auto material2 = Lambertian2::new_material(Colour{0.4, 0.2, 0.1});
-		world.push_back(Sphere::new_hittable(Vec3{-4.0, 1.0, 0.0}, 1.0,
+		world->push_back(Sphere::new_hittable(Vec3{-4.0, 1.0, 0.0}, 1.0,
 			std::move(material2)));
 
 		auto material3 = Metal::new_material(Colour{0.7, 0.6, 0.5}, 0.0);
-		world.push_back(Sphere::new_hittable(Vec3{4.0, 1.0, 0.0}, 1.0,
+		world->push_back(Sphere::new_hittable(Vec3{4.0, 1.0, 0.0}, 1.0,
 			std::move(material3)));
 
 		return world;
@@ -124,7 +124,7 @@ namespace {
 		constexpr auto aperture = 0.1;
 		constexpr auto dist_to_focus = 10.0;
 
-		auto const cam = Camera {
+		auto const cam = std::make_shared<Camera>(
 			lookfrom,
 			lookat,
 			vup,
@@ -132,12 +132,23 @@ namespace {
 			aspect_ratio,
 			aperture,
 			dist_to_focus
-		};
+		);
 
 		// Render.
 
-		rays::run(world, image_width, image_height, samples_per_pixel,
-		          max_depth, cam, output, true);
+		auto const num_threads = 32;
+
+		rays::run(
+			num_threads,
+			std::move(world),
+			image_width,
+			image_height,
+			samples_per_pixel,
+			max_depth,
+			std::move(cam),
+			output,
+			true
+		);
 	}
 
 	/*
