@@ -180,6 +180,8 @@ pub fn run(
     output: &mut dyn Write,
     log: bool,
 ) -> Result<(), Box<dyn Error + Send + Sync>> {
+    assert!(num_threads > 0);
+
     let samples_per_thread = samples_per_pixel / num_threads;
     let remaining_samples = samples_per_pixel % num_threads;
 
