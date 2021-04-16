@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <future>
 #include <iomanip>
 #include <iostream>
 #include <limits>
@@ -65,12 +66,12 @@ namespace {
 	 * * `cam` is the camera.
 	 * * If `log` is `true`, progress is reported to the standard error stream.
 	 */
-	auto render(std::shared_ptr<Hittable const> world,
+	auto render(std::shared_ptr<Hittable const> const world,
 	            int const image_width,
 	            int const image_height,
 	            int const samples_per_pixel,
 	            int const max_depth,
-	            std::shared_ptr<Camera const> cam,
+	            std::shared_ptr<Camera const> const cam,
 	            bool const log)
 		-> std::vector<Colour>
 	{
@@ -179,7 +180,7 @@ namespace {
  * * `output` is the stream to write the generated image to.
  * * If `log` is `true`, progress is reported to the standard error stream.
  */
-void rays::run(int const /*num_threads*/,
+void rays::run(int const num_threads,
                std::shared_ptr<Hittable const> world,
                int const image_width,
                int const image_height,
@@ -189,15 +190,56 @@ void rays::run(int const /*num_threads*/,
                std::ostream &output,
                bool const log)
 {
-	auto const pixels = render(
+	assert(num_threads > 0);
+
+	auto const samples_per_thread = samples_per_pixel / num_threads;
+	auto const remaining_samples = samples_per_pixel % num_threads;
+
+	// Spawn threads.
+	std::vector<std::future<std::vector<Colour>>> threads;
+	threads.reserve(num_threads - 1);
+	for (auto thread_num = 1; thread_num < num_threads; ++thread_num) {
+		auto const samples_per_pixel =   thread_num <= remaining_samples
+		                               ? samples_per_thread + 1
+		                               : samples_per_thread;
+		threads.push_back(std::async(
+			std::launch::async,
+			render,
+			world,
+			image_width,
+			image_height,
+			samples_per_pixel,
+			max_depth,
+			cam,
+			false
+		));
+	}
+
+	// This thread.
+	auto pixels = render(
 		std::move(world),
 		image_width,
 		image_height,
-		samples_per_pixel,
+		samples_per_thread,
 		max_depth,
 		std::move(cam),
 		log
 	);
+
+	// Join threads.
+	auto i = 1;
+	for (auto &&thread : threads) {
+		if (log) {
+			std::cerr << "\rWaiting for thread " << std::setw(2) << ++i
+			          << " of " << num_threads << "...";
+			auto const thread_pixels = thread.get();
+			assert(pixels.size() == thread_pixels.size());
+			for (auto i = decltype(pixels.size()){0}; i < pixels.size(); ++i)
+				pixels[i] += thread_pixels[i];
+		}
+	}
+	if (log)
+		std::cerr << '\n';
 
 	write_file(
 		output,

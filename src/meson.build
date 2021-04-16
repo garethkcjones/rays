@@ -12,4 +12,6 @@ src = [
   'vec3.cc'
 ]
 
-executable('rays', src)
+thread_dep = dependency('threads')
+
+executable('rays', src, dependencies : thread_dep)
