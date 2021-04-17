@@ -64,7 +64,6 @@ pub fn render(
 
     // Initialize random number generator.
     let mut rand_eng = thread_rng();
-    let rand_dst = rand::distributions::Uniform::new(0.0, 1.0);
 
     // Render.
 
@@ -86,11 +85,8 @@ pub fn render(
             let mut pixel_colour = Colour(0.0, 0.0, 0.0);
 
             for _ in 0..samples_per_pixel {
-                let ur = rand_eng.sample(rand_dst);
-                let vr = rand_eng.sample(rand_dst);
-
-                let u = (f64::from(i) + ur) / width_scale;
-                let v = (f64::from(j) + vr) / height_scale;
+                let u = (f64::from(i) + rand_eng.gen::<f64>()) / width_scale;
+                let v = (f64::from(j) + rand_eng.gen::<f64>()) / height_scale;
 
                 let r = cam.get_ray(u, v);
 
