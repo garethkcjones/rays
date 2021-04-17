@@ -1,5 +1,5 @@
 use rand::{distributions::Uniform, prelude::*};
-use std::ops;
+use std::ops::{self, Range};
 
 /**
  * Type for representing colours.
@@ -12,9 +12,9 @@ impl Colour {
      * Creates a random colour.
      */
     #[must_use]
-    pub fn new_random(min: f64, max: f64) -> Self {
+    pub fn new_random(range: Range<f64>) -> Self {
         let mut rand_eng = thread_rng();
-        let rand_dst = Uniform::from(min..max);
+        let rand_dst = Uniform::from(range);
 
         let r = rand_eng.sample(rand_dst);
         let g = rand_eng.sample(rand_dst);
