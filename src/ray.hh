@@ -12,7 +12,7 @@ namespace rays {
 class rays::Ray final {
 	public:
 
-		constexpr explicit Ray(Vec3 origin, Vec3 direction, double time = 0.0)
+		constexpr explicit Ray(Vec3 origin, Vec3 direction, double time)
 			noexcept;
 
 		constexpr auto origin() const noexcept {return origin_;}

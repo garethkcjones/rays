@@ -111,11 +111,11 @@ namespace {
 
 		// Image.
 
-		constexpr auto image_aspect_ratio = 3.0 / 2.0;
-		constexpr auto image_width = 1200;
+		constexpr auto image_aspect_ratio = 16.0 / 9.0;
+		constexpr auto image_width = 400;
 		constexpr auto image_height =
 			static_cast<int>(image_width / image_aspect_ratio);
-		constexpr auto samples_per_pixel = 500;
+		constexpr auto samples_per_pixel = 100;
 		constexpr auto max_depth = 50;
 
 		// World.
@@ -132,6 +132,8 @@ namespace {
 			static_cast<double>(image_width) / image_height;
 		constexpr auto aperture = 0.1;
 		constexpr auto dist_to_focus = 10.0;
+		constexpr auto time0 = 0.0;
+		constexpr auto time1 = 1.0;
 
 		auto const cam = std::make_shared<Camera>(
 			lookfrom,
@@ -140,7 +142,9 @@ namespace {
 			vfov,
 			aspect_ratio,
 			aperture,
-			dist_to_focus
+			dist_to_focus,
+			time0,
+			time1
 		);
 
 		// Render.
