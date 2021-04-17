@@ -82,10 +82,10 @@ fn random_scene() -> Arc<dyn Hittable> {
 fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error + Send + Sync>> {
     // Image.
 
-    let image_aspect_ratio = 3.0 / 2.0;
-    let image_width = 1200;
+    let image_aspect_ratio = 16.0 / 9.0;
+    let image_width = 400;
     let image_height = (f64::from(image_width) / image_aspect_ratio) as _;
-    let samples_per_pixel = 500;
+    let samples_per_pixel = 100;
     let max_depth = 50;
 
     // World.
@@ -101,6 +101,8 @@ fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error + Send + Sync>> {
     let aspect_ratio = f64::from(image_width) / f64::from(image_height);
     let aperture = 0.1;
     let dist_to_focus = 10.0;
+    let time0 = 0.0;
+    let time1 = 1.0;
 
     let cam = Camera::new(
         lookfrom,
@@ -110,6 +112,7 @@ fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error + Send + Sync>> {
         aspect_ratio,
         aperture,
         dist_to_focus,
+        time0..time1,
     );
     let cam = Arc::new(cam);
 
