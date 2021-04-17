@@ -1,5 +1,5 @@
 use rand::prelude::*;
-use rays::{Camera, Colour, Dielectric, Hittable, Lambertian2, Metal, Sphere, Vec3};
+use rays::{Camera, Colour, Dielectric, Hittable, Lambertian2, Metal, MovingSphere, Sphere, Vec3};
 use std::{
     env,
     error::Error,
@@ -41,7 +41,14 @@ fn random_scene() -> Arc<dyn Hittable> {
                     // Diffuse.
                     let albedo = Colour::new_random(0.0..1.0) * Colour::new_random(0.0..1.0);
                     let sphere_material = Lambertian2::new_material(albedo);
-                    world.push(Sphere::new_hittable(centre, 0.2, sphere_material));
+                    let centre2 = centre + Vec3(0.0, rand_eng.gen_range(0.0..0.5), 0.0);
+                    world.push(MovingSphere::new_hittable(
+                        centre,
+                        centre2,
+                        0.0..=1.0,
+                        0.2,
+                        sphere_material,
+                    ));
                 } else if choose_mat < 0.95 {
                     // Metal.
                     let albedo = Colour::new_random(0.5..1.0);
