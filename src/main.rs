@@ -14,7 +14,6 @@ use std::{
 #[must_use]
 fn random_scene() -> Arc<dyn Hittable> {
     let mut rand_eng = thread_rng();
-    let rand_dst = rand::distributions::Uniform::new(0.0, 1.0);
 
     let mut world = Vec::new();
 
@@ -30,11 +29,11 @@ fn random_scene() -> Arc<dyn Hittable> {
         for b in -11..11 {
             let b = f64::from(b);
 
-            let choose_mat = rand_eng.sample(rand_dst);
+            let choose_mat: f64 = rand_eng.gen();
             let centre = Vec3(
-                a + 0.9 * rand_eng.sample(rand_dst),
+                a + rand_eng.gen_range(0.0..0.9),
                 0.2,
-                b + 0.9 * rand_eng.sample(rand_dst),
+                b + rand_eng.gen_range(0.0..0.9),
             );
 
             if (centre - Vec3(4.0, 0.2, 0.0)).length() > 0.9 {
@@ -46,7 +45,7 @@ fn random_scene() -> Arc<dyn Hittable> {
                 } else if choose_mat < 0.95 {
                     // Metal.
                     let albedo = Colour::new_random(0.5, 1.0);
-                    let fuzz = 0.5 * rand_eng.sample(rand_dst);
+                    let fuzz = rand_eng.gen_range(0.0..0.5);
                     let sphere_material = Metal::new_material(albedo, fuzz);
                     world.push(Sphere::new_hittable(centre, 0.2, sphere_material));
                 } else {
