@@ -24,6 +24,7 @@ namespace {
 	auto random_scene() -> std::shared_ptr<rays::hittable::HittableList> {
 		using rays::Colour;
 		using rays::hittable::HittableList;
+		using rays::hittable::MovingSphere;
 		using rays::hittable::Sphere;
 		using rays::material::Dielectric;
 		using rays::material::Lambertian2;
@@ -57,8 +58,16 @@ namespace {
 							* Colour::new_random(rand_eng, 0.0, 1.0);
 						auto sphere_material =
 							Lambertian2::new_material(albedo);
-						world->push_back(Sphere::new_hittable(centre, 0.2,
-							std::move(sphere_material)));
+						auto const centre2 =
+							centre + Vec3{0.0, 0.5 * rand_dst(rand_eng), 0.0};
+						world->push_back(MovingSphere::new_hittable(
+							centre,
+							centre2,
+							0.0,
+							1.0,
+							0.2,
+							std::move(sphere_material)
+						));
 					} else if (choose_mat < 0.95) {
 						// Metal.
 						auto const albedo =
