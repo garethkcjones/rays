@@ -58,7 +58,7 @@ auto Dielectric::scatter(Ray const &r_in,
 		? reflect(unit_direction, rec.normal())
 		: refract(unit_direction, rec.normal(), refraction_ratio);
 
-	auto const scattered = Ray{rec.p(), direction};
+	auto const scattered = Ray{rec.p(), direction, r_in.time()};
 
 	return std::make_optional(std::make_pair(attenuation, scattered));
 }

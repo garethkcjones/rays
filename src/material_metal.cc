@@ -38,7 +38,8 @@ auto Metal::scatter(Ray const &r_in,
 	auto const attenuation = albedo_;
 	auto const scattered = Ray {
 		rec.p(),
-		reflected + fuzz_ * Vec3::new_random_in_unit_sphere (rand_eng)
+		reflected + fuzz_ * Vec3::new_random_in_unit_sphere (rand_eng),
+		r_in.time()
 	};
 
 	if (dot(scattered.direction(), rec.normal()) > 0.0)

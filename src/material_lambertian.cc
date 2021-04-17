@@ -43,7 +43,7 @@ auto Lambertian2::new_material(Colour const albedo) -> std::shared_ptr<Material>
 	return std::make_shared<Lambertian2>(albedo);
 }
 
-auto Lambertian0::scatter(Ray const &/*r_in*/,
+auto Lambertian0::scatter(Ray const &r_in,
                           HitRecord const &rec,
                           std::default_random_engine &rand_eng) const
 	-> std::optional<std::pair<Colour, Ray>>
@@ -56,12 +56,12 @@ auto Lambertian0::scatter(Ray const &/*r_in*/,
 		scatter_direction = rec.normal();
 
 	auto const attenuation = albedo_;
-	auto const scattered = Ray{rec.p(), scatter_direction};
+	auto const scattered = Ray{rec.p(), scatter_direction, r_in.time()};
 
 	return std::make_optional(std::make_pair(attenuation, scattered));
 }
 
-auto Lambertian1::scatter(Ray const &/*r_in*/,
+auto Lambertian1::scatter(Ray const &r_in,
                           HitRecord const &rec,
                           std::default_random_engine &rand_eng) const
 	-> std::optional<std::pair<Colour, Ray>>
@@ -74,12 +74,12 @@ auto Lambertian1::scatter(Ray const &/*r_in*/,
 		scatter_direction = rec.normal();
 
 	auto const attenuation = albedo_;
-	auto const scattered = Ray{rec.p(), scatter_direction};
+	auto const scattered = Ray{rec.p(), scatter_direction, r_in.time()};
 
 	return std::make_optional(std::make_pair(attenuation, scattered));
 }
 
-auto Lambertian2::scatter(Ray const &/*r_in*/,
+auto Lambertian2::scatter(Ray const &r_in,
                           HitRecord const &rec,
                           std::default_random_engine &rand_eng) const
 	-> std::optional<std::pair<Colour, Ray>>
@@ -91,7 +91,7 @@ auto Lambertian2::scatter(Ray const &/*r_in*/,
 		scatter_direction = rec.normal();
 
 	auto const attenuation = albedo_;
-	auto const scattered = Ray{rec.p(), scatter_direction};
+	auto const scattered = Ray{rec.p(), scatter_direction, r_in.time()};
 
 	return std::make_optional(std::make_pair(attenuation, scattered));
 }
