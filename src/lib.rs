@@ -4,7 +4,7 @@ mod hittable;
 mod material;
 mod ray;
 mod vec3;
-pub use camera::Camera;
+pub use camera::{Camera, LongExposureCamera};
 pub use colour::Colour;
 use hittable::HitRecord;
 pub use hittable::{Hittable, Sphere};
