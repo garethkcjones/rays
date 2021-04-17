@@ -1,4 +1,4 @@
-use rand::prelude::*;
+use rand::{distributions::Uniform, prelude::*};
 use std::ops;
 
 /**
@@ -14,7 +14,7 @@ impl Colour {
     #[must_use]
     pub fn new_random(min: f64, max: f64) -> Self {
         let mut rand_eng = thread_rng();
-        let rand_dst = rand::distributions::Uniform::new(min, max);
+        let rand_dst = Uniform::new(min, max);
 
         let r = rand_eng.sample(rand_dst);
         let g = rand_eng.sample(rand_dst);
