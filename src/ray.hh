@@ -12,10 +12,12 @@ namespace rays {
 class rays::Ray final {
 	public:
 
-		constexpr explicit Ray(Vec3 origin, Vec3 direction) noexcept;
+		constexpr explicit Ray(Vec3 origin, Vec3 direction, double time = 0.0)
+			noexcept;
 
 		constexpr auto origin() const noexcept {return origin_;}
 		constexpr auto direction() const noexcept {return direction_;}
+		constexpr auto time() const noexcept {return time_;}
 
 		constexpr Vec3 at(double t) const noexcept;
 
@@ -23,12 +25,15 @@ class rays::Ray final {
 
 		Vec3 origin_;
 		Vec3 direction_;
+		double time_;
 };
 
-inline constexpr rays::Ray::Ray(Vec3 const origin, Vec3 const direction)
-	noexcept:
+inline constexpr rays::Ray::Ray(Vec3 const origin,
+                                Vec3 const direction,
+                                double const time) noexcept:
 	origin_{origin},
-	direction_{direction}
+	direction_{direction},
+	time_{time}
 {
 }
 
