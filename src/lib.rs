@@ -13,7 +13,7 @@ pub use vec3::Vec3;
  */
 #[must_use]
 fn ray_colour(r: &Ray, world: &dyn Hittable) -> Colour {
-    if let Some(rec) = world.hit(r, 0.0, f64::INFINITY) {
+    if let Some(rec) = world.hit(r, 0.0..f64::INFINITY) {
         let Vec3(x, y, z) = rec.normal();
         return 0.5 * Colour(x + 1.0, y + 1.0, z + 1.0);
     }
