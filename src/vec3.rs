@@ -1,4 +1,4 @@
-use rand::prelude::*;
+use rand::{distributions::Uniform, prelude::*};
 use std::ops;
 
 /**
@@ -14,7 +14,7 @@ impl Vec3 {
     #[must_use]
     pub fn new_random(min: f64, max: f64) -> Self {
         let mut rand_eng = thread_rng();
-        let rand_dst = rand::distributions::Uniform::new(min, max);
+        let rand_dst = Uniform::from(min..max);
 
         let x = rand_eng.sample(rand_dst);
         let y = rand_eng.sample(rand_dst);
@@ -64,7 +64,7 @@ impl Vec3 {
     #[must_use]
     pub fn new_random_in_unit_disk() -> Self {
         let mut rand_eng = thread_rng();
-        let rand_dst = rand::distributions::Uniform::new(-1.0, 1.0);
+        let rand_dst = Uniform::from(-1.0..1.0);
 
         loop {
             let x = rand_eng.sample(rand_dst);
