@@ -24,7 +24,7 @@ fn ray_colour(r: &Ray, world: &dyn Hittable, depth: u32) -> Colour {
         return Colour(0.0, 0.0, 0.0);
     }
 
-    if let Some(rec) = world.hit(r, 0.001, f64::INFINITY) {
+    if let Some(rec) = world.hit(r, 0.001..f64::INFINITY) {
         if let Some((attenuation, scattered)) = rec.material_ref().scatter(r, &rec) {
             return attenuation * ray_colour(&scattered, world, depth - 1);
         }
