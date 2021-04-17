@@ -39,12 +39,12 @@ fn random_scene() -> Arc<dyn Hittable> {
             if (centre - Vec3(4.0, 0.2, 0.0)).length() > 0.9 {
                 if choose_mat < 0.8 {
                     // Diffuse.
-                    let albedo = Colour::new_random(0.0, 1.0) * Colour::new_random(0.0, 1.0);
+                    let albedo = Colour::new_random(0.0..1.0) * Colour::new_random(0.0..1.0);
                     let sphere_material = Lambertian2::new_material(albedo);
                     world.push(Sphere::new_hittable(centre, 0.2, sphere_material));
                 } else if choose_mat < 0.95 {
                     // Metal.
-                    let albedo = Colour::new_random(0.5, 1.0);
+                    let albedo = Colour::new_random(0.5..1.0);
                     let fuzz = rand_eng.gen_range(0.0..0.5);
                     let sphere_material = Metal::new_material(albedo, fuzz);
                     world.push(Sphere::new_hittable(centre, 0.2, sphere_material));
