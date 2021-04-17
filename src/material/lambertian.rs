@@ -63,7 +63,7 @@ impl Lambertian2 {
 }
 
 impl Material for Lambertian0 {
-    fn scatter(&self, _r_in: &Ray, rec: &HitRecord) -> Option<(Colour, Ray)> {
+    fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Colour, Ray)> {
         let mut scatter_direction = Vec3::new_random_in_hemisphere(rec.normal());
 
         // Catch degenerate scatter direction.
@@ -72,14 +72,14 @@ impl Material for Lambertian0 {
         }
 
         let attenuation = self.albedo;
-        let scattered = Ray::new(rec.p(), scatter_direction, 0.0);
+        let scattered = Ray::new(rec.p(), scatter_direction, r_in.time());
 
         Some((attenuation, scattered))
     }
 }
 
 impl Material for Lambertian1 {
-    fn scatter(&self, _r_in: &Ray, rec: &HitRecord) -> Option<(Colour, Ray)> {
+    fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Colour, Ray)> {
         let mut scatter_direction = rec.normal() + Vec3::new_random_in_unit_sphere();
 
         // Catch degenerate scatter direction.
@@ -88,14 +88,14 @@ impl Material for Lambertian1 {
         }
 
         let attenuation = self.albedo;
-        let scattered = Ray::new(rec.p(), scatter_direction, 0.0);
+        let scattered = Ray::new(rec.p(), scatter_direction, r_in.time());
 
         Some((attenuation, scattered))
     }
 }
 
 impl Material for Lambertian2 {
-    fn scatter(&self, _r_in: &Ray, rec: &HitRecord) -> Option<(Colour, Ray)> {
+    fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Colour, Ray)> {
         let mut scatter_direction = rec.normal() + Vec3::new_random_unit();
 
         // Catch degenerate scatter direction.
@@ -104,7 +104,7 @@ impl Material for Lambertian2 {
         }
 
         let attenuation = self.albedo;
-        let scattered = Ray::new(rec.p(), scatter_direction, 0.0);
+        let scattered = Ray::new(rec.p(), scatter_direction, r_in.time());
 
         Some((attenuation, scattered))
     }
