@@ -1,6 +1,6 @@
 use super::{HitRecord, Hittable};
 use crate::{Ray, Vec3};
-use std::sync::Arc;
+use std::{ops::Range, sync::Arc};
 
 /**
  * Type for representing stationary spheres.
@@ -24,7 +24,7 @@ impl Sphere {
 }
 
 impl Hittable for Sphere {
-    fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
+    fn hit(&self, r: &Ray, t: Range<f64>) -> Option<HitRecord> {
         #![allow(clippy::many_single_char_names)]
 
         let oc = r.origin() - self.centre;
@@ -42,9 +42,9 @@ impl Hittable for Sphere {
 
         // Find the nearest root that lies in the acceptable range.
         let mut root = (-half_b - sqrtd) / a;
-        if root < t_min || t_max < root {
+        if !t.contains(&root) {
             root = (-half_b + sqrtd) / a;
-            if root < t_min || t_max < root {
+            if !t.contains(&root) {
                 return None;
             }
         }
