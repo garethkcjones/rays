@@ -7,7 +7,7 @@ mod vec3;
 pub use camera::{Camera, LongExposureCamera};
 pub use colour::Colour;
 use hittable::HitRecord;
-pub use hittable::{Hittable, Sphere};
+pub use hittable::{Hittable, MovingSphere, Sphere};
 pub use material::{Dielectric, Lambertian0, Lambertian1, Lambertian2, Material, Metal};
 use rand::prelude::*;
 use ray::Ray;
