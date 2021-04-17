@@ -1,5 +1,5 @@
 use rand::{distributions::Uniform, prelude::*};
-use std::ops;
+use std::ops::{self, Range};
 
 /**
  * Type for representing vectors in 3-D space.
@@ -12,9 +12,9 @@ impl Vec3 {
      * Creates a random vector with components in the range [min, max).
      */
     #[must_use]
-    pub fn new_random(min: f64, max: f64) -> Self {
+    pub fn new_random(range: Range<f64>) -> Self {
         let mut rand_eng = thread_rng();
-        let rand_dst = Uniform::from(min..max);
+        let rand_dst = Uniform::from(range);
 
         let x = rand_eng.sample(rand_dst);
         let y = rand_eng.sample(rand_dst);
@@ -29,7 +29,7 @@ impl Vec3 {
     #[must_use]
     pub fn new_random_in_unit_sphere() -> Self {
         loop {
-            let p = Self::new_random(-1.0, 1.0);
+            let p = Self::new_random(-1.0..1.0);
             if p.dot(p) < 1.0 {
                 return p;
             }
