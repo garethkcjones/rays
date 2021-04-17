@@ -7,12 +7,17 @@ use crate::Vec3;
 pub struct Ray {
     origin: Vec3,
     direction: Vec3,
+    time: f64,
 }
 
 impl Ray {
     #[must_use]
-    pub const fn new(origin: Vec3, direction: Vec3) -> Self {
-        Self { origin, direction }
+    pub const fn new(origin: Vec3, direction: Vec3, time: f64) -> Self {
+        Self {
+            origin,
+            direction,
+            time,
+        }
     }
 
     #[must_use]
@@ -23,6 +28,11 @@ impl Ray {
     #[must_use]
     pub const fn direction(&self) -> Vec3 {
         self.direction
+    }
+
+    #[must_use]
+    pub const fn time(&self) -> f64 {
+        self.time
     }
 
     #[must_use]

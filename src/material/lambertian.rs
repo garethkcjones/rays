@@ -72,7 +72,7 @@ impl Material for Lambertian0 {
         }
 
         let attenuation = self.albedo;
-        let scattered = Ray::new(rec.p(), scatter_direction);
+        let scattered = Ray::new(rec.p(), scatter_direction, 0.0);
 
         Some((attenuation, scattered))
     }
@@ -88,7 +88,7 @@ impl Material for Lambertian1 {
         }
 
         let attenuation = self.albedo;
-        let scattered = Ray::new(rec.p(), scatter_direction);
+        let scattered = Ray::new(rec.p(), scatter_direction, 0.0);
 
         Some((attenuation, scattered))
     }
@@ -104,7 +104,7 @@ impl Material for Lambertian2 {
         }
 
         let attenuation = self.albedo;
-        let scattered = Ray::new(rec.p(), scatter_direction);
+        let scattered = Ray::new(rec.p(), scatter_direction, 0.0);
 
         Some((attenuation, scattered))
     }
