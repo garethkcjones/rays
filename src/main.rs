@@ -45,7 +45,7 @@ fn random_scene() -> Arc<dyn Hittable> {
                     world.push(MovingSphere::new_hittable(
                         centre,
                         centre2,
-                        0.0..=1.0,
+                        0.0..1.0,
                         0.2,
                         sphere_material,
                     ));

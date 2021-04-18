@@ -1,9 +1,6 @@
 use super::{HitRecord, Hittable};
 use crate::{Material, Ray, Vec3};
-use std::{
-    ops::{Range, RangeInclusive},
-    sync::Arc,
-};
+use std::{ops::Range, sync::Arc};
 
 /**
  * Type for representing stationary spheres.
@@ -21,7 +18,7 @@ pub struct Sphere {
 #[derive(Debug)]
 pub struct MovingSphere {
     centre: (Vec3, Vec3),
-    time: RangeInclusive<f64>,
+    time: Range<f64>,
     radius: f64,
     material: Arc<dyn Material>,
 }
@@ -51,7 +48,7 @@ impl MovingSphere {
     pub fn new(
         centre0: Vec3,
         centre1: Vec3,
-        time: RangeInclusive<f64>,
+        time: Range<f64>,
         radius: f64,
         material: Arc<dyn Material>,
     ) -> Self {
@@ -67,7 +64,7 @@ impl MovingSphere {
     pub fn new_hittable(
         centre0: Vec3,
         centre1: Vec3,
-        time: RangeInclusive<f64>,
+        time: Range<f64>,
         radius: f64,
         material: Arc<dyn Material>,
     ) -> Arc<dyn Hittable> {
@@ -77,8 +74,8 @@ impl MovingSphere {
     #[must_use]
     fn centre(&self, time: f64) -> Vec3 {
         let (centre0, centre1) = self.centre;
-        let time0 = self.time.start();
-        let time1 = self.time.end();
+        let time0 = self.time.start;
+        let time1 = self.time.end;
         centre0 + ((time - time0) / (time1 - time0)) * (centre1 - centre0)
     }
 }
