@@ -12,11 +12,15 @@ rays::hittable::HitRecord::HitRecord(
 	Vec3 const p,
 	Vec3 const outward_normal,
 	double const t,
+	double const u,
+	double const v,
 	std::shared_ptr<material::Material> material
 ) noexcept:
 	p_{p},
 	normal_{outward_normal},
 	t_{t},
+	u_{u},
+	v_{v},
 	material_{std::move(material)},
 	front_face_{dot(r.direction(), outward_normal) < 0.0}
 {

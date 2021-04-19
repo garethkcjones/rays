@@ -21,11 +21,14 @@ class rays::hittable::HitRecord final {
 	public:
 
 		explicit HitRecord(Ray const &r, Vec3 p, Vec3 normal, double t,
-			std::shared_ptr<material::Material> material) noexcept;
+			double u, double v, std::shared_ptr<material::Material> material)
+			noexcept;
 
 		constexpr auto p() const noexcept {return p_;}
 		constexpr auto normal() const noexcept {return normal_;}
 		constexpr auto t() const noexcept {return t_;}
+		constexpr auto u() const noexcept {return u_;}
+		constexpr auto v() const noexcept {return v_;}
 		constexpr auto front_face() const noexcept {return front_face_;}
 
 		auto material() const noexcept {return material_;}
@@ -36,6 +39,7 @@ class rays::hittable::HitRecord final {
 		Vec3 p_;
 		Vec3 normal_;
 		double t_;
+		double u_, v_;
 		std::shared_ptr<material::Material> material_;
 		bool front_face_;
 };
