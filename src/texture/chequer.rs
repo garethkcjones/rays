@@ -7,14 +7,20 @@ use std::sync::Arc;
  */
 #[derive(Debug)]
 pub struct Chequer {
+    scale: Vec3,
     even: Arc<dyn Texture>,
     odd: Arc<dyn Texture>,
 }
 
 impl Chequer {
     #[must_use]
-    pub fn new(even: impl Into<Arc<dyn Texture>>, odd: impl Into<Arc<dyn Texture>>) -> Self {
+    pub fn new(
+        scale: Vec3,
+        even: impl Into<Arc<dyn Texture>>,
+        odd: impl Into<Arc<dyn Texture>>,
+    ) -> Self {
         Self {
+            scale,
             even: even.into(),
             odd: odd.into(),
         }
@@ -22,16 +28,18 @@ impl Chequer {
 
     #[must_use]
     pub fn new_texture(
+        scale: Vec3,
         even: impl Into<Arc<dyn Texture>>,
         odd: impl Into<Arc<dyn Texture>>,
     ) -> Arc<dyn Texture> {
-        Arc::new(Self::new(even, odd))
+        Arc::new(Self::new(scale, even, odd))
     }
 }
 
 impl Texture for Chequer {
     fn value(&self, u: f64, v: f64, p: Vec3) -> Colour {
-        let sines = (10.0 * p.x()).sin() * (10.0 * p.y()).sin() * (10.0 * p.z()).sin();
+        let p = p * self.scale;
+        let sines = p.x().sin() * p.y().sin() * p.z().sin();
 
         if sines < 0.0 {
             self.odd.value(u, v, p)

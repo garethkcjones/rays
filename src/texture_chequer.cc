@@ -12,8 +12,10 @@
 
 using namespace rays::texture;
 
-Chequer::Chequer(std::shared_ptr<Texture> even,
+Chequer::Chequer(Vec3 const scale,
+                 std::shared_ptr<Texture> even,
                  std::shared_ptr<Texture> odd) noexcept:
+	scale_{scale},
 	even_{std::move(even)},
 	odd_{std::move(odd)}
 {
@@ -21,30 +23,36 @@ Chequer::Chequer(std::shared_ptr<Texture> even,
 	assert(odd_);
 }
 
-Chequer::Chequer(Colour const even, Colour const odd):
-	Chequer{SolidColour::new_texture(even), SolidColour::new_texture(odd)}
+Chequer::Chequer(Vec3 const scale, Colour const even, Colour const odd):
+	Chequer {
+		scale,
+		SolidColour::new_texture(even),
+		SolidColour::new_texture(odd)
+	}
 {
 }
 
-auto Chequer::new_texture(std::shared_ptr<Texture> even,
+auto Chequer::new_texture(Vec3 const scale,
+                          std::shared_ptr<Texture> even,
                           std::shared_ptr<Texture> odd)
 	-> std::shared_ptr<Texture>
 {
-	return std::make_shared<Chequer>(std::move(even), std::move(odd));
+	return std::make_shared<Chequer>(scale, std::move(even), std::move(odd));
 }
 
-auto Chequer::new_texture(Colour const even, Colour const odd)
+auto Chequer::new_texture(Vec3 const scale, Colour const even, Colour const odd)
 	-> std::shared_ptr<Texture>
 {
-	return std::make_shared<Chequer>(even, odd);
+	return std::make_shared<Chequer>(scale, even, odd);
 }
 
-auto Chequer::value(double const u, double const v, Vec3 const p) const
+auto Chequer::value(double const u, double const v, Vec3 p) const
 	-> Colour
 {
 	using std::sin;
 
-	auto const sines = sin(10.0 * p.x) * sin(10.0 * p.y) * sin(10.0 * p.z);
+	p *= scale_;
+	auto const sines = sin(p.x) * sin(p.y) * sin(p.z);
 
 	if (sines < 0.0)
 		return odd_->value(u, v, p);
