@@ -1,6 +1,6 @@
 use super::{HitRecord, Hittable};
 use crate::{Material, Ray, Vec3};
-use std::{ops::Range, sync::Arc};
+use std::{f64::consts, ops::Range, sync::Arc};
 
 /**
  * Type for representing stationary spheres.
@@ -109,9 +109,10 @@ impl Hittable for Sphere {
         let t = root;
         let p = r.at(t);
         let outward_normal = (p - self.centre) / self.radius;
+        let (u, v) = get_sphere_uv(outward_normal);
         let material = Arc::clone(&self.material);
 
-        Some(HitRecord::new(r, p, outward_normal, t, material))
+        Some(HitRecord::new(r, p, outward_normal, t, u, v, material))
     }
 }
 
@@ -145,8 +146,26 @@ impl Hittable for MovingSphere {
         let t = root;
         let p = r.at(t);
         let outward_normal = (p - centre) / self.radius;
+        let (u, v) = get_sphere_uv(outward_normal);
         let material = Arc::clone(&self.material);
 
-        Some(HitRecord::new(r, p, outward_normal, t, material))
+        Some(HitRecord::new(r, p, outward_normal, t, u, v, material))
     }
+}
+
+fn get_sphere_uv(p: Vec3) -> (f64, f64) {
+    // p: a given point on the sphere of radius one, centred at the origin.
+    // u: returned value [0,1] of angle around the Y axis from X=-1.
+    // v: returned value [0,1] of angle from Y=-1 to Y=+1.
+    //     <1 0 0> yields <0.50 0.50>       <-1  0  0> yields <0.00 0.50>
+    //     <0 1 0> yields <0.50 1.00>       < 0 -1  0> yields <0.50 0.00>
+    //     <0 0 1> yields <0.25 0.50>       < 0  0 -1> yields <0.75 0.50>
+
+    let theta = (-p.y()).acos();
+    let phi = (-p.z()).atan2(p.x()) + consts::PI;
+
+    let u = 0.5 * phi * consts::FRAC_1_PI;
+    let v = theta * consts::FRAC_1_PI;
+
+    (u, v)
 }
