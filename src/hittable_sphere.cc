@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <memory>
+#include <numbers>
 #include <optional>
 #include <utility>
 
@@ -12,6 +13,27 @@
 #include "vec3.hh"
 
 using namespace rays::hittable;
+
+namespace {
+	constexpr auto get_sphere_uv(rays::Vec3 const p) noexcept
+		-> std::pair<double, double>
+	{
+		// p: a given point on the sphere of radius one, centred at the origin.
+		// u: returned value [0,1] of angle around the Y axis from X=-1.
+		// v: returned value [0,1] of angle from Y=-1 to Y=+1.
+		//     <1 0 0> yields <0.50 0.50>       <-1  0  0> yields <0.00 0.50>
+		//     <0 1 0> yields <0.50 1.00>       < 0 -1  0> yields <0.50 0.00>
+		//     <0 0 1> yields <0.25 0.50>       < 0  0 -1> yields <0.75 0.50>
+
+		auto const theta = std::acos(-p.y);
+		auto const phi = std::atan2(-p.z, p.x) + std::numbers::pi;
+
+		auto const u = 0.5 * phi * std::numbers::inv_pi;
+		auto const v = theta * std::numbers::inv_pi;
+
+		return std::make_pair(u, v);
+	}
+}
 
 Sphere::Sphere(Vec3 const centre,
                double const radius,
@@ -89,8 +111,17 @@ auto Sphere::hit(Ray const &r, double const t_min, double const t_max) const
 	auto const t = root;
 	auto const p = r.at(t);
 	auto const outward_normal = (p - centre_) / radius_;
+	auto const [u, v] = get_sphere_uv(outward_normal);
 
-	return std::make_optional<HitRecord>(r, p, outward_normal, t, material_);
+	return std::make_optional<HitRecord>(
+		r,
+		p,
+		outward_normal,
+		t,
+		u,
+		v,
+		material_
+	);
 }
 
 auto MovingSphere::hit(Ray const &r, double const t_min, double const t_max)
@@ -119,6 +150,15 @@ auto MovingSphere::hit(Ray const &r, double const t_min, double const t_max)
 	auto const t = root;
 	auto const p = r.at(t);
 	auto const outward_normal = (p - centre) / radius_;
+	auto const [u, v] = get_sphere_uv(outward_normal);
 
-	return std::make_optional<HitRecord>(r, p, outward_normal, t, material_);
+	return std::make_optional<HitRecord>(
+		r,
+		p,
+		outward_normal,
+		t,
+		u,
+		v,
+		material_
+	);
 }
