@@ -1,5 +1,7 @@
 use rand::prelude::*;
-use rays::{Camera, Colour, Dielectric, Hittable, Lambertian2, Metal, MovingSphere, Sphere, Vec3};
+use rays::{
+    Camera, Chequer, Colour, Dielectric, Hittable, Lambertian2, Metal, MovingSphere, Sphere, Vec3,
+};
 use std::{
     env,
     error::Error,
@@ -17,7 +19,12 @@ fn random_scene() -> Arc<dyn Hittable> {
 
     let mut world = Vec::new();
 
-    let ground_material = Lambertian2::new_material(Colour(0.5, 0.5, 0.5));
+    let chequer = Chequer::new_texture(
+        Vec3(10.0, 10.0, 10.0),
+        Colour(0.2, 0.3, 0.1),
+        Colour(0.9, 0.9, 0.9),
+    );
+    let ground_material = Lambertian2::new_material(chequer);
     world.push(Sphere::new_hittable(
         Vec3(0.0, -1000.0, 0.0),
         1000.0,
