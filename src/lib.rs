@@ -3,6 +3,7 @@ mod colour;
 mod hittable;
 mod material;
 mod ray;
+mod texture;
 mod vec3;
 pub use camera::Camera;
 pub use colour::Colour;
@@ -12,6 +13,7 @@ pub use material::{Dielectric, Lambertian0, Lambertian1, Lambertian2, Material, 
 use rand::prelude::*;
 use ray::Ray;
 use std::{convert::TryFrom, error::Error, io::prelude::*, panic, sync::Arc, thread};
+pub use texture::{SolidColour, Texture};
 pub use vec3::Vec3;
 
 /**
