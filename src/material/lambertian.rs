@@ -1,5 +1,5 @@
 use super::Material;
-use crate::{Colour, HitRecord, Ray, Vec3};
+use crate::{Colour, HitRecord, Ray, Texture, Vec3};
 use std::sync::Arc;
 
 /**
@@ -7,7 +7,7 @@ use std::sync::Arc;
  */
 #[derive(Debug)]
 pub struct Lambertian0 {
-    albedo: Colour,
+    albedo: Arc<dyn Texture>,
 }
 
 /*
@@ -15,7 +15,7 @@ pub struct Lambertian0 {
  */
 #[derive(Debug)]
 pub struct Lambertian1 {
-    albedo: Colour,
+    albedo: Arc<dyn Texture>,
 }
 
 /*
@@ -23,41 +23,47 @@ pub struct Lambertian1 {
  */
 #[derive(Debug)]
 pub struct Lambertian2 {
-    albedo: Colour,
+    albedo: Arc<dyn Texture>,
 }
 
 impl Lambertian0 {
     #[must_use]
-    pub const fn new(albedo: Colour) -> Self {
-        Self { albedo }
+    pub fn new(albedo: impl Into<Arc<dyn Texture>>) -> Self {
+        Self {
+            albedo: albedo.into(),
+        }
     }
 
     #[must_use]
-    pub fn new_material(albedo: Colour) -> Arc<dyn Material> {
+    pub fn new_material(albedo: impl Into<Arc<dyn Texture>>) -> Arc<dyn Material> {
         Arc::new(Self::new(albedo))
     }
 }
 
 impl Lambertian1 {
     #[must_use]
-    pub const fn new(albedo: Colour) -> Self {
-        Self { albedo }
+    pub fn new(albedo: impl Into<Arc<dyn Texture>>) -> Self {
+        Self {
+            albedo: albedo.into(),
+        }
     }
 
     #[must_use]
-    pub fn new_material(albedo: Colour) -> Arc<dyn Material> {
+    pub fn new_material(albedo: impl Into<Arc<dyn Texture>>) -> Arc<dyn Material> {
         Arc::new(Self::new(albedo))
     }
 }
 
 impl Lambertian2 {
     #[must_use]
-    pub const fn new(albedo: Colour) -> Self {
-        Self { albedo }
+    pub fn new(albedo: impl Into<Arc<dyn Texture>>) -> Self {
+        Self {
+            albedo: albedo.into(),
+        }
     }
 
     #[must_use]
-    pub fn new_material(albedo: Colour) -> Arc<dyn Material> {
+    pub fn new_material(albedo: impl Into<Arc<dyn Texture>>) -> Arc<dyn Material> {
         Arc::new(Self::new(albedo))
     }
 }
@@ -71,7 +77,7 @@ impl Material for Lambertian0 {
             scatter_direction = rec.normal();
         }
 
-        let attenuation = self.albedo;
+        let attenuation = self.albedo.value(rec.u(), rec.v(), rec.p());
         let scattered = Ray::new(rec.p(), scatter_direction, r_in.time());
 
         Some((attenuation, scattered))
@@ -87,7 +93,7 @@ impl Material for Lambertian1 {
             scatter_direction = rec.normal();
         }
 
-        let attenuation = self.albedo;
+        let attenuation = self.albedo.value(rec.u(), rec.v(), rec.p());
         let scattered = Ray::new(rec.p(), scatter_direction, r_in.time());
 
         Some((attenuation, scattered))
@@ -103,7 +109,7 @@ impl Material for Lambertian2 {
             scatter_direction = rec.normal();
         }
 
-        let attenuation = self.albedo;
+        let attenuation = self.albedo.value(rec.u(), rec.v(), rec.p());
         let scattered = Ray::new(rec.p(), scatter_direction, r_in.time());
 
         Some((attenuation, scattered))
