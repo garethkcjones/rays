@@ -9,6 +9,7 @@
 #include "hittable_hitrecord.hh"
 #include "material.hh"
 #include "ray.hh"
+#include "texture.hh"
 
 namespace rays::material {
 	class Metal;
@@ -23,9 +24,13 @@ class rays::material::Metal final:
 	public:
 
 		static std::shared_ptr<Material>
+			new_material(std::shared_ptr<texture::Texture> albedo, double fuzz);
+		static std::shared_ptr<Material>
 			new_material(Colour albedo, double fuzz);
 
-		explicit Metal(Colour albedo, double fuzz) noexcept;
+		explicit Metal(std::shared_ptr<texture::Texture> albedo, double fuzz)
+			noexcept;
+		explicit Metal(Colour albedo, double fuzz);
 
 		std::optional<std::pair<Colour, Ray>> scatter(Ray const &r_in,
 			hittable::HitRecord const &rec,
@@ -33,6 +38,6 @@ class rays::material::Metal final:
 
 	private:
 
-		Colour albedo_;
+		std::shared_ptr<texture::Texture> albedo_;
 		double fuzz_;
 };

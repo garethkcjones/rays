@@ -10,17 +10,33 @@
 #include "hittable_hitrecord.hh"
 #include "material.hh"
 #include "ray.hh"
+#include "texture.hh"
+#include "texture_solidcolour.hh"
 #include "vec3.hh"
 
 using namespace rays::material;
 using rays::hittable::HitRecord;
+using rays::texture::SolidColour;
+using rays::texture::Texture;
 
-Metal::Metal(Colour const albedo, double const fuzz) noexcept:
-	albedo_{albedo},
+Metal::Metal(std::shared_ptr<Texture> albedo, double const fuzz) noexcept:
+	albedo_{std::move(albedo)},
 	fuzz_{fuzz}
 {
+	assert(albedo_);
 	assert(fuzz_ >= 0.0);
 	assert(fuzz_ <= 1.0);
+}
+
+Metal::Metal(Colour const albedo, double const fuzz):
+	Metal{SolidColour::new_texture(albedo), fuzz}
+{
+}
+
+auto Metal::new_material(std::shared_ptr<Texture> albedo, double const fuzz)
+	-> std::shared_ptr<Material>
+{
+	return std::make_shared<Metal>(albedo, fuzz);
 }
 
 auto Metal::new_material(Colour const albedo, double const fuzz)
@@ -35,7 +51,7 @@ auto Metal::scatter(Ray const &r_in,
 	-> std::optional<std::pair<Colour, Ray>>
 {
 	auto const reflected = reflect(r_in.direction().unit(), rec.normal());
-	auto const attenuation = albedo_;
+	auto const attenuation = albedo_->value(rec.u(), rec.v(), rec.p());
 	auto const scattered = Ray {
 		rec.p(),
 		reflected + fuzz_ * Vec3::new_random_in_unit_sphere (rand_eng),

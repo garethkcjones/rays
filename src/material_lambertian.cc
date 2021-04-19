@@ -1,5 +1,6 @@
 #include "material_lambertian.hh"
 
+#include <cassert>
 #include <memory>
 #include <optional>
 #include <random>
@@ -8,24 +9,64 @@
 #include "hittable_hitrecord.hh"
 #include "material.hh"
 #include "ray.hh"
+#include "texture.hh"
+#include "texture_solidcolour.hh"
 #include "vec3.hh"
 
 using namespace rays::material;
 using rays::hittable::HitRecord;
+using rays::texture::SolidColour;
+using rays::texture::Texture;
 
-Lambertian0::Lambertian0(Colour const albedo) noexcept:
-	albedo_{albedo}
+Lambertian0::Lambertian0(std::shared_ptr<Texture> albedo) noexcept:
+	albedo_{std::move(albedo)}
+{
+	assert(albedo_);
+}
+
+Lambertian1::Lambertian1(std::shared_ptr<Texture> albedo) noexcept:
+	albedo_{std::move(albedo)}
+{
+	assert(albedo_);
+}
+
+Lambertian2::Lambertian2(std::shared_ptr<Texture> albedo) noexcept:
+	albedo_{std::move(albedo)}
+{
+	assert(albedo_);
+}
+
+Lambertian0::Lambertian0(Colour const albedo):
+	Lambertian0{SolidColour::new_texture(albedo)}
 {
 }
 
-Lambertian1::Lambertian1(Colour const albedo) noexcept:
-	albedo_{albedo}
+Lambertian1::Lambertian1(Colour const albedo):
+	Lambertian1{SolidColour::new_texture(albedo)}
 {
 }
 
-Lambertian2::Lambertian2(Colour const albedo) noexcept:
-	albedo_{albedo}
+Lambertian2::Lambertian2(Colour const albedo):
+	Lambertian2{SolidColour::new_texture(albedo)}
 {
+}
+
+auto Lambertian0::new_material(std::shared_ptr<Texture> albedo)
+	-> std::shared_ptr<Material>
+{
+	return std::make_shared<Lambertian0>(std::move(albedo));
+}
+
+auto Lambertian1::new_material(std::shared_ptr<Texture> albedo)
+	-> std::shared_ptr<Material>
+{
+	return std::make_shared<Lambertian1>(std::move(albedo));
+}
+
+auto Lambertian2::new_material(std::shared_ptr<Texture> albedo)
+	-> std::shared_ptr<Material>
+{
+	return std::make_shared<Lambertian2>(std::move(albedo));
 }
 
 auto Lambertian0::new_material(Colour const albedo) -> std::shared_ptr<Material>
@@ -55,7 +96,7 @@ auto Lambertian0::scatter(Ray const &r_in,
 	if (scatter_direction.near_zero())
 		scatter_direction = rec.normal();
 
-	auto const attenuation = albedo_;
+	auto const attenuation = albedo_->value(rec.u(), rec.v(), rec.p());
 	auto const scattered = Ray{rec.p(), scatter_direction, r_in.time()};
 
 	return std::make_optional(std::make_pair(attenuation, scattered));
@@ -73,7 +114,7 @@ auto Lambertian1::scatter(Ray const &r_in,
 	if (scatter_direction.near_zero())
 		scatter_direction = rec.normal();
 
-	auto const attenuation = albedo_;
+	auto const attenuation = albedo_->value(rec.u(), rec.v(), rec.p());
 	auto const scattered = Ray{rec.p(), scatter_direction, r_in.time()};
 
 	return std::make_optional(std::make_pair(attenuation, scattered));
@@ -90,7 +131,7 @@ auto Lambertian2::scatter(Ray const &r_in,
 	if (scatter_direction.near_zero())
 		scatter_direction = rec.normal();
 
-	auto const attenuation = albedo_;
+	auto const attenuation = albedo_->value(rec.u(), rec.v(), rec.p());
 	auto const scattered = Ray{rec.p(), scatter_direction, r_in.time()};
 
 	return std::make_optional(std::make_pair(attenuation, scattered));

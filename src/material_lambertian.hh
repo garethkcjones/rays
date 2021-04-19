@@ -9,6 +9,7 @@
 #include "hittable_hitrecord.hh"
 #include "material.hh"
 #include "ray.hh"
+#include "texture.hh"
 
 namespace rays::material {
 	class Lambertian0;
@@ -24,9 +25,12 @@ class rays::material::Lambertian0 final:
 {
 	public:
 
+		static std::shared_ptr<Material>
+			new_material(std::shared_ptr<texture::Texture> albedo);
 		static std::shared_ptr<Material> new_material(Colour albedo);
 
-		explicit Lambertian0(Colour albedo) noexcept;
+		explicit Lambertian0(std::shared_ptr<texture::Texture> albedo) noexcept;
+		explicit Lambertian0(Colour albedo);
 
 		std::optional<std::pair<Colour, Ray>> scatter(Ray const &r_in,
 			hittable::HitRecord const &rec,
@@ -34,7 +38,7 @@ class rays::material::Lambertian0 final:
 
 	private:
 
-		Colour albedo_;
+		std::shared_ptr<texture::Texture> albedo_;
 };
 
 /*
@@ -45,9 +49,12 @@ class rays::material::Lambertian1 final:
 {
 	public:
 
+		static std::shared_ptr<Material>
+			new_material(std::shared_ptr<texture::Texture> albedo);
 		static std::shared_ptr<Material> new_material(Colour albedo);
 
-		explicit Lambertian1(Colour albedo) noexcept;
+		explicit Lambertian1(std::shared_ptr<texture::Texture> albedo) noexcept;
+		explicit Lambertian1(Colour albedo);
 
 		std::optional<std::pair<Colour, Ray>> scatter(Ray const &r_in,
 			hittable::HitRecord const &rec,
@@ -55,7 +62,7 @@ class rays::material::Lambertian1 final:
 
 	private:
 
-		Colour albedo_;
+		std::shared_ptr<texture::Texture> albedo_;
 };
 
 /*
@@ -66,9 +73,12 @@ class rays::material::Lambertian2 final:
 {
 	public:
 
+		static std::shared_ptr<Material>
+			new_material(std::shared_ptr<texture::Texture> albedo);
 		static std::shared_ptr<Material> new_material(Colour albedo);
 
-		explicit Lambertian2(Colour albedo) noexcept;
+		explicit Lambertian2(std::shared_ptr<texture::Texture> albedo) noexcept;
+		explicit Lambertian2(Colour albedo);
 
 		std::optional<std::pair<Colour, Ray>> scatter(Ray const &r_in,
 			hittable::HitRecord const &rec,
@@ -76,5 +86,5 @@ class rays::material::Lambertian2 final:
 
 	private:
 
-		Colour albedo_;
+		std::shared_ptr<texture::Texture> albedo_;
 };
