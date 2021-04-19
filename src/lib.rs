@@ -13,7 +13,7 @@ pub use material::{Dielectric, Lambertian0, Lambertian1, Lambertian2, Material, 
 use rand::prelude::*;
 use ray::Ray;
 use std::{convert::TryFrom, error::Error, io::prelude::*, panic, sync::Arc, thread};
-pub use texture::{SolidColour, Texture};
+pub use texture::{Chequer, SolidColour, Texture};
 pub use vec3::Vec3;
 
 /**
