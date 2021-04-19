@@ -16,6 +16,7 @@
 #include "material_dielectric.hh"
 #include "material_lambertian.hh"
 #include "material_metal.hh"
+#include "texture_chequer.hh"
 #include "vec3.hh"
 
 namespace fs = std::filesystem;
@@ -29,6 +30,7 @@ namespace {
 		using rays::material::Dielectric;
 		using rays::material::Lambertian2;
 		using rays::material::Metal;
+		using rays::texture::Chequer;
 		using rays::Vec3;
 
 		auto rand_dev = std::random_device{};
@@ -37,7 +39,12 @@ namespace {
 
 		auto const world = std::make_shared<HittableList>();
 
-		auto ground_material = Lambertian2::new_material(Colour{0.5, 0.5, 0.5});
+		auto chequer = Chequer::new_texture(
+			Vec3{10.0, 10.0, 10.0},
+			Colour{0.2, 0.3, 0.1},
+			Colour{0.9, 0.9, 0.9}
+		);
+		auto ground_material = Lambertian2::new_material(std::move(chequer));
 		world->push_back(Sphere::new_hittable(Vec3{0.0, -1000.0, 0.0}, 1000.0,
 			std::move(ground_material)));
 
