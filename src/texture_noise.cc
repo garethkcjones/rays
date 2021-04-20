@@ -23,5 +23,5 @@ auto Noise::new_texture(std::default_random_engine &rand_eng,
 }
 
 auto Noise::value(double /*u*/, double /*v*/, Vec3 const p) const -> Colour {
-	return Colour{1.0, 1.0, 1.0} * noise_.noise(scale_ * p);
+	return Colour{1.0, 1.0, 1.0} * 0.5 * (1.0 + noise_.noise(scale_ * p));
 }

@@ -24,6 +24,6 @@ class rays::Perlin final {
 
 	private:
 
-		std::array<double, point_count> ranfloat_;
+		std::array<Vec3, point_count> ranvec_;
 		std::array<std::size_t, point_count> perm_x_, perm_y_, perm_z_;
 };
