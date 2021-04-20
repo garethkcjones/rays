@@ -11,6 +11,7 @@ src = [
   'material_metal.cc',
   'perlin.cc',
   'texture_chequer.cc',
+  'texture_noise.cc',
   'texture_solidcolour.cc',
   'vec3.cc'
 ]
