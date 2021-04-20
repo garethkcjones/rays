@@ -120,32 +120,37 @@ fn rand_fill() -> [Vec3; POINT_COUNT] {
 }
 
 fn perlin_interp(c: &[[[Vec3; 2]; 2]; 2], u: f64, v: f64, w: f64) -> f64 {
+    #![allow(clippy::many_single_char_names)]
+
     let uu = u * u * (3.0 - 2.0 * u);
     let vv = v * v * (3.0 - 2.0 * v);
     let ww = w * w * (3.0 - 2.0 * w);
 
     let mut accum = 0.0;
 
-    #[allow(clippy::needless_range_loop)]
-    for i in 0..2 {
-        let fi = i as f64;
-        let iterm = fi * uu + (1.0 - fi) * (1.0 - uu);
-        let iweight = u - fi;
+    let mut i = 0.0;
+    for c in c {
+        let iterm = i * uu + (1.0 - i) * (1.0 - uu);
+        let iweight = u - i;
 
-        for j in 0..2 {
-            let fj = j as f64;
-            let jterm = fj * vv + (1.0 - fj) * (1.0 - vv);
-            let jweight = v - fj;
+        let mut j = 0.0;
+        for c in c {
+            let jterm = j * vv + (1.0 - j) * (1.0 - vv);
+            let jweight = v - j;
 
-            for k in 0..2 {
-                let fk = k as f64;
-                let kterm = fk * ww + (1.0 - fk) * (1.0 - ww);
-                let kweight = w - fk;
+            let mut k = 0.0;
+            for c in c {
+                let kterm = k * ww + (1.0 - k) * (1.0 - ww);
+                let kweight = w - k;
 
                 let weight_v = Vec3(iweight, jweight, kweight);
-                accum += iterm * jterm * kterm * c[i][j][k].dot(weight_v);
+                accum += iterm * jterm * kterm * c.dot(weight_v);
+
+                k += 1.0;
             }
+            j += 1.0;
         }
+        i += 1.0;
     }
     accum
 }
