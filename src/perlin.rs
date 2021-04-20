@@ -114,7 +114,7 @@ fn perlin_generate_perm() -> [usize; POINT_COUNT] {
 fn rand_fill() -> [Vec3; POINT_COUNT] {
     let mut ranvec = [Default::default(); POINT_COUNT];
     for i in &mut ranvec {
-        *i = Vec3::new_random(-1.0..1.0);
+        *i = Vec3::new_random(-1.0..1.0).unit();
     }
     ranvec
 }

@@ -43,7 +43,7 @@ namespace {
 	{
 		std::array<Vec3, Perlin::point_count> ranvec;
 		for (auto &&i : ranvec)
-			i = Vec3::new_random(rand_eng, -1.0, 1.0);
+			i = Vec3::new_random(rand_eng, -1.0, 1.0).unit();
 		return ranvec;
 	}
 
