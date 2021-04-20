@@ -24,9 +24,9 @@ impl Perlin {
     pub fn noise(&self, p: Vec3) -> f64 {
         const MASK: usize = POINT_COUNT - 1;
 
-        let i = (4.0 * p.x()) as usize & MASK;
-        let j = (4.0 * p.y()) as usize & MASK;
-        let k = (4.0 * p.z()) as usize & MASK;
+        let i = (4.0 * p.x()) as isize as usize & MASK;
+        let j = (4.0 * p.y()) as isize as usize & MASK;
+        let k = (4.0 * p.z()) as isize as usize & MASK;
 
         let ind = self.perm_x[i] ^ self.perm_y[j] ^ self.perm_z[k];
         self.ranfloat[ind]
