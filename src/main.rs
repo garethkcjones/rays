@@ -5,7 +5,7 @@ use rays::{
 use std::{
     env,
     error::Error,
-    ffi::OsString,
+    ffi::{OsStr, OsString},
     fs::File,
     io::{self, prelude::*, BufWriter},
     path::Path,
@@ -83,33 +83,101 @@ fn random_scene() -> Arc<dyn Hittable> {
     Arc::new(world)
 }
 
+#[must_use]
+fn two_spheres() -> Arc<dyn Hittable> {
+    let chequer = Chequer::new_texture(
+        Vec3(10.0, 10.0, 10.0),
+        Colour(0.2, 0.3, 0.1),
+        Colour(0.9, 0.9, 0.9),
+    );
+
+    let objects = vec![
+        Sphere::new_hittable(
+            Vec3(0.0, -10.0, 0.0),
+            10.0,
+            Lambertian2::new_material(chequer.clone()),
+        ),
+        Sphere::new_hittable(
+            Vec3(0.0, 10.0, 0.0),
+            10.0,
+            Lambertian2::new_material(chequer),
+        ),
+    ];
+
+    Arc::new(objects)
+}
+
 /**
  * Builds and renders a scene.
  */
-fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error + Send + Sync>> {
-    // Image.
+fn render(scene: u32, output: &mut dyn Write) -> Result<(), Box<dyn Error + Send + Sync>> {
+    // Scene parameters.
+    let (
+        world,
+        lookfrom,
+        lookat,
+        vup,
+        vfov,
+        aspect_ratio,
+        aperture,
+        dist_to_focus,
+        time0,
+        time1,
+        image_width,
+        image_height,
+        samples_per_pixel,
+        max_depth,
+    );
 
-    let image_aspect_ratio = 16.0 / 9.0;
-    let image_width = 400;
-    let image_height = (f64::from(image_width) / image_aspect_ratio) as _;
-    let samples_per_pixel = 100;
-    let max_depth = 50;
+    match scene {
+        1 => {
+            // Image.
+            let image_aspect_ratio = 16.0 / 9.0;
+            image_width = 400;
+            image_height = (f64::from(image_width) / image_aspect_ratio) as _;
+            samples_per_pixel = 100;
+            max_depth = 50;
 
-    // World.
+            // World.
+            world = random_scene();
 
-    let world = random_scene();
+            // Camera.
+            lookfrom = Vec3(13.0, 2.0, 3.0);
+            lookat = Vec3(0.0, 0.0, 0.0);
+            vup = Vec3(0.0, 1.0, 0.0);
+            vfov = 20.0;
+            aspect_ratio = f64::from(image_width) / f64::from(image_height);
+            aperture = 0.1;
+            dist_to_focus = 10.0;
+            time0 = 0.0;
+            time1 = 1.0;
+        }
 
-    // Camera.
+        2 => {
+            // Image.
+            let image_aspect_ratio = 16.0 / 9.0;
+            image_width = 400;
+            image_height = (f64::from(image_width) / image_aspect_ratio) as _;
+            samples_per_pixel = 100;
+            max_depth = 50;
 
-    let lookfrom = Vec3(13.0, 2.0, 3.0);
-    let lookat = Vec3(0.0, 0.0, 0.0);
-    let vup = Vec3(0.0, 1.0, 0.0);
-    let vfov = 20.0;
-    let aspect_ratio = f64::from(image_width) / f64::from(image_height);
-    let aperture = 0.1;
-    let dist_to_focus = 10.0;
-    let time0 = 0.0;
-    let time1 = 1.0;
+            // World.
+            world = two_spheres();
+
+            // Camera.
+            lookfrom = Vec3(13.0, 2.0, 3.0);
+            lookat = Vec3(0.0, 0.0, 0.0);
+            vup = Vec3(0.0, 1.0, 0.0);
+            vfov = 20.0;
+            aspect_ratio = f64::from(image_width) / f64::from(image_height);
+            aperture = 0.0;
+            dist_to_focus = 10.0;
+            time0 = 0.0;
+            time1 = 1.0;
+        }
+
+        x => return Err(format!("invalid scene number: {}", x).into()),
+    }
 
     let cam = Camera::new(
         lookfrom,
@@ -140,19 +208,35 @@ fn render(output: &mut dyn Write) -> Result<(), Box<dyn Error + Send + Sync>> {
     )
 }
 
+fn scene_number(arg: &OsStr) -> Result<u32, Box<dyn Error + Send + Sync>> {
+    match arg.to_str() {
+        Some(arg) => match arg.parse() {
+            Ok(scene) => Ok(scene),
+            Err(x) => Err(format!("invalid scene number “{}”: {}", arg, x).into()),
+        },
+        None => Err(format!("invalid scene number “{}”", arg.to_string_lossy()).into()),
+    }
+}
+
 /**
  * Runs the program.
  */
 fn run(args: &[OsString]) -> Result<(), Box<dyn Error + Send + Sync>> {
     match args.len() {
-        0 | 1 => {
-            // No output file name specified on command-line.  Use stdout.
-            render(&mut io::stdout().lock())?;
-        }
+        0 | 1 => return Err("no scene number specified".into()),
 
         2 => {
+            let scene = scene_number(&args[1])?;
+
+            // No output file name specified on command-line.  Use stdout.
+            render(scene, &mut io::stdout().lock())?;
+        }
+
+        3 => {
+            let scene = scene_number(&args[1])?;
+
             // Get the output file name from the command-line.
-            let filename = Path::new(&args[1]);
+            let filename = Path::new(&args[2]);
 
             let mut output = match File::create(filename) {
                 Ok(output) => BufWriter::new(output),
@@ -163,7 +247,7 @@ fn run(args: &[OsString]) -> Result<(), Box<dyn Error + Send + Sync>> {
                 }
             };
 
-            render(&mut output)?;
+            render(scene, &mut output)?;
 
             if let Err(x) = output.flush() {
                 return Err(format!("error writing to “{}”: {}", filename.display(), x).into());
