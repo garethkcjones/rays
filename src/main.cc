@@ -147,7 +147,7 @@ namespace {
 
 		auto const objects = std::make_shared<HittableList>();
 
-		auto pertext = Noise::new_texture(rand_eng);
+		auto pertext = Noise::new_texture(rand_eng, 4.0);
 		objects->push_back(Sphere::new_hittable(Vec3{0.0, -1000.0, 0.0}, 1000.0,
 			Lambertian2::new_material(pertext)));
 		objects->push_back(Sphere::new_hittable(Vec3{0.0, 2.0, 0.0}, 2.0,

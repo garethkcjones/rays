@@ -21,13 +21,14 @@ class rays::texture::Noise final:
 	public:
 
 		static std::shared_ptr<Texture>
-			new_texture(std::default_random_engine &rand_eng);
+			new_texture(std::default_random_engine &rand_eng, double scale);
 
-		explicit Noise(std::default_random_engine &rand_eng);
+		explicit Noise(std::default_random_engine &rand_eng, double scale);
 
 		Colour value(double u, double v, Vec3 p) const override;
 
 	private:
 
 		Perlin noise_;
+		double scale_;
 };
