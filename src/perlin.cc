@@ -84,9 +84,13 @@ auto Perlin::noise(Vec3 const p) const noexcept -> double {
 	auto const fpy = std::floor(p.y);
 	auto const fpz = std::floor(p.z);
 
-	auto const u = p.x - fpx;
-	auto const v = p.y - fpy;
-	auto const w = p.z - fpz;
+	auto u = p.x - fpx;
+	auto v = p.y - fpy;
+	auto w = p.z - fpz;
+
+	u = u * u * (3.0 - 2.0 * u);
+	v = v * v * (3.0 - 2.0 * v);
+	w = w * w * (3.0 - 2.0 * w);
 
 	auto const i = static_cast<int>(fpx);
 	auto const j = static_cast<int>(fpy);
