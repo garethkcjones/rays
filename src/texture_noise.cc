@@ -1,5 +1,6 @@
 #include "texture_noise.hh"
 
+#include <cmath>
 #include <memory>
 #include <random>
 
@@ -23,5 +24,7 @@ auto Noise::new_texture(std::default_random_engine &rand_eng,
 }
 
 auto Noise::value(double /*u*/, double /*v*/, Vec3 const p) const -> Colour {
-	return Colour{1.0, 1.0, 1.0} * noise_.turb(scale_ * p);
+	return   Colour{1.0, 1.0, 1.0}
+	       * 0.5
+	       * (1.0 + std::sin(scale_ * p.z + 10.0 * noise_.turb(p)));
 }
