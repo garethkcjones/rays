@@ -1,7 +1,9 @@
 mod chequer;
+mod noise;
 mod solidcolour;
 use crate::{Colour, Vec3};
 pub use chequer::Chequer;
+pub use noise::Noise;
 pub use solidcolour::SolidColour;
 use std::fmt::Debug;
 
