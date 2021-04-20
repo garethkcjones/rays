@@ -36,6 +36,10 @@ impl Perlin {
         let v = py - fpy;
         let w = pz - fpz;
 
+        let u = u * u * (3.0 - 2.0 * u);
+        let v = v * v * (3.0 - 2.0 * v);
+        let w = w * w * (3.0 - 2.0 * w);
+
         let i = fpx as i32;
         let j = fpy as i32;
         let k = fpz as i32;
