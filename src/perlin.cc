@@ -128,3 +128,17 @@ auto Perlin::noise(Vec3 const p) const noexcept -> double {
 
 	return perlin_interp(c, u, v, w);
 }
+
+auto Perlin::turb(Vec3 const p, int const depth) const noexcept -> double {
+	auto accum = 0.0;
+	auto temp_p = p;
+	auto weight = 1.0;
+
+	for (auto i = 0; i < depth; ++i) {
+		accum += weight * noise(temp_p);
+		weight *= 0.5;
+		temp_p *= 2.0;
+	}
+
+	return std::abs(accum);
+}

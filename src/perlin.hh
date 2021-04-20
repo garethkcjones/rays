@@ -21,6 +21,7 @@ class rays::Perlin final {
 		explicit Perlin(std::default_random_engine &rand_eng);
 
 		double noise(Vec3 p) const noexcept;
+		double turb(Vec3 p, int depth = 7) const noexcept;
 
 	private:
 
