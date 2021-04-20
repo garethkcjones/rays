@@ -1,6 +1,7 @@
 use rand::prelude::*;
 use rays::{
-    Camera, Chequer, Colour, Dielectric, Hittable, Lambertian2, Metal, MovingSphere, Sphere, Vec3,
+    Camera, Chequer, Colour, Dielectric, Hittable, Lambertian2, Metal, MovingSphere, Noise, Sphere,
+    Vec3,
 };
 use std::{
     env,
@@ -107,6 +108,20 @@ fn two_spheres() -> Arc<dyn Hittable> {
     Arc::new(objects)
 }
 
+fn two_perlin_spheres() -> Arc<dyn Hittable> {
+    let pertext = Noise::new_texture();
+    let objects = vec![
+        Sphere::new_hittable(
+            Vec3(0.0, -1000.0, 0.0),
+            1000.0,
+            Lambertian2::new_material(pertext.clone()),
+        ),
+        Sphere::new_hittable(Vec3(0.0, 2.0, 0.0), 2.0, Lambertian2::new_material(pertext)),
+    ];
+
+    Arc::new(objects)
+}
+
 /**
  * Builds and renders a scene.
  */
@@ -163,6 +178,29 @@ fn render(scene: u32, output: &mut dyn Write) -> Result<(), Box<dyn Error + Send
 
             // World.
             world = two_spheres();
+
+            // Camera.
+            lookfrom = Vec3(13.0, 2.0, 3.0);
+            lookat = Vec3(0.0, 0.0, 0.0);
+            vup = Vec3(0.0, 1.0, 0.0);
+            vfov = 20.0;
+            aspect_ratio = f64::from(image_width) / f64::from(image_height);
+            aperture = 0.0;
+            dist_to_focus = 10.0;
+            time0 = 0.0;
+            time1 = 1.0;
+        }
+
+        3 => {
+            // Image.
+            let image_aspect_ratio = 16.0 / 9.0;
+            image_width = 400;
+            image_height = (f64::from(image_width) / image_aspect_ratio) as _;
+            samples_per_pixel = 100;
+            max_depth = 50;
+
+            // World.
+            world = two_perlin_spheres();
 
             // Camera.
             lookfrom = Vec3(13.0, 2.0, 3.0);
