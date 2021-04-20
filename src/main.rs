@@ -109,7 +109,7 @@ fn two_spheres() -> Arc<dyn Hittable> {
 }
 
 fn two_perlin_spheres() -> Arc<dyn Hittable> {
-    let pertext = Noise::new_texture();
+    let pertext = Noise::new_texture(4.0);
     let objects = vec![
         Sphere::new_hittable(
             Vec3(0.0, -1000.0, 0.0),
