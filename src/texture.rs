@@ -1,6 +1,8 @@
 mod chequer;
+mod image;
 mod noise;
 mod solidcolour;
+pub use self::image::Image;
 use crate::{Colour, Vec3};
 pub use chequer::Chequer;
 pub use noise::Noise;
