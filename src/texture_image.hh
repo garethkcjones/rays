@@ -12,6 +12,9 @@ namespace rays::texture {
 	class Image;
 }
 
+/*
+ * Type for image textures.
+ */
 class rays::texture::Image final:
 	public Texture
 {
