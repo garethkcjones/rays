@@ -18,13 +18,14 @@
 #include "material_lambertian.hh"
 #include "material_metal.hh"
 #include "texture_chequer.hh"
+#include "texture_image.hh"
 #include "texture_noise.hh"
 #include "vec3.hh"
 
 namespace fs = std::filesystem;
 
 namespace {
-	auto random_scene() -> std::shared_ptr<rays::hittable::HittableList> {
+	auto random_scene() -> std::shared_ptr<rays::hittable::Hittable> {
 		using rays::Colour;
 		using rays::hittable::HittableList;
 		using rays::hittable::MovingSphere;
@@ -111,7 +112,7 @@ namespace {
 		return world;
 	}
 
-	auto two_spheres() -> std::shared_ptr<rays::hittable::HittableList> {
+	auto two_spheres() -> std::shared_ptr<rays::hittable::Hittable> {
 		using rays::Colour;
 		using rays::hittable::HittableList;
 		using rays::hittable::Sphere;
@@ -135,7 +136,7 @@ namespace {
 		return objects;
 	}
 
-	auto two_perlin_spheres() -> std::shared_ptr<rays::hittable::HittableList> {
+	auto two_perlin_spheres() -> std::shared_ptr<rays::hittable::Hittable> {
 		using rays::hittable::HittableList;
 		using rays::hittable::Sphere;
 		using rays::material::Lambertian2;
@@ -154,6 +155,21 @@ namespace {
 			Lambertian2::new_material(std::move(pertext))));
 
 		return objects;
+	}
+
+	auto earth() -> std::shared_ptr<rays::hittable::Hittable> {
+		using rays::hittable::Sphere;
+		using rays::material::Lambertian2;
+		using rays::texture::Image;
+		using rays::Vec3;
+
+		auto earth_texture = Image::new_texture("earthmap.jpg");
+		auto earth_surface =
+			Lambertian2::new_material(std::move(earth_texture));
+		auto globe = Sphere::new_hittable(Vec3{0.0, 0.0, 0.0}, 2.0,
+			std::move(earth_surface));
+
+		return globe;
 	}
 
 	/*
@@ -234,6 +250,32 @@ namespace {
 
 				// World.
 				world = two_perlin_spheres();
+
+				// Camera.
+				lookfrom = Vec3{13.0, 2.0, 3.0};
+				lookat   = Vec3{ 0.0, 0.0, 0.0};
+				vup      = Vec3{ 0.0, 1.0, 0.0};
+				vfov = 20.0;
+				aspect_ratio = static_cast<double>(image_width) / image_height;
+				aperture = 0.0;
+				dist_to_focus = 10.0;
+				time0 = 0.0;
+				time1 = 1.0;
+
+				break;
+			}
+
+			case 4: {
+				// Image.
+				auto const image_aspect_ratio = 16.0 / 9.0;
+				image_width = 400;
+				image_height =
+					static_cast<int>(image_width / image_aspect_ratio);
+				samples_per_pixel = 100;
+				max_depth = 50;
+
+				// World.
+				world = earth();
 
 				// Camera.
 				lookfrom = Vec3{13.0, 2.0, 3.0};
