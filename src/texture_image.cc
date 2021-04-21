@@ -106,14 +106,10 @@ auto Image::value(double u, double v, Vec3 /*p*/) const -> Colour {
 
 	auto const ind = j * bytes_per_scanline_ + i * bytes_per_pixel;
 	assert(ind + 2 < width_ * height_ * bytes_per_pixel);
-	auto const pixelr = data_[ind];
-	auto const pixelg = data_[ind + 1];
-	auto const pixelb = data_[ind + 2];
-	auto const pixel = Colour {
-		static_cast<double>(pixelr),
-		static_cast<double>(pixelg),
-		static_cast<double>(pixelb)
-	};
+	auto const r = static_cast<double>(data_[ind]);
+	auto const g = static_cast<double>(data_[ind + 1]);
+	auto const b = static_cast<double>(data_[ind + 2]);
+	auto const pixel = Colour {r, g, b};
 
 	return colour_scale * pixel;
 }
