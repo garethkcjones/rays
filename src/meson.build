@@ -7,6 +7,7 @@ src = [
   'lib.cc',
   'main.cc',
   'material_dielectric.cc',
+  'material_diffuselight.cc',
   'material_lambertian.cc',
   'material_metal.cc',
   'perlin.cc',
