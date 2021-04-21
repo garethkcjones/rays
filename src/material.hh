@@ -7,6 +7,7 @@
 #include "colour.hh"
 #include "hittable_hitrecord.hh"
 #include "ray.hh"
+#include "vec3.hh"
 
 namespace rays::material {
 	class Material;
@@ -23,4 +24,8 @@ class rays::material::Material {
 		virtual std::optional<std::pair<Colour, Ray>> scatter(Ray const &r_in,
 			hittable::HitRecord const &rec,
 			std::default_random_engine &rand_eng) const = 0;
+
+		virtual Colour emitted(double /*u*/, double /*v*/, Vec3 /*p*/) const {
+			return Colour{0.0, 0.0, 0.0};
+		}
 };
