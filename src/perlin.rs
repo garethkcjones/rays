@@ -43,19 +43,22 @@ impl Perlin {
         let mut c = [[[Default::default(); 2]; 2]; 2];
 
         for di in 0..2 {
-            let iterm = (i + di) as isize as usize & MASK;
+            let iterm = (i + di) as usize & MASK;
             let xterm = self.perm_x[iterm];
+            let di = di as usize;
 
             for dj in 0..2 {
-                let jterm = (j + dj) as isize as usize & MASK;
+                let jterm = (j + dj) as usize & MASK;
                 let yterm = self.perm_y[jterm];
+                let dj = dj as usize;
 
                 for dk in 0..2 {
-                    let kterm = (k + dk) as isize as usize & MASK;
+                    let kterm = (k + dk) as usize & MASK;
                     let zterm = self.perm_z[kterm];
+                    let dk = dk as usize;
 
                     let ind = xterm ^ yterm ^ zterm;
-                    c[di as usize][dj as usize][dk as usize] = self.ranvec[ind];
+                    c[di][dj][dk] = self.ranvec[ind];
                 }
             }
         }
