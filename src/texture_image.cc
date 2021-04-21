@@ -50,7 +50,7 @@ Image::Image(
 	height_{height},
 	bytes_per_scanline_{bytes_per_scanline}
 {
-	assert(data);
+	assert(data_);
 }
 
 auto Image::new_texture(std::filesystem::path const &filename)
