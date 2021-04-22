@@ -24,22 +24,24 @@ pub use vec3::Vec3;
  * Calculates the colour of a ray of light.
  */
 #[must_use]
-fn ray_colour(r: &Ray, world: &dyn Hittable, depth: u32) -> Colour {
+fn ray_colour(r: &Ray, background: Colour, world: &dyn Hittable, depth: u32) -> Colour {
     // If we’ve exceeded the ray bounce limit, no more light is gathered.
     if depth == 0 {
         return Colour(0.0, 0.0, 0.0);
     }
 
     if let Some(rec) = world.hit(r, 0.001..f64::INFINITY) {
-        if let Some((attenuation, scattered)) = rec.material_ref().scatter(r, &rec) {
-            return attenuation * ray_colour(&scattered, world, depth - 1);
-        }
-        return Colour(0.0, 0.0, 0.0);
-    }
+        let emitted = rec.material_ref().emitted(rec.u(), rec.v(), rec.p());
 
-    let unit_direction = r.direction().unit();
-    let t = 0.5 * (unit_direction.y() + 1.0);
-    (1.0 - t) * Colour(1.0, 1.0, 1.0) + t * Colour(0.5, 0.7, 1.0)
+        if let Some((attenuation, scattered)) = rec.material_ref().scatter(r, &rec) {
+            emitted + attenuation * ray_colour(&scattered, background, world, depth - 1)
+        } else {
+            emitted
+        }
+    } else {
+        // If the ray hits nothing, return the background colour.
+        background
+    }
 }
 
 /**
@@ -48,14 +50,17 @@ fn ray_colour(r: &Ray, world: &dyn Hittable, depth: u32) -> Colour {
  * # Parameters
  *
  * * `world` contains the hittable objects in the scene.
+ * * `background` is the background colour.
  * * `image_width` and `image_height` are the image dimesions, in pixels.
  * * `samples_per_pixel` is the number of samples per pixel.
  * * `max_depth` is the recursion limit for ray reflections.
  * * `cam` is the camera.
  * * If `log` is `true`, progress is reported to the standard error stream.
  */
+#[allow(clippy::too_many_arguments)]
 fn render(
     world: Arc<dyn Hittable>,
+    background: Colour,
     image_width: u32,
     image_height: u32,
     samples_per_pixel: u32,
@@ -102,7 +107,7 @@ fn render(
 
                 let r = cam.get_ray(u, v);
 
-                pixel_colour += ray_colour(&r, world.as_ref(), max_depth);
+                pixel_colour += ray_colour(&r, background, world.as_ref(), max_depth);
             }
 
             pixels.push(pixel_colour);
@@ -163,6 +168,7 @@ fn write_file(
  *
  * * `num_threads` is the number of threads to distribute rendering over.
  * * `world` contains the hittable objects in the scene.
+ * * `background` is the background colour.
  * * `image_width` and `image_height` are the image dimesions, in pixels.
  * * `samples_per_pixel` is the number of samples per pixel.
  * * `max_depth` is the recursion limit for ray reflections.
@@ -174,6 +180,7 @@ fn write_file(
 pub fn run(
     num_threads: u32,
     world: Arc<dyn Hittable>,
+    background: Colour,
     image_width: u32,
     image_height: u32,
     samples_per_pixel: u32,
@@ -200,6 +207,7 @@ pub fn run(
         threads.push(thread::spawn(move || {
             render(
                 world,
+                background,
                 image_width,
                 image_height,
                 samples_per_pixel,
@@ -213,6 +221,7 @@ pub fn run(
     // This thread.
     let mut pixels = render(
         world,
+        background,
         image_width,
         image_height,
         samples_per_thread,
