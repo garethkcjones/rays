@@ -1,7 +1,7 @@
 use rand::prelude::*;
 use rays::{
-    Camera, Chequer, Colour, Dielectric, Hittable, Image, Lambertian2, Metal, MovingSphere, Noise,
-    Sphere, Vec3,
+    Camera, Chequer, Colour, Dielectric, DiffuseLight, Hittable, Image, Lambertian2, Metal,
+    MovingSphere, Noise, Sphere, Vec3, XyRect,
 };
 use std::{
     env,
@@ -130,6 +130,24 @@ fn earth() -> Result<Arc<dyn Hittable>, Box<dyn Error + Send + Sync>> {
     Ok(globe)
 }
 
+#[must_use]
+fn simple_light() -> Arc<dyn Hittable> {
+    let pertext = Noise::new_texture(4.0);
+    let difflight = DiffuseLight::new_material(Colour(4.0, 4.0, 4.0));
+
+    let objects = vec![
+        Sphere::new_hittable(
+            Vec3(0.0, -1000.0, 0.0),
+            1000.0,
+            Lambertian2::new_material(pertext.clone()),
+        ),
+        Sphere::new_hittable(Vec3(0.0, 2.0, 0.0), 2.0, Lambertian2::new_material(pertext)),
+        XyRect::new_hittable(3.0..5.0, 1.0..3.0, -2.0, difflight),
+    ];
+
+    Arc::new(objects)
+}
+
 /**
  * Builds and renders a scene.
  */
@@ -255,16 +273,16 @@ fn render(scene: u32, output: &mut dyn Write) -> Result<(), Box<dyn Error + Send
             let image_aspect_ratio = 16.0 / 9.0;
             image_width = 400;
             image_height = (f64::from(image_width) / image_aspect_ratio) as _;
-            samples_per_pixel = 100;
+            samples_per_pixel = 400;
             max_depth = 50;
 
             // World.
-            world = earth()?;
+            world = simple_light();
             background = Colour(0.0, 0.0, 0.0);
 
             // Camera.
-            lookfrom = Vec3(13.0, 2.0, 3.0);
-            lookat = Vec3(0.0, 0.0, 0.0);
+            lookfrom = Vec3(26.0, 3.0, 6.0);
+            lookat = Vec3(0.0, 2.0, 0.0);
             vup = Vec3(0.0, 1.0, 0.0);
             vfov = 20.0;
             aspect_ratio = f64::from(image_width) / f64::from(image_height);
