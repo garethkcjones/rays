@@ -28,11 +28,6 @@ Metal::Metal(std::shared_ptr<Texture> albedo, double const fuzz) noexcept:
 	assert(fuzz_ <= 1.0);
 }
 
-Metal::Metal(Colour const albedo, double const fuzz):
-	Metal{SolidColour::new_texture(albedo), fuzz}
-{
-}
-
 auto Metal::new_material(std::shared_ptr<Texture> albedo, double const fuzz)
 	-> std::shared_ptr<Material>
 {
@@ -42,7 +37,7 @@ auto Metal::new_material(std::shared_ptr<Texture> albedo, double const fuzz)
 auto Metal::new_material(Colour const albedo, double const fuzz)
 	-> std::shared_ptr<Material>
 {
-	return std::make_shared<Metal>(albedo, fuzz);
+	return new_material(SolidColour::new_texture(albedo), fuzz);
 }
 
 auto Metal::scatter(Ray const &r_in,

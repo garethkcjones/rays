@@ -30,7 +30,6 @@ class rays::material::Metal final:
 
 		explicit Metal(std::shared_ptr<texture::Texture> albedo, double fuzz)
 			noexcept;
-		explicit Metal(Colour albedo, double fuzz);
 
 		std::optional<std::pair<Colour, Ray>> scatter(Ray const &r_in,
 			hittable::HitRecord const &rec,
