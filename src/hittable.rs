@@ -10,7 +10,7 @@ use std::{fmt::Debug, ops::Range, sync::Arc};
  */
 pub trait Hittable: Debug {
     #[must_use]
-    fn hit(&self, r: &Ray, t: Range<f64>) -> Option<HitRecord>;
+    fn hit(&self, r: &Ray, tr: Range<f64>) -> Option<HitRecord>;
 }
 
 impl Hittable for [Arc<dyn Hittable>] {
@@ -30,7 +30,7 @@ impl Hittable for [Arc<dyn Hittable>] {
 }
 
 impl Hittable for Vec<Arc<dyn Hittable>> {
-    fn hit(&self, r: &Ray, t: Range<f64>) -> Option<HitRecord> {
-        self.as_slice().hit(r, t)
+    fn hit(&self, r: &Ray, tr: Range<f64>) -> Option<HitRecord> {
+        self.as_slice().hit(r, tr)
     }
 }
