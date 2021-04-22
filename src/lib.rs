@@ -9,7 +9,7 @@ mod vec3;
 pub use camera::Camera;
 pub use colour::Colour;
 use hittable::HitRecord;
-pub use hittable::{Hittable, MovingSphere, Sphere};
+pub use hittable::{Hittable, MovingSphere, Sphere, XyRect};
 pub use material::{
     Dielectric, DiffuseLight, Lambertian0, Lambertian1, Lambertian2, Material, Metal,
 };
