@@ -25,11 +25,6 @@ DiffuseLight::DiffuseLight(std::shared_ptr<Texture> emit) noexcept:
 	assert(emit_);
 }
 
-DiffuseLight::DiffuseLight(Colour const emit):
-	DiffuseLight{SolidColour::new_texture(emit)}
-{
-}
-
 auto DiffuseLight::new_material(std::shared_ptr<Texture> emit)
 	-> std::shared_ptr<Material>
 {
@@ -38,7 +33,7 @@ auto DiffuseLight::new_material(std::shared_ptr<Texture> emit)
 
 auto DiffuseLight::new_material(Colour const emit) -> std::shared_ptr<Material>
 {
-	return std::make_shared<DiffuseLight>(emit);
+	return new_material(SolidColour::new_texture(emit));
 }
 
 auto DiffuseLight::scatter(Ray const &/*r_in*/,

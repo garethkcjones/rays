@@ -28,7 +28,6 @@ class rays::material::DiffuseLight final:
 		static std::shared_ptr<Material> new_material(Colour emit);
 
 		explicit DiffuseLight(std::shared_ptr<texture::Texture> emit) noexcept;
-		explicit DiffuseLight(Colour emit);
 
 		std::optional<std::pair<Colour, Ray>> scatter(Ray const &r_in,
 			hittable::HitRecord const &rec,
