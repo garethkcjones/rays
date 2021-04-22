@@ -1,5 +1,6 @@
 #include "hittable_sphere.hh"
 
+#include <cassert>
 #include <cmath>
 #include <memory>
 #include <optional>
@@ -15,6 +16,7 @@ Sphere::Sphere(Vec3 const centre, double const radius) noexcept:
 	centre_{centre},
 	radius_{radius}
 {
+	assert(material_);
 }
 
 auto Sphere::new_hittable(Vec3 const centre, double const radius)
