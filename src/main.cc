@@ -12,9 +12,11 @@
 
 #include "camera.hh"
 #include "hittable.hh"
+#include "hittable_aarect.hh"
 #include "hittable_sphere.hh"
 #include "lib.hh"
 #include "material_dielectric.hh"
+#include "material_diffuselight.hh"
 #include "material_lambertian.hh"
 #include "material_metal.hh"
 #include "texture_chequer.hh"
@@ -172,6 +174,34 @@ namespace {
 		return globe;
 	}
 
+	auto simple_light() -> std::shared_ptr<rays::hittable::Hittable> {
+		using rays::Colour;
+		using rays::hittable::HittableList;
+		using rays::hittable::Sphere;
+		using rays::hittable::XyRect;
+		using rays::material::DiffuseLight;
+		using rays::material::Lambertian2;
+		using rays::texture::Noise;
+		using rays::Vec3;
+
+		auto rand_dev = std::random_device{};
+		auto rand_eng = std::default_random_engine{rand_dev()};
+
+		auto const objects = std::make_shared<HittableList>();
+
+		auto pertext = Noise::new_texture(rand_eng, 4.0);
+		objects->push_back(Sphere::new_hittable(Vec3{0.0, -1000.0, 0.0}, 1000.0,
+			Lambertian2::new_material(pertext)));
+		objects->push_back(Sphere::new_hittable(Vec3{0.0, 2.0, 0.0}, 2.0,
+			Lambertian2::new_material(std::move(pertext))));
+
+		auto difflight = DiffuseLight::new_material(Colour{4.0, 4.0, 4.0});
+		objects->push_back(XyRect::new_hittable(3.0, 5.0, 1.0, 3.0, -2.0,
+			std::move(difflight)));
+
+		return objects;
+	}
+
 	/*
 	 * Builds and renders a scene.
 	 */
@@ -303,16 +333,16 @@ namespace {
 				image_width = 400;
 				image_height =
 					static_cast<int>(image_width / image_aspect_ratio);
-				samples_per_pixel = 100;
+				samples_per_pixel = 400;
 				max_depth = 50;
 
 				// World.
-				world = earth();
+				world = simple_light();
 				background = Colour{0.0, 0.0, 0.0};
 
 				// Camera.
-				lookfrom = Vec3{13.0, 2.0, 3.0};
-				lookat   = Vec3{ 0.0, 0.0, 0.0};
+				lookfrom = Vec3{26.0, 3.0, 6.0};
+				lookat   = Vec3{ 0.0, 2.0, 0.0};
 				vup      = Vec3{ 0.0, 1.0, 0.0};
 				vfov = 20.0;
 				aspect_ratio = static_cast<double>(image_width) / image_height;
