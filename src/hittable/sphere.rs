@@ -24,7 +24,7 @@ impl Sphere {
 }
 
 impl Hittable for Sphere {
-    fn hit(&self, r: &Ray, t: Range<f64>) -> Option<HitRecord> {
+    fn hit(&self, r: &Ray, tr: Range<f64>) -> Option<HitRecord> {
         #![allow(clippy::many_single_char_names)]
 
         let oc = r.origin() - self.centre;
@@ -42,9 +42,9 @@ impl Hittable for Sphere {
 
         // Find the nearest root that lies in the acceptable range.
         let mut root = (-half_b - sqrtd) / a;
-        if !t.contains(&root) {
+        if !tr.contains(&root) {
             root = (-half_b + sqrtd) / a;
-            if !t.contains(&root) {
+            if !tr.contains(&root) {
                 return None;
             }
         }
