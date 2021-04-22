@@ -1,5 +1,6 @@
 #include "hittable_sphere.hh"
 
+#include <cassert>
 #include <cmath>
 #include <memory>
 #include <numbers>
@@ -42,6 +43,7 @@ Sphere::Sphere(Vec3 const centre,
 	radius_{radius},
 	material_{std::move(material)}
 {
+	assert(material_);
 }
 
 MovingSphere::MovingSphere(Vec3 const centre0,
