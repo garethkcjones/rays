@@ -202,6 +202,38 @@ namespace {
 		return objects;
 	}
 
+	auto cornell_box() -> std::shared_ptr<rays::hittable::Hittable> {
+		using rays::Colour;
+		using rays::hittable::HittableList;
+		using rays::hittable::XyRect;
+		using rays::hittable::XzRect;
+		using rays::hittable::YzRect;
+		using rays::material::DiffuseLight;
+		using rays::material::Lambertian2;
+
+		auto const objects = std::make_shared<HittableList>();
+
+		auto red   = Lambertian2::new_material(Colour{0.65, 0.05, 0.05});
+		auto white = Lambertian2::new_material(Colour{0.73, 0.73, 0.73});
+		auto green = Lambertian2::new_material(Colour{0.12, 0.45, 0.15});
+		auto light = DiffuseLight::new_material(Colour{15.0, 15.0, 15.0});
+
+		objects->push_back(YzRect::new_hittable(0.0, 555.0, 0.0, 555.0, 555.0,
+			std::move(green)));
+		objects->push_back(YzRect::new_hittable(0.0, 555.0, 0.0, 555.0, 0.0,
+			std::move(red)));
+		objects->push_back(XzRect::new_hittable(213.0, 343.0, 227.0, 332.0,
+			554.0, std::move(light)));
+		objects->push_back(XzRect::new_hittable(0.0, 555.0, 0.0, 555.0, 0.0,
+			white));
+		objects->push_back(XzRect::new_hittable(0.0, 555.0, 0.0, 555.0, 555.0,
+			white));
+		objects->push_back(XyRect::new_hittable(0.0, 555.0, 0.0, 555.0, 555.0,
+			std::move(white)));
+
+		return objects;
+	}
+
 	/*
 	 * Builds and renders a scene.
 	 */
@@ -345,6 +377,33 @@ namespace {
 				lookat   = Vec3{ 0.0, 2.0, 0.0};
 				vup      = Vec3{ 0.0, 1.0, 0.0};
 				vfov = 20.0;
+				aspect_ratio = static_cast<double>(image_width) / image_height;
+				aperture = 0.0;
+				dist_to_focus = 10.0;
+				time0 = 0.0;
+				time1 = 1.0;
+
+				break;
+			}
+
+			case 6: {
+				// Image.
+				auto const image_aspect_ratio = 1.0;
+				image_width = 600;
+				image_height =
+					static_cast<int>(image_width / image_aspect_ratio);
+				samples_per_pixel = 200;
+				max_depth = 50;
+
+				// World.
+				world = cornell_box();
+				background = Colour{0.0, 0.0, 0.0};
+
+				// Camera.
+				lookfrom = Vec3{278.0, 278.0, -800.0};
+				lookat   = Vec3{278.0, 278.0,    0.0};
+				vup      = Vec3{ 0.0, 1.0, 0.0};
+				vfov = 40.0;
 				aspect_ratio = static_cast<double>(image_width) / image_height;
 				aperture = 0.0;
 				dist_to_focus = 10.0;
