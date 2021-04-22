@@ -10,7 +10,9 @@ pub use camera::Camera;
 pub use colour::Colour;
 use hittable::HitRecord;
 pub use hittable::{Hittable, MovingSphere, Sphere};
-pub use material::{Dielectric, Lambertian0, Lambertian1, Lambertian2, Material, Metal};
+pub use material::{
+    Dielectric, DiffuseLight, Lambertian0, Lambertian1, Lambertian2, Material, Metal,
+};
 use perlin::Perlin;
 use rand::prelude::*;
 use ray::Ray;
