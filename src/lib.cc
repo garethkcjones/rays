@@ -27,6 +27,7 @@ namespace {
 	 * Calculates the colour of a ray of light.
 	 */
 	auto ray_colour(Ray const &r,
+	                Colour const background,
 	                Hittable const &world,
 	                int const depth,
 	                std::default_random_engine &rand_eng)
@@ -39,19 +40,22 @@ namespace {
 			return Colour{0.0, 0.0, 0.0};
 
 		if (auto const rec = world.hit(r, 0.001, infinity); rec) {
+			auto const emitted =
+				rec->material_ref().emitted(rec->u(), rec->v(), rec->p());
+
 			if (auto const s = rec->material_ref().scatter(r, *rec, rand_eng);
 			    s)
 			{
 				auto const [attenuation, scattered] = *s;
-				return attenuation
-				       * ray_colour(scattered, world, depth - 1, rand_eng);
+				return emitted + attenuation *
+				  ray_colour(scattered, background, world, depth - 1, rand_eng);
+			} else {
+				return emitted;
 			}
-			return Colour{0.0, 0.0, 0.0};
+		} else {
+			// If the ray hits nothing, return the background colour.
+			return background;
 		}
-
-		auto const unit_direction = r.direction().unit();
-		auto const t = 0.5 * (unit_direction.y + 1.0);
-		return (1.0 - t) * Colour{1.0, 1.0, 1.0} + t * Colour{0.5, 0.7, 1.0};
 	}
 
 	/*
@@ -60,6 +64,7 @@ namespace {
 	 * # Parameters
 	 *
 	 * * `world` contains the hittable objects in the scene.
+	 * * `background` is the background colour.
 	 * * `image_width` and `image_height` are the image dimesions, in pixels.
 	 * * `samples_per_pixel` is the number of samples per pixel.
 	 * * `max_depth` is the recursion limit for ray reflections.
@@ -67,6 +72,7 @@ namespace {
 	 * * If `log` is `true`, progress is reported to the standard error stream.
 	 */
 	auto render(std::shared_ptr<Hittable const> const world,
+	            Colour const background,
 	            int const image_width,
 	            int const image_height,
 	            int const samples_per_pixel,
@@ -117,7 +123,8 @@ namespace {
 
 					auto const r = cam->get_ray(u, v, rand_eng);
 
-					pixel_colour += ray_colour(r, *world, max_depth, rand_eng);
+					pixel_colour +=
+						ray_colour(r, background, *world, max_depth, rand_eng);
 				}
 
 				pixels.push_back(pixel_colour);
@@ -173,6 +180,7 @@ namespace {
  *
  * * `num_threads` is the number of threads to distribute rendering over.
  * * `world` contains the hittable objects in the scene.
+ * * `background` is the background colour.
  * * `image_width` and `image_height` are the image dimesions, in pixels.
  * * `samples_per_pixel` is the number of samples per pixel.
  * * `max_depth` is the recursion limit for ray reflections.
@@ -182,6 +190,7 @@ namespace {
  */
 void rays::run(int const num_threads,
                std::shared_ptr<Hittable const> world,
+               Colour const background,
                int const image_width,
                int const image_height,
                int const samples_per_pixel,
@@ -206,6 +215,7 @@ void rays::run(int const num_threads,
 			std::launch::async,
 			render,
 			world,
+			background,
 			image_width,
 			image_height,
 			samples_per_pixel,
@@ -218,6 +228,7 @@ void rays::run(int const num_threads,
 	// This thread.
 	auto pixels = render(
 		std::move(world),
+		background,
 		image_width,
 		image_height,
 		samples_per_thread,

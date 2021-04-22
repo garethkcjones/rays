@@ -176,12 +176,14 @@ namespace {
 	 * Builds and renders a scene.
 	 */
 	void render(int const scene, std::ostream &output) {
+		using rays::Colour;
 		using rays::Camera;
 		using rays::hittable::Hittable;
 		using rays::Vec3;
 
 		// Scene parameters.
 		std::shared_ptr<Hittable> world;
+		Colour background;
 		Vec3 lookfrom, lookat, vup;
 		double vfov, aspect_ratio, aperture, dist_to_focus, time0, time1;
 		int image_width, image_height, samples_per_pixel, max_depth;
@@ -198,6 +200,7 @@ namespace {
 
 				// World.
 				world = random_scene();
+				background = Colour{0.7, 0.8, 1.0};
 
 				// Camera.
 				lookfrom = Vec3{13.0, 2.0, 3.0};
@@ -224,6 +227,7 @@ namespace {
 
 				// World.
 				world = two_spheres();
+				background = Colour{0.7, 0.8, 1.0};
 
 				// Camera.
 				lookfrom = Vec3{13.0, 2.0, 3.0};
@@ -250,6 +254,7 @@ namespace {
 
 				// World.
 				world = two_perlin_spheres();
+				background = Colour{0.7, 0.8, 1.0};
 
 				// Camera.
 				lookfrom = Vec3{13.0, 2.0, 3.0};
@@ -276,6 +281,34 @@ namespace {
 
 				// World.
 				world = earth();
+				background = Colour{0.7, 0.8, 1.0};
+
+				// Camera.
+				lookfrom = Vec3{13.0, 2.0, 3.0};
+				lookat   = Vec3{ 0.0, 0.0, 0.0};
+				vup      = Vec3{ 0.0, 1.0, 0.0};
+				vfov = 20.0;
+				aspect_ratio = static_cast<double>(image_width) / image_height;
+				aperture = 0.0;
+				dist_to_focus = 10.0;
+				time0 = 0.0;
+				time1 = 1.0;
+
+				break;
+			}
+
+			case 5: {
+				// Image.
+				auto const image_aspect_ratio = 16.0 / 9.0;
+				image_width = 400;
+				image_height =
+					static_cast<int>(image_width / image_aspect_ratio);
+				samples_per_pixel = 100;
+				max_depth = 50;
+
+				// World.
+				world = earth();
+				background = Colour{0.0, 0.0, 0.0};
 
 				// Camera.
 				lookfrom = Vec3{13.0, 2.0, 3.0};
@@ -316,6 +349,7 @@ namespace {
 		rays::run(
 			num_threads,
 			std::move(world),
+			background,
 			image_width,
 			image_height,
 			samples_per_pixel,

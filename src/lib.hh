@@ -4,6 +4,7 @@
 #include <numbers>
 #include <ostream>
 
+#include "colour.hh"
 #include "camera.hh"
 #include "hittable.hh"
 
@@ -13,8 +14,9 @@ namespace rays {
 
 	// Main raytracer function.
 	void run(int num_threads, std::shared_ptr<hittable::Hittable const> world,
-		int image_width, int image_height, int samples_per_pixel, int max_depth,
-		std::shared_ptr<Camera const> cam, std::ostream &output, bool log);
+		Colour background, int image_width, int image_height,
+		int samples_per_pixel, int max_depth, std::shared_ptr<Camera const> cam,
+		std::ostream &output, bool log);
 }
 
 inline constexpr auto rays::degrees_to_radians(double const degrees) noexcept
