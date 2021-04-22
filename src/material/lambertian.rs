@@ -10,7 +10,7 @@ pub struct Lambertian0 {
     albedo: Colour,
 }
 
-/*
+/**
  * Type for representing a pseudo-Lambertian scattering material.
  */
 #[derive(Debug)]
@@ -18,7 +18,7 @@ pub struct Lambertian1 {
     albedo: Colour,
 }
 
-/*
+/**
  * Type for representing a true Lambertian scattering material.
  */
 #[derive(Debug)]
