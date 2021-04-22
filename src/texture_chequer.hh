@@ -27,8 +27,6 @@ class rays::texture::Chequer final:
 		explicit Chequer(Vec3 scale, std::shared_ptr<Texture> even,
 			std::shared_ptr<Texture> odd) noexcept;
 
-		explicit Chequer(Vec3 scale, Colour even, Colour odd);
-
 		Colour value(double u, double v, Vec3 p) const override;
 
 	private:
