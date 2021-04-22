@@ -23,15 +23,6 @@ Chequer::Chequer(Vec3 const scale,
 	assert(odd_);
 }
 
-Chequer::Chequer(Vec3 const scale, Colour const even, Colour const odd):
-	Chequer {
-		scale,
-		SolidColour::new_texture(even),
-		SolidColour::new_texture(odd)
-	}
-{
-}
-
 auto Chequer::new_texture(Vec3 const scale,
                           std::shared_ptr<Texture> even,
                           std::shared_ptr<Texture> odd)
@@ -43,7 +34,9 @@ auto Chequer::new_texture(Vec3 const scale,
 auto Chequer::new_texture(Vec3 const scale, Colour const even, Colour const odd)
 	-> std::shared_ptr<Texture>
 {
-	return std::make_shared<Chequer>(scale, even, odd);
+	return new_texture(scale,
+	                   SolidColour::new_texture(even),
+	                   SolidColour::new_texture(odd));
 }
 
 auto Chequer::value(double const u, double const v, Vec3 p) const

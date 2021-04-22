@@ -36,21 +36,6 @@ Lambertian2::Lambertian2(std::shared_ptr<Texture> albedo) noexcept:
 	assert(albedo_);
 }
 
-Lambertian0::Lambertian0(Colour const albedo):
-	Lambertian0{SolidColour::new_texture(albedo)}
-{
-}
-
-Lambertian1::Lambertian1(Colour const albedo):
-	Lambertian1{SolidColour::new_texture(albedo)}
-{
-}
-
-Lambertian2::Lambertian2(Colour const albedo):
-	Lambertian2{SolidColour::new_texture(albedo)}
-{
-}
-
 auto Lambertian0::new_material(std::shared_ptr<Texture> albedo)
 	-> std::shared_ptr<Material>
 {
@@ -71,17 +56,17 @@ auto Lambertian2::new_material(std::shared_ptr<Texture> albedo)
 
 auto Lambertian0::new_material(Colour const albedo) -> std::shared_ptr<Material>
 {
-	return std::make_shared<Lambertian0>(albedo);
+	return new_material(SolidColour::new_texture(albedo));
 }
 
 auto Lambertian1::new_material(Colour const albedo) -> std::shared_ptr<Material>
 {
-	return std::make_shared<Lambertian1>(albedo);
+	return new_material(SolidColour::new_texture(albedo));
 }
 
 auto Lambertian2::new_material(Colour const albedo) -> std::shared_ptr<Material>
 {
-	return std::make_shared<Lambertian2>(albedo);
+	return new_material(SolidColour::new_texture(albedo));
 }
 
 auto Lambertian0::scatter(Ray const &r_in,
