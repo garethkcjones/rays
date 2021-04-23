@@ -1,7 +1,7 @@
 use rand::prelude::*;
 use rays::{
     Block, Camera, Chequer, Colour, Dielectric, DiffuseLight, Hittable, Image, Lambertian2, Metal,
-    MovingSphere, Noise, Sphere, Vec3, XyRect, XzRect, YzRect,
+    MovingSphere, Noise, RotateY, Sphere, Translate, Vec3, XyRect, XzRect, YzRect,
 };
 use std::{
     env,
@@ -155,19 +155,31 @@ fn cornell_box() -> Arc<dyn Hittable> {
     let green = Lambertian2::new_material(Colour(0.12, 0.45, 0.15));
     let light = DiffuseLight::new_material(Colour(15.0, 15.0, 15.0));
 
+    let mut box1 = Block::new_hittable(
+        Vec3(0.0, 0.0, 0.0),
+        Vec3(165.0, 330.0, 165.0),
+        white.clone(),
+    );
+    box1 = RotateY::new_hittable(box1, 15.0);
+    box1 = Translate::new_hittable(box1, Vec3(265.0, 0.0, 295.0));
+
+    let mut box2 = Block::new_hittable(
+        Vec3(0.0, 0.0, 0.0),
+        Vec3(165.0, 165.0, 165.0),
+        white.clone(),
+    );
+    box2 = RotateY::new_hittable(box2, -18.0);
+    box2 = Translate::new_hittable(box2, Vec3(130.0, 0.0, 65.0));
+
     let objects = vec![
         YzRect::new_hittable(0.0..555.0, 0.0..555.0, 555.0, green),
         YzRect::new_hittable(0.0..555.0, 0.0..555.0, 0.0, red),
         XzRect::new_hittable(213.0..343.0, 227.0..332.0, 554.0, light),
         XzRect::new_hittable(0.0..555.0, 0.0..555.0, 0.0, white.clone()),
         XzRect::new_hittable(0.0..555.0, 0.0..555.0, 555.0, white.clone()),
-        XyRect::new_hittable(0.0..555.0, 0.0..555.0, 555.0, white.clone()),
-        Block::new_hittable(
-            Vec3(130.0, 0.0, 65.0),
-            Vec3(295.0, 165.0, 230.0),
-            white.clone(),
-        ),
-        Block::new_hittable(Vec3(265.0, 0.0, 295.0), Vec3(430.0, 330.0, 460.0), white),
+        XyRect::new_hittable(0.0..555.0, 0.0..555.0, 555.0, white),
+        box1,
+        box2,
     ];
 
     Arc::new(objects)
