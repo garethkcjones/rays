@@ -31,32 +31,32 @@ impl RotateY {
 
 impl Hittable for RotateY {
     fn hit(&self, r: &Ray, tr: Range<f64>) -> Option<HitRecord> {
-        let Vec3(mut ox, oy, mut oz) = r.origin();
-        let Vec3(mut dx, dy, mut dz) = r.direction();
+        let Vec3(o1x, oy, o1z) = r.origin();
+        let Vec3(d1x, dy, d1z) = r.direction();
 
-        ox = self.cos_theta * ox - self.sin_theta * oz;
-        oz = self.sin_theta * ox + self.cos_theta * oz;
+        let o2x = self.cos_theta * o1x - self.sin_theta * o1z;
+        let o2z = self.sin_theta * o1x + self.cos_theta * o1z;
 
-        dx = self.cos_theta * dx - self.sin_theta * dz;
-        dz = self.sin_theta * dx + self.cos_theta * dz;
+        let d2x = self.cos_theta * d1x - self.sin_theta * d1z;
+        let d2z = self.sin_theta * d1x + self.cos_theta * d1z;
 
-        let origin = Vec3(ox, oy, oz);
-        let direction = Vec3(dx, dz, dy);
+        let origin = Vec3(o2x, oy, o2z);
+        let direction = Vec3(d2x, dy, d2z);
 
         let rotated_r = Ray::new(origin, direction, r.time());
 
         self.object.hit(&rotated_r, tr).map(|rec| {
-            let Vec3(mut px, py, mut pz) = rec.p();
-            let Vec3(mut nx, ny, mut nz) = rec.normal();
+            let Vec3(p1x, py, p1z) = rec.p();
+            let Vec3(n1x, ny, n1z) = rec.normal();
 
-            px = self.cos_theta * px + self.sin_theta * pz;
-            pz = -self.sin_theta * px + self.cos_theta * pz;
+            let p2x = self.cos_theta * p1x + self.sin_theta * p1z;
+            let p2z = -self.sin_theta * p1x + self.cos_theta * p1z;
 
-            nx = self.cos_theta * nx + self.sin_theta * nz;
-            nz = -self.sin_theta * nx + self.cos_theta * nz;
+            let n2x = self.cos_theta * n1x + self.sin_theta * n1z;
+            let n2z = -self.sin_theta * n1x + self.cos_theta * n1z;
 
-            let p = Vec3(px, py, pz);
-            let normal = Vec3(nx, ny, nz);
+            let p = Vec3(p2x, py, p2z);
+            let normal = Vec3(n2x, ny, n2z);
 
             HitRecord::new(
                 &rotated_r,

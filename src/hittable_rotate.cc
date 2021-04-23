@@ -31,32 +31,32 @@ auto RotateY::new_hittable(std::shared_ptr<Hittable> object, double const angle)
 auto RotateY::hit(Ray const &r, double const t_min, double const t_max) const
 	noexcept -> std::optional<HitRecord>
 {
-	auto [ox, oy, oz] = r.origin();
-	auto [dx, dy, dz] = r.direction();
+	auto const [o1x, oy, o1z] = r.origin();
+	auto const [d1x, dy, d1z] = r.direction();
 
-	ox = cos_theta_ * ox - sin_theta_ * oz;
-	oz = sin_theta_ * ox + cos_theta_ * oz;
+	auto const o2x = cos_theta_ * o1x - sin_theta_ * o1z;
+	auto const o2z = sin_theta_ * o1x + cos_theta_ * o1z;
 
-	dx = cos_theta_ * dx - sin_theta_ * dz;
-	dz = sin_theta_ * dx + cos_theta_ * dz;
+	auto const d2x = cos_theta_ * d1x - sin_theta_ * d1z;
+	auto const d2z = sin_theta_ * d1x + cos_theta_ * d1z;
 
-	auto const origin    = Vec3{ox, oy, oz};
-	auto const direction = Vec3{dx, dz, dy};
+	auto const origin    = Vec3{o2x, oy, o2z};
+	auto const direction = Vec3{d2x, dy, d2z};
 
 	auto const rotated_r = Ray{origin, direction, r.time()};
 
 	if (auto const rec = object_->hit(rotated_r, t_min, t_max); rec) {
-		auto [px, py, pz] = rec->p();
-		auto [nx, ny, nz] = rec->normal();
+		auto const [p1x, py, p1z] = rec->p();
+		auto const [n1x, ny, n1z] = rec->normal();
 
-		px =  cos_theta_ * px + sin_theta_ * pz;
-		pz = -sin_theta_ * px + cos_theta_ * pz;
+		auto const p2x =  cos_theta_ * p1x + sin_theta_ * p1z;
+		auto const p2z = -sin_theta_ * p1x + cos_theta_ * p1z;
 
-		nx =  cos_theta_ * nx + sin_theta_ * nz;
-		nz = -sin_theta_ * nx + cos_theta_ * nz;
+		auto const n2x =  cos_theta_ * n1x + sin_theta_ * n1z;
+		auto const n2z = -sin_theta_ * n1x + cos_theta_ * n1z;
 
-		auto const p      = Vec3{px, py, pz};
-		auto const normal = Vec3{nx, ny, nz};
+		auto const p      = Vec3{p2x, py, p2z};
+		auto const normal = Vec3{n2x, ny, n2z};
 
 		return std::make_optional<HitRecord>(
 			rotated_r,
