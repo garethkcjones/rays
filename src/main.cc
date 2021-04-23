@@ -13,6 +13,7 @@
 #include "camera.hh"
 #include "hittable.hh"
 #include "hittable_aarect.hh"
+#include "hittable_block.hh"
 #include "hittable_sphere.hh"
 #include "lib.hh"
 #include "material_dielectric.hh"
@@ -204,12 +205,14 @@ namespace {
 
 	auto cornell_box() -> std::shared_ptr<rays::hittable::Hittable> {
 		using rays::Colour;
+		using rays::hittable::Block;
 		using rays::hittable::HittableList;
 		using rays::hittable::XyRect;
 		using rays::hittable::XzRect;
 		using rays::hittable::YzRect;
 		using rays::material::DiffuseLight;
 		using rays::material::Lambertian2;
+		using rays::Vec3;
 
 		auto const objects = std::make_shared<HittableList>();
 
@@ -229,7 +232,12 @@ namespace {
 		objects->push_back(XzRect::new_hittable(0.0, 555.0, 0.0, 555.0, 555.0,
 			white));
 		objects->push_back(XyRect::new_hittable(0.0, 555.0, 0.0, 555.0, 555.0,
-			std::move(white)));
+			white));
+
+		objects->push_back(Block::new_hittable(Vec3{130.0, 0.0, 65.0},
+			Vec3{295.0, 165.0, 230.0}, white));
+		objects->push_back(Block::new_hittable(Vec3{265.0, 0.0, 295.0},
+			Vec3{430.0, 330.0, 460.0}, std::move(white)));
 
 		return objects;
 	}
