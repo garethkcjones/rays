@@ -1,7 +1,7 @@
 use rand::prelude::*;
 use rays::{
     Camera, Chequer, Colour, Dielectric, DiffuseLight, Hittable, Image, Lambertian2, Metal,
-    MovingSphere, Noise, Sphere, Vec3, XyRect,
+    MovingSphere, Noise, Sphere, Vec3, XyRect, XzRect, YzRect,
 };
 use std::{
     env,
@@ -148,6 +148,25 @@ fn simple_light() -> Arc<dyn Hittable> {
     Arc::new(objects)
 }
 
+#[must_use]
+fn cornell_box() -> Arc<dyn Hittable> {
+    let red = Lambertian2::new_material(Colour(0.65, 0.05, 0.05));
+    let white = Lambertian2::new_material(Colour(0.73, 0.73, 0.73));
+    let green = Lambertian2::new_material(Colour(0.12, 0.45, 0.15));
+    let light = DiffuseLight::new_material(Colour(15.0, 15.0, 15.0));
+
+    let objects = vec![
+        YzRect::new_hittable(0.0..555.0, 0.0..555.0, 555.0, green),
+        YzRect::new_hittable(0.0..555.0, 0.0..555.0, 0.0, red),
+        XzRect::new_hittable(213.0..343.0, 227.0..332.0, 554.0, light),
+        XzRect::new_hittable(0.0..555.0, 0.0..555.0, 0.0, white.clone()),
+        XzRect::new_hittable(0.0..555.0, 0.0..555.0, 555.0, white.clone()),
+        XyRect::new_hittable(0.0..555.0, 0.0..555.0, 555.0, white),
+    ];
+
+    Arc::new(objects)
+}
+
 /**
  * Builds and renders a scene.
  */
@@ -285,6 +304,30 @@ fn render(scene: u32, output: &mut dyn Write) -> Result<(), Box<dyn Error + Send
             lookat = Vec3(0.0, 2.0, 0.0);
             vup = Vec3(0.0, 1.0, 0.0);
             vfov = 20.0;
+            aspect_ratio = f64::from(image_width) / f64::from(image_height);
+            aperture = 0.0;
+            dist_to_focus = 10.0;
+            time0 = 0.0;
+            time1 = 1.0;
+        }
+
+        6 => {
+            // Image.
+            let image_aspect_ratio = 1.0;
+            image_width = 600;
+            image_height = (f64::from(image_width) / image_aspect_ratio) as _;
+            samples_per_pixel = 200;
+            max_depth = 50;
+
+            // World.
+            world = cornell_box();
+            background = Colour(0.0, 0.0, 0.0);
+
+            // Camera.
+            lookfrom = Vec3(278.0, 278.0, -800.0);
+            lookat = Vec3(278.0, 278.0, 0.0);
+            vup = Vec3(0.0, 1.0, 0.0);
+            vfov = 40.0;
             aspect_ratio = f64::from(image_width) / f64::from(image_height);
             aperture = 0.0;
             dist_to_focus = 10.0;
