@@ -3,6 +3,7 @@ src = [
   'colour.cc',
   'hittable.cc',
   'hittable_aarect.cc',
+  'hittable_block.cc',
   'hittable_hitrecord.cc',
   'hittable_sphere.cc',
   'lib.cc',
