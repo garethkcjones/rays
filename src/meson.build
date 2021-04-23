@@ -6,6 +6,7 @@ src = [
   'hittable_block.cc',
   'hittable_hitrecord.cc',
   'hittable_sphere.cc',
+  'hittable_translate.cc',
   'lib.cc',
   'main.cc',
   'material_dielectric.cc',
