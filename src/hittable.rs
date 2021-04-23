@@ -2,12 +2,14 @@ mod aarect;
 mod block;
 mod hitrecord;
 mod sphere;
+mod translate;
 use crate::Ray;
 pub use aarect::{XyRect, XzRect, YzRect};
 pub use block::Block;
 pub use hitrecord::HitRecord;
 pub use sphere::{MovingSphere, Sphere};
 use std::{fmt::Debug, ops::Range, sync::Arc};
+pub use translate::Translate;
 
 /**
  * Trait for hittable objects.
