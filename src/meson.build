@@ -5,6 +5,7 @@ src = [
   'hittable_aarect.cc',
   'hittable_block.cc',
   'hittable_hitrecord.cc',
+  'hittable_rotate.cc',
   'hittable_sphere.cc',
   'hittable_translate.cc',
   'lib.cc',
