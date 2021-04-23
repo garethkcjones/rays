@@ -279,10 +279,9 @@ fn render(scene: u32, output: &mut dyn Write) -> Result<(), Box<dyn Error + Send
 
 fn scene_number(arg: &OsStr) -> Result<u32, Box<dyn Error + Send + Sync>> {
     match arg.to_str() {
-        Some(arg) => match arg.parse() {
-            Ok(scene) => Ok(scene),
-            Err(x) => Err(format!("invalid scene number “{}”: {}", arg, x).into()),
-        },
+        Some(arg) => arg
+            .parse()
+            .map_err(|x| format!("invalid scene number “{}”: {}", arg, x).into()),
         None => Err(format!("invalid scene number “{}”", arg.to_string_lossy()).into()),
     }
 }
