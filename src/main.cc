@@ -14,7 +14,9 @@
 #include "hittable.hh"
 #include "hittable_aarect.hh"
 #include "hittable_block.hh"
+#include "hittable_rotate.hh"
 #include "hittable_sphere.hh"
+#include "hittable_translate.hh"
 #include "lib.hh"
 #include "material_dielectric.hh"
 #include "material_diffuselight.hh"
@@ -207,6 +209,8 @@ namespace {
 		using rays::Colour;
 		using rays::hittable::Block;
 		using rays::hittable::HittableList;
+		using rays::hittable::RotateY;
+		using rays::hittable::Translate;
 		using rays::hittable::XyRect;
 		using rays::hittable::XzRect;
 		using rays::hittable::YzRect;
@@ -234,10 +238,18 @@ namespace {
 		objects->push_back(XyRect::new_hittable(0.0, 555.0, 0.0, 555.0, 555.0,
 			white));
 
-		objects->push_back(Block::new_hittable(Vec3{130.0, 0.0, 65.0},
-			Vec3{295.0, 165.0, 230.0}, white));
-		objects->push_back(Block::new_hittable(Vec3{265.0, 0.0, 295.0},
-			Vec3{430.0, 330.0, 460.0}, std::move(white)));
+		auto box1 = Block::new_hittable(Vec3{0.0, 0.0, 0.0},
+			Vec3{165.0, 330.0, 165.0}, white);
+		box1 = RotateY::new_hittable(std::move(box1), 15.0);
+		box1 = Translate::new_hittable(std::move(box1),
+			Vec3{265.0, 0.0, 295.0});
+		objects->push_back(std::move(box1));
+
+		auto box2 = Block::new_hittable(Vec3{0.0, 0.0, 0.0},
+			Vec3{165.0, 165.0, 165.0}, std::move(white));
+		box2 = RotateY::new_hittable(std::move(box2), -18.0);
+		box2 = Translate::new_hittable(std::move(box2), Vec3{130.0, 0.0, 65.0});
+		objects->push_back(std::move(box2));
 
 		return objects;
 	}
