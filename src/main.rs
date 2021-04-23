@@ -1,6 +1,6 @@
 use rand::prelude::*;
 use rays::{
-    Camera, Chequer, Colour, Dielectric, DiffuseLight, Hittable, Image, Lambertian2, Metal,
+    Block, Camera, Chequer, Colour, Dielectric, DiffuseLight, Hittable, Image, Lambertian2, Metal,
     MovingSphere, Noise, Sphere, Vec3, XyRect, XzRect, YzRect,
 };
 use std::{
@@ -161,7 +161,13 @@ fn cornell_box() -> Arc<dyn Hittable> {
         XzRect::new_hittable(213.0..343.0, 227.0..332.0, 554.0, light),
         XzRect::new_hittable(0.0..555.0, 0.0..555.0, 0.0, white.clone()),
         XzRect::new_hittable(0.0..555.0, 0.0..555.0, 555.0, white.clone()),
-        XyRect::new_hittable(0.0..555.0, 0.0..555.0, 555.0, white),
+        XyRect::new_hittable(0.0..555.0, 0.0..555.0, 555.0, white.clone()),
+        Block::new_hittable(
+            Vec3(130.0, 0.0, 65.0),
+            Vec3(295.0, 165.0, 230.0),
+            white.clone(),
+        ),
+        Block::new_hittable(Vec3(265.0, 0.0, 295.0), Vec3(430.0, 330.0, 460.0), white),
     ];
 
     Arc::new(objects)
