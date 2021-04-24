@@ -41,7 +41,8 @@ namespace {
 
 		if (auto const rec = world.hit(r, 0.001, infinity); rec) {
 			auto const emitted =
-				rec->material_ref().emitted(rec->u(), rec->v(), rec->p());
+				rec->material_ref()
+				.emitted(rec->u(), rec->v(), rec->p(), rand_eng);
 
 			if (auto const s = rec->material_ref().scatter(r, *rec, rand_eng);
 			    s)

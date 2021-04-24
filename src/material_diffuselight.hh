@@ -33,7 +33,8 @@ class rays::material::DiffuseLight final:
 			hittable::HitRecord const &rec,
 			std::default_random_engine &rand_eng) const override;
 
-		Colour emitted(double u, double v, Vec3 p) const override;
+		Colour emitted(double u, double v, Vec3 p,
+			std::default_random_engine &rand_eng) const override;
 
 	private:
 

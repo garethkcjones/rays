@@ -44,7 +44,9 @@ auto DiffuseLight::scatter(Ray const &/*r_in*/,
 	return std::nullopt;
 }
 
-auto DiffuseLight::emitted(double const u, double const v, Vec3 const p) const
+auto DiffuseLight::emitted(double const u,
+                           double const v, Vec3 const p,
+                           std::default_random_engine &/*rand_eng*/) const
 	-> Colour
 {
 	return emit_->value(u, v, p);

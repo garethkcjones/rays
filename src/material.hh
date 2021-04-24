@@ -25,12 +25,14 @@ class rays::material::Material {
 			hittable::HitRecord const &rec,
 			std::default_random_engine &rand_eng) const = 0;
 
-		virtual Colour emitted(double u, double v, Vec3 p) const;
+		virtual Colour emitted(double u, double v, Vec3 p,
+			std::default_random_engine &rand_eng) const;
 };
 
 inline auto rays::material::Material::emitted(double /*u*/,
                                               double /*v*/,
-                                              Vec3 /*p*/) const
+                                              Vec3 /*p*/,
+                                 std::default_random_engine &/*rand_eng*/) const
 	-> Colour
 {
 	return Colour{0.0, 0.0, 0.0};
