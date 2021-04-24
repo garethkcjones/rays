@@ -12,6 +12,7 @@ src = [
   'main.cc',
   'material_dielectric.cc',
   'material_diffuselight.cc',
+  'material_isotropic.cc',
   'material_lambertian.cc',
   'material_metal.cc',
   'perlin.cc',
