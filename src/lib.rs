@@ -14,7 +14,7 @@ pub use hittable::{
     YzRect,
 };
 pub use material::{
-    Dielectric, DiffuseLight, Lambertian0, Lambertian1, Lambertian2, Material, Metal,
+    Dielectric, DiffuseLight, Isotropic, Lambertian0, Lambertian1, Lambertian2, Material, Metal,
 };
 use perlin::Perlin;
 use rand::prelude::*;
