@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <optional>
+#include <random>
 #include <vector>
 
 #include "hittable_hitrecord.hh"
@@ -21,7 +22,7 @@ class rays::hittable::Hittable {
 		virtual ~Hittable() noexcept = default;
 
 		virtual std::optional<HitRecord> hit(Ray const &r, double t_min,
-			double t_max) const noexcept = 0;
+			double t_max, std::default_random_engine &rand_eng) const = 0;
 };
 
 /*
@@ -35,6 +36,6 @@ public:
 
 	using vector::vector;
 
-	std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max) const
-		noexcept override;
+	std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max,
+		std::default_random_engine &rand_eng) const override;
 };

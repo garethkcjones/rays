@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <optional>
+#include <random>
 
 #include "hittable.hh"
 #include "hittable_hitrecord.hh"
@@ -29,8 +30,8 @@ class rays::hittable::XyRect final:
 		explicit XyRect(double x0, double x1, double y0, double y1, double k,
 			std::shared_ptr<material::Material> material) noexcept;
 
-		std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max)
-			const noexcept override;
+		std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max,
+			std::default_random_engine &rand_eng) const override;
 
 	private:
 
@@ -53,8 +54,8 @@ class rays::hittable::XzRect final:
 		explicit XzRect(double x0, double x1, double z0, double z1, double k,
 			std::shared_ptr<material::Material> material) noexcept;
 
-		std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max)
-			const noexcept override;
+		std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max,
+			std::default_random_engine &rand_eng) const override;
 
 	private:
 
@@ -77,8 +78,8 @@ class rays::hittable::YzRect final:
 		explicit YzRect(double y0, double y1, double z0, double z1, double k,
 			std::shared_ptr<material::Material> material) noexcept;
 
-		std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max)
-			const noexcept override;
+		std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max,
+			std::default_random_engine &rand_eng) const override;
 
 	private:
 

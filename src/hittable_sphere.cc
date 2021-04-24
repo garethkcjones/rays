@@ -5,6 +5,7 @@
 #include <memory>
 #include <numbers>
 #include <optional>
+#include <random>
 #include <utility>
 
 #include "hittable.hh"
@@ -88,8 +89,11 @@ auto MovingSphere::new_hittable(Vec3 const centre0,
 	);
 }
 
-auto Sphere::hit(Ray const &r, double const t_min, double const t_max) const
-	noexcept -> std::optional<HitRecord>
+auto Sphere::hit(Ray const &r,
+                 double const t_min,
+                 double const t_max,
+                 std::default_random_engine &/*rand_eng*/) const
+	-> std::optional<HitRecord>
 {
 	auto const oc = r.origin() - centre_;
 	auto const a = dot(r.direction(), r.direction());
@@ -126,8 +130,11 @@ auto Sphere::hit(Ray const &r, double const t_min, double const t_max) const
 	);
 }
 
-auto MovingSphere::hit(Ray const &r, double const t_min, double const t_max)
-	const noexcept -> std::optional<HitRecord>
+auto MovingSphere::hit(Ray const &r,
+                       double const t_min,
+                       double const t_max,
+                       std::default_random_engine &/*rand_eng*/) const
+	-> std::optional<HitRecord>
 {
 	auto const centre = this->centre(r.time());
 	auto const oc = r.origin() - centre;

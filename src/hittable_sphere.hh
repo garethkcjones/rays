@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <optional>
+#include <random>
 
 #include "hittable.hh"
 #include "hittable_hitrecord.hh"
@@ -27,8 +28,8 @@ class rays::hittable::Sphere final:
 		explicit Sphere(Vec3 centre, double radius,
 			std::shared_ptr<material::Material> material) noexcept;
 
-		std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max)
-			const noexcept override;
+		std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max,
+			std::default_random_engine &rand_eng) const override;
 
 	private:
 
@@ -52,8 +53,8 @@ class rays::hittable::MovingSphere final:
 			double time1, double radius,
 			std::shared_ptr<material::Material> material) noexcept;
 
-		std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max)
-			const noexcept override;
+		std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max,
+			std::default_random_engine &rand_eng) const override;
 
 	private:
 

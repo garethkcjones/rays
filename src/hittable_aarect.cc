@@ -3,6 +3,7 @@
 #include <cassert>
 #include <memory>
 #include <optional>
+#include <random>
 #include <utility>
 
 #include "hittable.hh"
@@ -95,8 +96,11 @@ auto YzRect::new_hittable(double const y0,
 	return std::make_shared<YzRect>(y0, y1, z0, z1, k, std::move(material));
 }
 
-auto XyRect::hit(Ray const &r, double const t_min, double const t_max) const
-	noexcept -> std::optional<HitRecord>
+auto XyRect::hit(Ray const &r,
+                 double const t_min,
+                 double const t_max,
+                 std::default_random_engine &/*rand_eng*/) const
+	-> std::optional<HitRecord>
 {
 	auto const t = (k_ - r.origin().z) / r.direction().z;
 	if (t < t_min || t > t_max)
@@ -123,8 +127,11 @@ auto XyRect::hit(Ray const &r, double const t_min, double const t_max) const
 	);
 }
 
-auto XzRect::hit(Ray const &r, double const t_min, double const t_max) const
-	noexcept -> std::optional<HitRecord>
+auto XzRect::hit(Ray const &r,
+                 double const t_min,
+                 double const t_max,
+                 std::default_random_engine &/*rand_eng*/) const
+	-> std::optional<HitRecord>
 {
 	auto const t = (k_ - r.origin().y) / r.direction().y;
 	if (t < t_min || t > t_max)
@@ -151,8 +158,11 @@ auto XzRect::hit(Ray const &r, double const t_min, double const t_max) const
 	);
 }
 
-auto YzRect::hit(Ray const &r, double const t_min, double const t_max) const
-	noexcept -> std::optional<HitRecord>
+auto YzRect::hit(Ray const &r,
+                 double const t_min,
+                 double const t_max,
+                 std::default_random_engine &/*rand_eng*/) const
+	-> std::optional<HitRecord>
 {
 	auto const t = (k_ - r.origin().x) / r.direction().x;
 	if (t < t_min || t > t_max)

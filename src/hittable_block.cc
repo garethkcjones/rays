@@ -43,8 +43,11 @@ auto Block::new_hittable(Vec3 const box_min,
 	return std::make_shared<Block>(box_min, box_max, std::move(material));
 }
 
-auto Block::hit(Ray const &r, double const t_min, double const t_max) const
-	noexcept -> std::optional<HitRecord>
+auto Block::hit(Ray const &r,
+                double const t_min,
+                double const t_max,
+                std::default_random_engine &rand_eng) const
+	-> std::optional<HitRecord>
 {
-	return sides_.hit(r, t_min, t_max);
+	return sides_.hit(r, t_min, t_max, rand_eng);
 }

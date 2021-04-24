@@ -3,6 +3,7 @@
 #include <cassert>
 #include <memory>
 #include <optional>
+#include <random>
 #include <utility>
 
 #include "hittable.hh"
@@ -27,11 +28,14 @@ auto Translate::new_hittable(std::shared_ptr<Hittable> object,
 	return std::make_shared<Translate>(std::move(object), offset);
 }
 
-auto Translate::hit(Ray const &r, double const t_min, double const t_max) const
-	noexcept -> std::optional<HitRecord>
+auto Translate::hit(Ray const &r,
+                    double const t_min,
+                    double const t_max,
+                    std::default_random_engine &rand_eng) const
+	-> std::optional<HitRecord>
 {
 	auto const moved_r = Ray{r.origin() - offset_, r.direction(), r.time()};
-	if (auto const rec = object_->hit(moved_r, t_min, t_max); rec) {
+	if (auto const rec = object_->hit(moved_r, t_min, t_max, rand_eng); rec) {
 		return std::make_optional<HitRecord>(
 			moved_r,
 			rec->p() + offset_,

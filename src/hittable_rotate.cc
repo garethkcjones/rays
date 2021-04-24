@@ -4,6 +4,7 @@
 #include <cmath>
 #include <memory>
 #include <optional>
+#include <random>
 #include <utility>
 
 #include "hittable_hitrecord.hh"
@@ -58,8 +59,11 @@ auto RotateZ::new_hittable(std::shared_ptr<Hittable> object, double const angle)
 	return std::make_shared<RotateZ>(std::move(object), theta);
 }
 
-auto RotateX::hit(Ray const &r, double const t_min, double const t_max) const
-	noexcept -> std::optional<HitRecord>
+auto RotateX::hit(Ray const &r,
+                  double const t_min,
+                  double const t_max,
+                  std::default_random_engine &rand_eng) const
+	-> std::optional<HitRecord>
 {
 	auto const [ox, o1y, o1z] = r.origin();
 	auto const [dx, d1y, d1z] = r.direction();
@@ -75,7 +79,7 @@ auto RotateX::hit(Ray const &r, double const t_min, double const t_max) const
 
 	auto const rotated_r = Ray{origin, direction, r.time()};
 
-	if (auto const rec = object_->hit(rotated_r, t_min, t_max); rec) {
+	if (auto const rec = object_->hit(rotated_r, t_min, t_max, rand_eng); rec) {
 		auto const [px, p1y, p1z] = rec->p();
 		auto const [nx, n1y, n1z] = rec->normal();
 
@@ -102,8 +106,11 @@ auto RotateX::hit(Ray const &r, double const t_min, double const t_max) const
 	}
 }
 
-auto RotateY::hit(Ray const &r, double const t_min, double const t_max) const
-	noexcept -> std::optional<HitRecord>
+auto RotateY::hit(Ray const &r,
+                  double const t_min,
+                  double const t_max,
+                  std::default_random_engine &rand_eng) const
+	-> std::optional<HitRecord>
 {
 	auto const [o1x, oy, o1z] = r.origin();
 	auto const [d1x, dy, d1z] = r.direction();
@@ -119,7 +126,7 @@ auto RotateY::hit(Ray const &r, double const t_min, double const t_max) const
 
 	auto const rotated_r = Ray{origin, direction, r.time()};
 
-	if (auto const rec = object_->hit(rotated_r, t_min, t_max); rec) {
+	if (auto const rec = object_->hit(rotated_r, t_min, t_max, rand_eng); rec) {
 		auto const [p1x, py, p1z] = rec->p();
 		auto const [n1x, ny, n1z] = rec->normal();
 
@@ -146,8 +153,11 @@ auto RotateY::hit(Ray const &r, double const t_min, double const t_max) const
 	}
 }
 
-auto RotateZ::hit(Ray const &r, double const t_min, double const t_max) const
-	noexcept -> std::optional<HitRecord>
+auto RotateZ::hit(Ray const &r,
+                  double const t_min,
+                  double const t_max,
+                  std::default_random_engine &rand_eng) const
+	-> std::optional<HitRecord>
 {
 	auto const [o1x, o1y, oz] = r.origin();
 	auto const [d1x, d1y, dz] = r.direction();
@@ -163,7 +173,7 @@ auto RotateZ::hit(Ray const &r, double const t_min, double const t_max) const
 
 	auto const rotated_r = Ray{origin, direction, r.time()};
 
-	if (auto const rec = object_->hit(rotated_r, t_min, t_max); rec) {
+	if (auto const rec = object_->hit(rotated_r, t_min, t_max, rand_eng); rec) {
 		auto const [p1x, p1y, pz] = rec->p();
 		auto const [n1x, n1y, nz] = rec->normal();
 

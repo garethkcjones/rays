@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <optional>
+#include <random>
 
 #include "hittable.hh"
 #include "hittable_hitrecord.hh"
@@ -27,8 +28,8 @@ class rays::hittable::Block final:
 		explicit Block(Vec3 box_min, Vec3 box_max,
 			std::shared_ptr<material::Material> material);
 
-		std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max)
-			const noexcept override;
+		std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max,
+			std::default_random_engine &rand_eng) const override;
 
 	private:
 
