@@ -1,4 +1,5 @@
 src = [
+  'aabb.cc',
   'camera.cc',
   'colour.cc',
   'hittable.cc',
