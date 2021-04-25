@@ -10,8 +10,8 @@ pub use camera::Camera;
 pub use colour::Colour;
 use hittable::HitRecord;
 pub use hittable::{
-    Block, Hittable, MovingSphere, RotateX, RotateY, RotateZ, Sphere, Translate, XyRect, XzRect,
-    YzRect,
+    Block, ConstantMedium, Hittable, MovingSphere, RotateX, RotateY, RotateZ, Sphere, Translate,
+    XyRect, XzRect, YzRect,
 };
 pub use material::{
     Dielectric, DiffuseLight, Isotropic, Lambertian0, Lambertian1, Lambertian2, Material, Metal,

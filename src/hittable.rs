@@ -1,5 +1,6 @@
 mod aarect;
 mod block;
+mod constantmedium;
 mod hitrecord;
 mod rotate;
 mod sphere;
@@ -7,6 +8,7 @@ mod translate;
 use crate::Ray;
 pub use aarect::{XyRect, XzRect, YzRect};
 pub use block::Block;
+pub use constantmedium::ConstantMedium;
 pub use hitrecord::HitRecord;
 pub use rotate::{RotateX, RotateY, RotateZ};
 pub use sphere::{MovingSphere, Sphere};

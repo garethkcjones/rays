@@ -15,6 +15,9 @@ namespace rays::hittable {
 	class ConstantMedium;
 }
 
+/*
+ * Type for an isotropic medium.
+ */
 class rays::hittable::ConstantMedium final:
 	public Hittable
 {
