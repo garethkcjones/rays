@@ -1,7 +1,8 @@
 use rand::prelude::*;
 use rays::{
-    Block, Camera, Chequer, Colour, Dielectric, DiffuseLight, Hittable, Image, Lambertian2, Metal,
-    MovingSphere, Noise, RotateY, Sphere, Translate, Vec3, XyRect, XzRect, YzRect,
+    Block, Camera, Chequer, Colour, ConstantMedium, Dielectric, DiffuseLight, Hittable, Image,
+    Lambertian2, Metal, MovingSphere, Noise, RotateY, Sphere, Translate, Vec3, XyRect, XzRect,
+    YzRect,
 };
 use std::{
     env,
@@ -185,6 +186,45 @@ fn cornell_box() -> Arc<dyn Hittable> {
     Arc::new(objects)
 }
 
+#[must_use]
+fn cornell_smoke() -> Arc<dyn Hittable> {
+    let red = Lambertian2::new_material(Colour(0.65, 0.05, 0.05));
+    let white = Lambertian2::new_material(Colour(0.73, 0.73, 0.73));
+    let green = Lambertian2::new_material(Colour(0.12, 0.45, 0.15));
+    let light = DiffuseLight::new_material(Colour(7.0, 7.0, 7.0));
+
+    let mut box1 = Block::new_hittable(
+        Vec3(0.0, 0.0, 0.0),
+        Vec3(165.0, 330.0, 165.0),
+        white.clone(),
+    );
+    box1 = RotateY::new_hittable(box1, 15.0);
+    box1 = Translate::new_hittable(box1, Vec3(265.0, 0.0, 295.0));
+    box1 = ConstantMedium::new_hittable(box1, 0.01, Colour(0.0, 0.0, 0.0));
+
+    let mut box2 = Block::new_hittable(
+        Vec3(0.0, 0.0, 0.0),
+        Vec3(165.0, 165.0, 165.0),
+        white.clone(),
+    );
+    box2 = RotateY::new_hittable(box2, -18.0);
+    box2 = Translate::new_hittable(box2, Vec3(130.0, 0.0, 65.0));
+    box2 = ConstantMedium::new_hittable(box2, 0.01, Colour(1.0, 1.0, 1.0));
+
+    let objects = vec![
+        YzRect::new_hittable(0.0..555.0, 0.0..555.0, 555.0, green),
+        YzRect::new_hittable(0.0..555.0, 0.0..555.0, 0.0, red),
+        XzRect::new_hittable(113.0..443.0, 127.0..432.0, 554.0, light),
+        XzRect::new_hittable(0.0..555.0, 0.0..555.0, 0.0, white.clone()),
+        XzRect::new_hittable(0.0..555.0, 0.0..555.0, 555.0, white.clone()),
+        XyRect::new_hittable(0.0..555.0, 0.0..555.0, 555.0, white),
+        box1,
+        box2,
+    ];
+
+    Arc::new(objects)
+}
+
 /**
  * Builds and renders a scene.
  */
@@ -339,6 +379,30 @@ fn render(scene: u32, output: &mut dyn Write) -> Result<(), Box<dyn Error + Send
 
             // World.
             world = cornell_box();
+            background = Colour(0.0, 0.0, 0.0);
+
+            // Camera.
+            lookfrom = Vec3(278.0, 278.0, -800.0);
+            lookat = Vec3(278.0, 278.0, 0.0);
+            vup = Vec3(0.0, 1.0, 0.0);
+            vfov = 40.0;
+            aspect_ratio = f64::from(image_width) / f64::from(image_height);
+            aperture = 0.0;
+            dist_to_focus = 10.0;
+            time0 = 0.0;
+            time1 = 1.0;
+        }
+
+        7 => {
+            // Image.
+            let image_aspect_ratio = 1.0;
+            image_width = 600;
+            image_height = (f64::from(image_width) / image_aspect_ratio) as _;
+            samples_per_pixel = 200;
+            max_depth = 50;
+
+            // World.
+            world = cornell_smoke();
             background = Colour(0.0, 0.0, 0.0);
 
             // Camera.
