@@ -50,7 +50,7 @@ impl Hittable for ConstantMedium {
         if let Some(rec1) = self.boundary.hit(r, -f64::INFINITY..f64::INFINITY) {
             if let Some(rec2) = self.boundary.hit(r, (rec1.t() + 0.0001)..f64::INFINITY) {
                 if debugging {
-                    eprint!("\nt_min = {}, t_max = {}\n", rec1.t(), rec2.t());
+                    eprint!("\nt_min = {:?}, t_max = {:?}\n", rec1.t(), rec2.t());
                 }
 
                 let t1 = rec1.t().max(tr.start);
@@ -68,9 +68,9 @@ impl Hittable for ConstantMedium {
                         let p = r.at(t);
 
                         if debugging {
-                            eprintln!("hit_distance = {}", hit_distance);
-                            eprintln!("rec.t = {}", t);
-                            eprintln!("rec.p = {}", p);
+                            eprintln!("hit_distance = {:?}", hit_distance);
+                            eprintln!("rec.t = {:?}", t);
+                            eprintln!("rec.p = {:?}", p);
                         }
 
                         let normal = Vec3(1.0, 0.0, 0.0); // Arbitrary.
