@@ -1,5 +1,8 @@
 use rand::{distributions::Uniform, prelude::*};
-use std::ops::{self, Range};
+use std::{
+    fmt,
+    ops::{self, Range},
+};
 
 /**
  * Type for representing vectors in 3-D space.
@@ -341,5 +344,12 @@ impl ops::MulAssign<f64> for Vec3 {
 impl ops::DivAssign<f64> for Vec3 {
     fn div_assign(&mut self, s: f64) {
         *self = *self / s;
+    }
+}
+
+impl fmt::Display for Vec3 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let Vec3(x, y, z) = self;
+        write!(f, "({}, {}, {})", x, y, z)
     }
 }
