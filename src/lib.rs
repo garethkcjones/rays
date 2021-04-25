@@ -1,3 +1,4 @@
+mod aabb;
 mod camera;
 mod colour;
 mod hittable;
@@ -6,6 +7,7 @@ mod perlin;
 mod ray;
 mod texture;
 mod vec3;
+use aabb::Aabb;
 pub use camera::Camera;
 pub use colour::Colour;
 use hittable::HitRecord;
