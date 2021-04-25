@@ -14,6 +14,7 @@
 #include "hittable.hh"
 #include "hittable_aarect.hh"
 #include "hittable_block.hh"
+#include "hittable_constantmedium.hh"
 #include "hittable_rotate.hh"
 #include "hittable_sphere.hh"
 #include "hittable_translate.hh"
@@ -254,6 +255,58 @@ namespace {
 		return objects;
 	}
 
+	auto cornell_smoke() -> std::shared_ptr<rays::hittable::Hittable> {
+		using rays::Colour;
+		using rays::hittable::Block;
+		using rays::hittable::ConstantMedium;
+		using rays::hittable::HittableList;
+		using rays::hittable::RotateY;
+		using rays::hittable::Translate;
+		using rays::hittable::XyRect;
+		using rays::hittable::XzRect;
+		using rays::hittable::YzRect;
+		using rays::material::DiffuseLight;
+		using rays::material::Lambertian2;
+		using rays::Vec3;
+
+		auto const objects = std::make_shared<HittableList>();
+
+		auto red   = Lambertian2::new_material(Colour{0.65, 0.05, 0.05});
+		auto white = Lambertian2::new_material(Colour{0.73, 0.73, 0.73});
+		auto green = Lambertian2::new_material(Colour{0.12, 0.45, 0.15});
+		auto light = DiffuseLight::new_material(Colour{7.0, 7.0, 7.0});
+
+		objects->push_back(YzRect::new_hittable(0.0, 555.0, 0.0, 555.0, 555.0,
+			std::move(green)));
+		objects->push_back(YzRect::new_hittable(0.0, 555.0, 0.0, 555.0, 0.0,
+			std::move(red)));
+		objects->push_back(XzRect::new_hittable(113.0, 443.0, 127.0, 432.0,
+			554.0, std::move(light)));
+		objects->push_back(XzRect::new_hittable(0.0, 555.0, 0.0, 555.0, 0.0,
+			white));
+		objects->push_back(XzRect::new_hittable(0.0, 555.0, 0.0, 555.0, 555.0,
+			white));
+		objects->push_back(XyRect::new_hittable(0.0, 555.0, 0.0, 555.0, 555.0,
+			white));
+
+		auto box1 = Block::new_hittable(Vec3{0.0, 0.0, 0.0},
+			Vec3{165.0, 330.0, 165.0}, white);
+		box1 = RotateY::new_hittable(std::move(box1), 15.0);
+		box1 = Translate::new_hittable(std::move(box1),
+			Vec3{265.0, 0.0, 295.0});
+		objects->push_back(ConstantMedium::new_hittable(std::move(box1), 0.01,
+			Colour{0.0, 0.0, 0.0}));
+
+		auto box2 = Block::new_hittable(Vec3{0.0, 0.0, 0.0},
+			Vec3{165.0, 165.0, 165.0}, std::move(white));
+		box2 = RotateY::new_hittable(std::move(box2), -18.0);
+		box2 = Translate::new_hittable(std::move(box2), Vec3{130.0, 0.0, 65.0});
+		objects->push_back(ConstantMedium::new_hittable(std::move(box2), 0.01,
+			Colour{1.0, 1.0, 1.0}));
+
+		return objects;
+	}
+
 	/*
 	 * Builds and renders a scene.
 	 */
@@ -417,6 +470,33 @@ namespace {
 
 				// World.
 				world = cornell_box();
+				background = Colour{0.0, 0.0, 0.0};
+
+				// Camera.
+				lookfrom = Vec3{278.0, 278.0, -800.0};
+				lookat   = Vec3{278.0, 278.0,    0.0};
+				vup      = Vec3{ 0.0, 1.0, 0.0};
+				vfov = 40.0;
+				aspect_ratio = static_cast<double>(image_width) / image_height;
+				aperture = 0.0;
+				dist_to_focus = 10.0;
+				time0 = 0.0;
+				time1 = 1.0;
+
+				break;
+			}
+
+			case 7: {
+				// Image.
+				auto const image_aspect_ratio = 1.0;
+				image_width = 600;
+				image_height =
+					static_cast<int>(image_width / image_aspect_ratio);
+				samples_per_pixel = 200;
+				max_depth = 50;
+
+				// World.
+				world = cornell_smoke();
 				background = Colour{0.0, 0.0, 0.0};
 
 				// Camera.
