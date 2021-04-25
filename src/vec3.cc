@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <ostream>
 #include <random>
 
 using namespace rays;
@@ -87,4 +88,9 @@ auto rays::refract(Vec3 const uv, Vec3 const n, double const etai_over_etat)
 	auto const r_out_parallel =
 		-std::sqrt(std::abs(1.0 - dot(r_out_perp, r_out_perp))) * n;
 	return r_out_perp + r_out_parallel;
+}
+
+auto rays::operator<<(std::ostream &os, Vec3 const v) -> std::ostream & {
+	os << '(' << v.x << ", " << v.y << ", " << v.z << ')';
+	return os;
 }

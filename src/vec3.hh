@@ -1,10 +1,13 @@
 #pragma once
 
 #include <cmath>
+#include <ostream>
 #include <random>
 
 namespace rays {
 	struct Vec3;
+
+	std::ostream &operator<<(std::ostream &os, Vec3 v);
 
 	constexpr Vec3 operator+(Vec3 v1, Vec3 v2) noexcept;
 	constexpr Vec3 operator-(Vec3 v1, Vec3 v2) noexcept;
