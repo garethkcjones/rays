@@ -13,6 +13,8 @@ namespace rays::hittable {
 class rays::hittable::Aabb final {
 	public:
 
+		static Aabb surrounding_box(Aabb box0, Aabb box1) noexcept;
+
 		constexpr explicit Aabb(Vec3 minimum, Vec3 maximum) noexcept;
 
 		constexpr auto minimum() const noexcept {return minimum_;}
