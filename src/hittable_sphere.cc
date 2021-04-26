@@ -181,3 +181,21 @@ auto Sphere::bounding_box(double /*time0*/, double /*time1*/) const
 	auto const maximum = centre_ + radius;
 	return std::make_optional<Aabb>(minimum, maximum);
 }
+
+auto MovingSphere::bounding_box(double const time0, double const time1) const
+	-> std::optional<Aabb>
+{
+	auto const radius = Vec3{radius_, radius_, radius_};
+
+	auto const centre0 = centre(time0);
+	auto const minimum0 = centre0 - radius;
+	auto const maximum0 = centre0 + radius;
+	auto const box0 = Aabb{minimum0, maximum0};
+
+	auto const centre1 = centre(time1);
+	auto const minimum1 = centre1 - radius;
+	auto const maximum1 = centre1 + radius;
+	auto const box1 = Aabb{minimum1, maximum1};
+
+	return std::make_optional(Aabb::surrounding_box(box0, box1));
+}
