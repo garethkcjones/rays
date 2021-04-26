@@ -8,7 +8,7 @@ mod texture;
 mod vec3;
 pub use camera::Camera;
 pub use colour::Colour;
-use hittable::{Aabb, HitRecord};
+use hittable::HitRecord;
 pub use hittable::{
     Block, ConstantMedium, Hittable, MovingSphere, RotateX, RotateY, RotateZ, Sphere, Translate,
     XyRect, XzRect, YzRect,

@@ -7,7 +7,7 @@ mod rotate;
 mod sphere;
 mod translate;
 use crate::Ray;
-pub use aabb::Aabb;
+use aabb::Aabb;
 pub use aarect::{XyRect, XzRect, YzRect};
 pub use block::Block;
 pub use constantmedium::ConstantMedium;
@@ -23,6 +23,11 @@ pub use translate::Translate;
 pub trait Hittable: Debug + Send + Sync {
     #[must_use]
     fn hit(&self, r: &Ray, tr: Range<f64>) -> Option<HitRecord>;
+
+    #[must_use]
+    fn bounding_box(&self, _tr: Range<f64>) -> Option<Aabb> {
+        unimplemented!() // FIXME: Remove “implementation”.
+    }
 }
 
 impl Hittable for [Arc<dyn Hittable>] {
