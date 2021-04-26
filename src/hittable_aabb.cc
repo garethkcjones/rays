@@ -1,11 +1,11 @@
-#include "aabb.hh"
+#include "hittable_aabb.hh"
 
 #include <algorithm>
 #include <utility>
 
 #include "ray.hh"
 
-using namespace rays;
+using namespace rays::hittable;
 
 namespace {
 	auto hit1d(double const minimum,

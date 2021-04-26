@@ -1,4 +1,3 @@
-mod aabb;
 mod camera;
 mod colour;
 mod hittable;
@@ -7,10 +6,9 @@ mod perlin;
 mod ray;
 mod texture;
 mod vec3;
-use aabb::Aabb;
 pub use camera::Camera;
 pub use colour::Colour;
-use hittable::HitRecord;
+use hittable::{Aabb, HitRecord};
 pub use hittable::{
     Block, ConstantMedium, Hittable, MovingSphere, RotateX, RotateY, RotateZ, Sphere, Translate,
     XyRect, XzRect, YzRect,

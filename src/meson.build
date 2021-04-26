@@ -1,8 +1,8 @@
 src = [
-  'aabb.cc',
   'camera.cc',
   'colour.cc',
   'hittable.cc',
+  'hittable_aabb.cc',
   'hittable_aarect.cc',
   'hittable_block.cc',
   'hittable_constantmedium.cc',

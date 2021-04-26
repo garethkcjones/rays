@@ -1,3 +1,4 @@
+mod aabb;
 mod aarect;
 mod block;
 mod constantmedium;
@@ -6,6 +7,7 @@ mod rotate;
 mod sphere;
 mod translate;
 use crate::Ray;
+pub use aabb::Aabb;
 pub use aarect::{XyRect, XzRect, YzRect};
 pub use block::Block;
 pub use constantmedium::ConstantMedium;
