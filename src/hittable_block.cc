@@ -6,6 +6,7 @@
 #include <utility>
 
 #include "hittable.hh"
+#include "hittable_aabb.hh"
 #include "hittable_aarect.hh"
 #include "hittable_hitrecord.hh"
 #include "material.hh"
@@ -17,7 +18,9 @@ using rays::material::Material;
 
 Block::Block(Vec3 const box_min,
              Vec3 const box_max,
-             std::shared_ptr<Material> material)
+             std::shared_ptr<Material> material):
+	box_min_{box_min},
+	box_max_{box_max}
 {
 	auto const [p0x, p0y, p0z] = box_min;
 	auto const [p1x, p1y, p1z] = box_max;
@@ -50,4 +53,8 @@ auto Block::hit(Ray const &r,
 	-> std::optional<HitRecord>
 {
 	return sides_.hit(r, t_min, t_max, rand_eng);
+}
+
+auto Block::bounding_box(double /*time0*/, double /*time1*/) const -> Aabb {
+	return Aabb{box_min_, box_max_};
 }
