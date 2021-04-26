@@ -31,10 +31,10 @@ class rays::hittable::HittableList final:
 	public Hittable,
 	public std::vector<std::shared_ptr<Hittable>>
 {
-public:
+	public:
 
-	using vector::vector;
+		using vector::vector;
 
-	std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max) const
-		noexcept override;
+		std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max)
+			const noexcept override;
 };
