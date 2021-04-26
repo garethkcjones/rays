@@ -1,4 +1,4 @@
-use super::{HitRecord, Hittable};
+use super::{Aabb, HitRecord, Hittable};
 use crate::{Material, Ray, Vec3};
 use std::{f64::consts, ops::Range, sync::Arc};
 
@@ -113,6 +113,13 @@ impl Hittable for Sphere {
         let material = Arc::clone(&self.material);
 
         Some(HitRecord::new(r, p, outward_normal, t, u, v, material))
+    }
+
+    fn bounding_box(&self, _tr: Range<f64>) -> Option<Aabb> {
+        let radius = Vec3(self.radius, self.radius, self.radius);
+        let minimum = self.centre - radius;
+        let maximum = self.centre + radius;
+        Some(Aabb::new(minimum, maximum))
     }
 }
 
