@@ -1,10 +1,12 @@
 #pragma once
 
+#include <exception> // FIXME: Temporary
 #include <memory>
 #include <optional>
 #include <random>
 #include <vector>
 
+#include "hittable_aabb.hh"
 #include "hittable_hitrecord.hh"
 #include "ray.hh"
 
@@ -23,6 +25,9 @@ class rays::hittable::Hittable {
 
 		virtual std::optional<HitRecord> hit(Ray const &r, double t_min,
 			double t_max, std::default_random_engine &rand_eng) const = 0;
+
+		virtual std::optional<Aabb> bounding_box(double /*time0*/, double /*time1*/)
+			const /* FIXME: = 0; */ {std::terminate();}
 };
 
 /*
