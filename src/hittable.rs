@@ -54,7 +54,7 @@ impl Hittable for [Arc<dyn Hittable>] {
             _ => self
                 .iter()
                 .map(|object| object.bounding_box(tr.clone()))
-                .reduce(|a, b| Aabb::surrounding_box(&a, &b))
+                .reduce(Aabb::surrounding_box)
                 .unwrap(),
         }
     }

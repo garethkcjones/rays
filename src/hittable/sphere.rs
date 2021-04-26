@@ -172,7 +172,7 @@ impl Hittable for MovingSphere {
         let maximum1 = centre1 + radius;
         let box1 = Aabb::new(minimum1, maximum1);
 
-        Aabb::surrounding_box(&box0, &box1)
+        Aabb::surrounding_box(box0, box1)
     }
 }
 

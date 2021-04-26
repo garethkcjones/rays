@@ -27,7 +27,7 @@ impl Aabb {
     }
 
     #[must_use]
-    pub fn surrounding_box(box0: &Self, box1: &Self) -> Self {
+    pub fn surrounding_box(box0: Self, box1: Self) -> Self {
         let Vec3(b0mnx, b0mny, b0mnz) = box0.minimum;
         let Vec3(b0mxx, b0mxy, b0mxz) = box0.maximum;
         let Vec3(b1mnx, b1mny, b1mnz) = box1.minimum;
