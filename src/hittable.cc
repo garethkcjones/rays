@@ -4,6 +4,7 @@
 #include <optional>
 #include <random>
 
+#include "hittable_aabb.hh"
 #include "hittable_hitrecord.hh"
 #include "ray.hh"
 
@@ -28,4 +29,30 @@ auto HittableList::hit(Ray const &r,
 	}
 
 	return rec;
+}
+
+auto HittableList::bounding_box(double const time0, double const time1) const
+	-> Aabb
+{
+	switch (size()) {
+		case 0:
+			return Aabb{Vec3{0.0, 0.0, 0.0}, Vec3{0.0, 0.0, 0.0}};
+
+		case 1:
+			return front()->bounding_box(time0, time1);
+
+		default:
+			using std::begin;
+			using std::end;
+
+			auto object = begin(*this);
+			auto output_box = (*object)->bounding_box(time0, time1);
+
+			for (++object; object < end(*this); ++object) {
+				auto const temp_box = (*object)->bounding_box(time0, time1);
+				output_box = Aabb::surrounding_box(output_box, temp_box);
+			}
+
+			return output_box;
+	}
 }

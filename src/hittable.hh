@@ -42,4 +42,6 @@ class rays::hittable::HittableList final:
 
 		std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max,
 			std::default_random_engine &rand_eng) const override;
+
+		Aabb bounding_box(double time0, double time1) const override;
 };
