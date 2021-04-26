@@ -115,11 +115,11 @@ impl Hittable for Sphere {
         Some(HitRecord::new(r, p, outward_normal, t, u, v, material))
     }
 
-    fn bounding_box(&self, _tr: Range<f64>) -> Option<Aabb> {
+    fn bounding_box(&self, _tr: Range<f64>) -> Aabb {
         let radius = Vec3(self.radius, self.radius, self.radius);
         let minimum = self.centre - radius;
         let maximum = self.centre + radius;
-        Some(Aabb::new(minimum, maximum))
+        Aabb::new(minimum, maximum)
     }
 }
 
@@ -159,7 +159,7 @@ impl Hittable for MovingSphere {
         Some(HitRecord::new(r, p, outward_normal, t, u, v, material))
     }
 
-    fn bounding_box(&self, tr: Range<f64>) -> Option<Aabb> {
+    fn bounding_box(&self, tr: Range<f64>) -> Aabb {
         let radius = Vec3(self.radius, self.radius, self.radius);
 
         let centre0 = self.centre(tr.start);
@@ -172,7 +172,7 @@ impl Hittable for MovingSphere {
         let maximum1 = centre1 + radius;
         let box1 = Aabb::new(minimum1, maximum1);
 
-        Some(Aabb::surrounding_box(&box0, &box1))
+        Aabb::surrounding_box(&box0, &box1)
     }
 }
 

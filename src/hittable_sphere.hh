@@ -32,8 +32,7 @@ class rays::hittable::Sphere final:
 		std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max,
 			std::default_random_engine &rand_eng) const override;
 
-		std::optional<Aabb> bounding_box(double time0, double time1) const
-			override;
+		Aabb bounding_box(double time0, double time1) const override;
 
 	private:
 
@@ -60,8 +59,7 @@ class rays::hittable::MovingSphere final:
 		std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max,
 			std::default_random_engine &rand_eng) const override;
 
-		std::optional<Aabb> bounding_box(double time0, double time1) const
-			override;
+		Aabb bounding_box(double time0, double time1) const override;
 
 	private:
 

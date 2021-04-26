@@ -173,17 +173,15 @@ auto MovingSphere::hit(Ray const &r,
 	);
 }
 
-auto Sphere::bounding_box(double /*time0*/, double /*time1*/) const
-	-> std::optional<Aabb>
-{
+auto Sphere::bounding_box(double /*time0*/, double /*time1*/) const -> Aabb {
 	auto const radius = Vec3{radius_, radius_, radius_};
 	auto const minimum = centre_ - radius;
 	auto const maximum = centre_ + radius;
-	return std::make_optional<Aabb>(minimum, maximum);
+	return Aabb{minimum, maximum};
 }
 
 auto MovingSphere::bounding_box(double const time0, double const time1) const
-	-> std::optional<Aabb>
+	-> Aabb
 {
 	auto const radius = Vec3{radius_, radius_, radius_};
 
@@ -197,5 +195,5 @@ auto MovingSphere::bounding_box(double const time0, double const time1) const
 	auto const maximum1 = centre1 + radius;
 	auto const box1 = Aabb{minimum1, maximum1};
 
-	return std::make_optional(Aabb::surrounding_box(box0, box1));
+	return Aabb::surrounding_box(box0, box1);
 }

@@ -25,7 +25,7 @@ pub trait Hittable: Debug + Send + Sync {
     fn hit(&self, r: &Ray, tr: Range<f64>) -> Option<HitRecord>;
 
     #[must_use]
-    fn bounding_box(&self, _tr: Range<f64>) -> Option<Aabb> {
+    fn bounding_box(&self, _tr: Range<f64>) -> Aabb {
         unimplemented!() // FIXME: Remove “implementation”.
     }
 }
