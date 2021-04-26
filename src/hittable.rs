@@ -6,7 +6,7 @@ mod hitrecord;
 mod rotate;
 mod sphere;
 mod translate;
-use crate::Ray;
+use crate::{Ray, Vec3};
 use aabb::Aabb;
 pub use aarect::{XyRect, XzRect, YzRect};
 pub use block::Block;
@@ -44,10 +44,28 @@ impl Hittable for [Arc<dyn Hittable>] {
 
         rec
     }
+
+    fn bounding_box(&self, tr: Range<f64>) -> Aabb {
+        match self.len() {
+            0 => Aabb::new(Vec3(0.0, 0.0, 0.0), Vec3(0.0, 0.0, 0.0)),
+
+            1 => self.first().unwrap().bounding_box(tr),
+
+            _ => self
+                .iter()
+                .map(|object| object.bounding_box(tr.clone()))
+                .reduce(|a, b| Aabb::surrounding_box(&a, &b))
+                .unwrap(),
+        }
+    }
 }
 
 impl Hittable for Vec<Arc<dyn Hittable>> {
     fn hit(&self, r: &Ray, tr: Range<f64>) -> Option<HitRecord> {
         self.as_slice().hit(r, tr)
+    }
+
+    fn bounding_box(&self, tr: Range<f64>) -> Aabb {
+        self.as_slice().bounding_box(tr)
     }
 }
