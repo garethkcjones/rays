@@ -5,6 +5,7 @@
 #include <random>
 
 #include "hittable.hh"
+#include "hittable_aabb.hh"
 #include "hittable_hitrecord.hh"
 #include "material.hh"
 #include "ray.hh"
@@ -33,6 +34,8 @@ class rays::hittable::XyRect final:
 		std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max,
 			std::default_random_engine &rand_eng) const override;
 
+		Aabb bounding_box(double time0, double time1) const override;
+
 	private:
 
 		std::shared_ptr<material::Material> material_;
@@ -57,6 +60,8 @@ class rays::hittable::XzRect final:
 		std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max,
 			std::default_random_engine &rand_eng) const override;
 
+		Aabb bounding_box(double time0, double time1) const override;
+
 	private:
 
 		std::shared_ptr<material::Material> material_;
@@ -80,6 +85,8 @@ class rays::hittable::YzRect final:
 
 		std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max,
 			std::default_random_engine &rand_eng) const override;
+
+		Aabb bounding_box(double time0, double time1) const override;
 
 	private:
 
