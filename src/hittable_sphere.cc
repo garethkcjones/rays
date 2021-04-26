@@ -9,6 +9,7 @@
 #include <utility>
 
 #include "hittable.hh"
+#include "hittable_aabb.hh"
 #include "hittable_hitrecord.hh"
 #include "material.hh"
 #include "ray.hh"
@@ -170,4 +171,13 @@ auto MovingSphere::hit(Ray const &r,
 		v,
 		material_
 	);
+}
+
+auto Sphere::bounding_box(double /*time0*/, double /*time1*/) const
+	-> std::optional<Aabb>
+{
+	auto const radius = Vec3{radius_, radius_, radius_};
+	auto const minimum = centre_ - radius;
+	auto const maximum = centre_ + radius;
+	return std::make_optional<Aabb>(minimum, maximum);
 }
