@@ -1,4 +1,4 @@
-use super::{HitRecord, Hittable};
+use super::{Aabb, HitRecord, Hittable};
 use crate::{Material, Ray, Vec3};
 use std::{ops::Range, sync::Arc};
 
@@ -124,6 +124,14 @@ impl Hittable for XyRect {
 
         Some(HitRecord::new(r, p, outward_normal, t, u, v, material))
     }
+
+    fn bounding_box(&self, _tr: Range<f64>) -> Aabb {
+        // The bounding box must have non-zero width in each dimension, so pad the z-dimension a
+        // small amount.
+        let minimum = Vec3(self.xr.start, self.yr.start, self.k - 0.0001);
+        let maximum = Vec3(self.xr.end, self.yr.end, self.k + 0.0001);
+        Aabb::new(minimum, maximum)
+    }
 }
 
 impl Hittable for XzRect {
@@ -149,6 +157,14 @@ impl Hittable for XzRect {
 
         Some(HitRecord::new(r, p, outward_normal, t, u, v, material))
     }
+
+    fn bounding_box(&self, _tr: Range<f64>) -> Aabb {
+        // The bounding box must have non-zero width in each dimension, so pad the y-dimension a
+        // small amount.
+        let minimum = Vec3(self.xr.start, self.k - 0.0001, self.zr.start);
+        let maximum = Vec3(self.xr.end, self.k + 0.0001, self.zr.end);
+        Aabb::new(minimum, maximum)
+    }
 }
 
 impl Hittable for YzRect {
@@ -173,5 +189,13 @@ impl Hittable for YzRect {
         let material = Arc::clone(&self.material);
 
         Some(HitRecord::new(r, p, outward_normal, t, u, v, material))
+    }
+
+    fn bounding_box(&self, _tr: Range<f64>) -> Aabb {
+        // The bounding box must have non-zero width in each dimension, so pad the x-dimension a
+        // small amount.
+        let minimum = Vec3(self.k - 0.0001, self.yr.start, self.zr.start);
+        let maximum = Vec3(self.k + 0.0001, self.yr.end, self.zr.end);
+        Aabb::new(minimum, maximum)
     }
 }
