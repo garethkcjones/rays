@@ -1,4 +1,4 @@
-use super::{HitRecord, Hittable, XyRect, XzRect, YzRect};
+use super::{Aabb, HitRecord, Hittable, XyRect, XzRect, YzRect};
 use crate::{Material, Ray, Vec3};
 use std::{ops::Range, sync::Arc};
 
@@ -7,6 +7,8 @@ use std::{ops::Range, sync::Arc};
  */
 #[derive(Debug)]
 pub struct Block {
+    box_min: Vec3,
+    box_max: Vec3,
     sides: Vec<Arc<dyn Hittable>>,
 }
 
@@ -27,7 +29,11 @@ impl Block {
 
         assert_eq!(sides.len(), 6);
 
-        Self { sides }
+        Self {
+            box_min,
+            box_max,
+            sides,
+        }
     }
 
     #[must_use]
@@ -43,5 +49,9 @@ impl Block {
 impl Hittable for Block {
     fn hit(&self, r: &Ray, tr: Range<f64>) -> Option<HitRecord> {
         self.sides.hit(r, tr)
+    }
+
+    fn bounding_box(&self, _tr: Range<f64>) -> Aabb {
+        Aabb::new(self.box_min, self.box_max)
     }
 }
