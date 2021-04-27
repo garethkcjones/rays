@@ -1,7 +1,7 @@
 use super::{HitRecord, Hittable};
 use crate::{Isotropic, Material, Ray, Texture, Vec3};
 use rand::prelude::*;
-use std::{f64, ops::Range, sync::Arc};
+use std::{ops::Range, sync::Arc};
 
 /**
  * Type for an isotropic medium.
