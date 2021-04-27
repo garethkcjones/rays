@@ -12,6 +12,7 @@
 
 #include "colour.hh"
 #include "hittable.hh"
+#include "hittable_aabb.hh"
 #include "hittable_hitrecord.hh"
 #include "material_isotropic.hh"
 #include "ray.hh"
@@ -115,4 +116,10 @@ auto ConstantMedium::hit(Ray const &r,
 	}
 
 	return std::nullopt;
+}
+
+auto ConstantMedium::bounding_box(double const time0, double const time1) const
+	-> Aabb
+{
+	return boundary_->bounding_box(time0, time1);
 }
