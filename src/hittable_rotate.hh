@@ -5,6 +5,7 @@
 #include <random>
 
 #include "hittable.hh"
+#include "hittable_aabb.hh"
 #include "hittable_hitrecord.hh"
 #include "ray.hh"
 
@@ -31,10 +32,13 @@ class rays::hittable::RotateX final:
 		std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max,
 			std::default_random_engine &rand_eng) const override;
 
+		Aabb bounding_box(double time0, double time1) const override;
+
 	private:
 
 		std::shared_ptr<Hittable> object_;
 		double sin_theta_, cos_theta_;
+		Aabb bounding_box_;
 };
 
 /*
@@ -54,10 +58,13 @@ class rays::hittable::RotateY final:
 		std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max,
 			std::default_random_engine &rand_eng) const override;
 
+		Aabb bounding_box(double time0, double time1) const override;
+
 	private:
 
 		std::shared_ptr<Hittable> object_;
 		double sin_theta_, cos_theta_;
+		Aabb bounding_box_;
 };
 
 /*
@@ -77,8 +84,11 @@ class rays::hittable::RotateZ final:
 		std::optional<HitRecord> hit(Ray const &r, double t_min, double t_max,
 			std::default_random_engine &rand_eng) const override;
 
+		Aabb bounding_box(double time0, double time1) const override;
+
 	private:
 
 		std::shared_ptr<Hittable> object_;
 		double sin_theta_, cos_theta_;
+		Aabb bounding_box_;
 };

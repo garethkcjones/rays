@@ -1,13 +1,16 @@
 #include "hittable_rotate.hh"
 
+#include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <limits>
 #include <memory>
 #include <optional>
 #include <random>
 #include <utility>
 
 #include "hittable.hh"
+#include "hittable_aabb.hh"
 #include "hittable_hitrecord.hh"
 #include "lib.hh"
 #include "ray.hh"
@@ -15,28 +18,140 @@
 
 using namespace rays::hittable;
 
+namespace {
+	constexpr auto infinity = std::numeric_limits<double>::infinity();
+}
+
 RotateX::RotateX(std::shared_ptr<Hittable> object, double const theta) noexcept:
 	object_{std::move(object)},
 	sin_theta_{std::sin(theta)},
-	cos_theta_{std::cos(theta)}
+	cos_theta_{std::cos(theta)},
+	bounding_box_{object_ ? object_->bounding_box(0.0, 1.0)
+	                      : Aabb{Vec3{0.0, 0.0, 0.0}, Vec3{0.0, 0.0, 0.0}}}
 {
 	assert(object_);
+
+	auto const bbmn = bounding_box_.minimum();
+	auto const bbmx = bounding_box_.maximum();
+
+	auto mnx =  infinity;
+	auto mny =  infinity;
+	auto mnz =  infinity;
+	auto mxx = -infinity;
+	auto mxy = -infinity;
+	auto mxz = -infinity;
+
+	for (auto i = 0; i < 2; ++i) {
+		for (auto j = 0; j < 2; ++j) {
+			for (auto k = 0; k < 2; ++k) {
+				auto const x = i * bbmx.x + (1 - i) * bbmn.x;
+				auto const y = j * bbmx.y + (1 - j) * bbmn.y;
+				auto const z = k * bbmx.z + (1 - k) * bbmn.z;
+
+				auto const newy =  cos_theta_ * y + sin_theta_ * z;
+				auto const newz = -sin_theta_ * y + cos_theta_ * z;
+
+				mnx = std::min(mnx, x);
+				mxx = std::max(mxx, x);
+				mny = std::min(mny, newy);
+				mxy = std::max(mxy, newy);
+				mnz = std::min(mnz, newz);
+				mxz = std::max(mxz, newz);
+			}
+		}
+	}
+
+	auto const minimum = Vec3{mnx, mny, mnz};
+	auto const maximum = Vec3{mxx, mxy, mxz};
+	bounding_box_ = Aabb{minimum, maximum};
 }
 
 RotateY::RotateY(std::shared_ptr<Hittable> object, double const theta) noexcept:
 	object_{std::move(object)},
 	sin_theta_{std::sin(theta)},
-	cos_theta_{std::cos(theta)}
+	cos_theta_{std::cos(theta)},
+	bounding_box_{object_ ? object_->bounding_box(0.0, 1.0)
+	                      : Aabb{Vec3{0.0, 0.0, 0.0}, Vec3{0.0, 0.0, 0.0}}}
 {
 	assert(object_);
+
+	auto const bbmn = bounding_box_.minimum();
+	auto const bbmx = bounding_box_.maximum();
+
+	auto mnx =  infinity;
+	auto mny =  infinity;
+	auto mnz =  infinity;
+	auto mxx = -infinity;
+	auto mxy = -infinity;
+	auto mxz = -infinity;
+
+	for (auto i = 0; i < 2; ++i) {
+		for (auto j = 0; j < 2; ++j) {
+			for (auto k = 0; k < 2; ++k) {
+				auto const x = i * bbmx.x + (1 - i) * bbmn.x;
+				auto const y = j * bbmx.y + (1 - j) * bbmn.y;
+				auto const z = k * bbmx.z + (1 - k) * bbmn.z;
+
+				auto const newx =  cos_theta_ * x + sin_theta_ * z;
+				auto const newz = -sin_theta_ * x + cos_theta_ * z;
+
+				mnx = std::min(mnx, newx);
+				mxx = std::max(mxx, newx);
+				mny = std::min(mny, y);
+				mxy = std::max(mxy, y);
+				mnz = std::min(mnz, newz);
+				mxz = std::max(mxz, newz);
+			}
+		}
+	}
+
+	auto const minimum = Vec3{mnx, mny, mnz};
+	auto const maximum = Vec3{mxx, mxy, mxz};
+	bounding_box_ = Aabb{minimum, maximum};
 }
 
 RotateZ::RotateZ(std::shared_ptr<Hittable> object, double const theta) noexcept:
 	object_{std::move(object)},
 	sin_theta_{std::sin(theta)},
-	cos_theta_{std::cos(theta)}
+	cos_theta_{std::cos(theta)},
+	bounding_box_{object_ ? object_->bounding_box(0.0, 1.0)
+	                      : Aabb{Vec3{0.0, 0.0, 0.0}, Vec3{0.0, 0.0, 0.0}}}
 {
 	assert(object_);
+
+	auto const bbmn = bounding_box_.minimum();
+	auto const bbmx = bounding_box_.maximum();
+
+	auto mnx =  infinity;
+	auto mny =  infinity;
+	auto mnz =  infinity;
+	auto mxx = -infinity;
+	auto mxy = -infinity;
+	auto mxz = -infinity;
+
+	for (auto i = 0; i < 2; ++i) {
+		for (auto j = 0; j < 2; ++j) {
+			for (auto k = 0; k < 2; ++k) {
+				auto const x = i * bbmx.x + (1 - i) * bbmn.x;
+				auto const y = j * bbmx.y + (1 - j) * bbmn.y;
+				auto const z = k * bbmx.z + (1 - k) * bbmn.z;
+
+				auto const newx =  cos_theta_ * x + sin_theta_ * y;
+				auto const newy = -sin_theta_ * x + cos_theta_ * y;
+
+				mnx = std::min(mnx, newx);
+				mxx = std::max(mxx, newx);
+				mny = std::min(mny, newy);
+				mxy = std::max(mxy, newy);
+				mnz = std::min(mnz, z);
+				mxz = std::max(mxz, z);
+			}
+		}
+	}
+
+	auto const minimum = Vec3{mnx, mny, mnz};
+	auto const maximum = Vec3{mxx, mxy, mxz};
+	bounding_box_ = Aabb{minimum, maximum};
 }
 
 auto RotateX::new_hittable(std::shared_ptr<Hittable> object, double const angle)
@@ -199,4 +314,16 @@ auto RotateZ::hit(Ray const &r,
 	} else {
 		return std::nullopt;
 	}
+}
+
+auto RotateX::bounding_box(double /*time0*/, double /*time1*/) const -> Aabb {
+	return bounding_box_;
+}
+
+auto RotateY::bounding_box(double /*time0*/, double /*time1*/) const -> Aabb {
+	return bounding_box_;
+}
+
+auto RotateZ::bounding_box(double /*time0*/, double /*time1*/) const -> Aabb {
+	return bounding_box_;
 }
