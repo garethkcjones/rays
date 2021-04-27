@@ -7,6 +7,7 @@
 #include <random>
 #include <utility>
 
+#include "hittable.hh"
 #include "hittable_hitrecord.hh"
 #include "lib.hh"
 #include "ray.hh"
