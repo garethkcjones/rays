@@ -1,4 +1,4 @@
-use super::{HitRecord, Hittable};
+use super::{Aabb, HitRecord, Hittable};
 use crate::{Ray, Vec3};
 use std::{ops::Range, sync::Arc};
 
@@ -37,5 +37,13 @@ impl Hittable for Translate {
                 rec.material(),
             )
         })
+    }
+
+    fn bounding_box(&self, tr: Range<f64>) -> Aabb {
+        let output_box = self.object.bounding_box(tr);
+        Aabb::new(
+            output_box.minimum() + self.offset,
+            output_box.maximum() + self.offset,
+        )
     }
 }
