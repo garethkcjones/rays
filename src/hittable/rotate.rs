@@ -38,6 +38,8 @@ pub struct RotateZ {
 impl RotateX {
     #[must_use]
     pub fn new(object: Arc<dyn Hittable>, theta: f64) -> Self {
+        #![allow(clippy::many_single_char_names)]
+
         let (sin_theta, cos_theta) = theta.to_radians().sin_cos();
 
         let bounding_box = object.bounding_box(0.0..1.0);
@@ -96,6 +98,8 @@ impl RotateX {
 impl RotateY {
     #[must_use]
     pub fn new(object: Arc<dyn Hittable>, theta: f64) -> Self {
+        #![allow(clippy::many_single_char_names)]
+
         let (sin_theta, cos_theta) = theta.to_radians().sin_cos();
 
         let bounding_box = object.bounding_box(0.0..1.0);
@@ -154,6 +158,8 @@ impl RotateY {
 impl RotateZ {
     #[must_use]
     pub fn new(object: Arc<dyn Hittable>, theta: f64) -> Self {
+        #![allow(clippy::many_single_char_names)]
+
         let (sin_theta, cos_theta) = theta.to_radians().sin_cos();
 
         let bounding_box = object.bounding_box(0.0..1.0);
