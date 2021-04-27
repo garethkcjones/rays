@@ -1,4 +1,4 @@
-use super::{HitRecord, Hittable};
+use super::{Aabb, HitRecord, Hittable};
 use crate::{Ray, Vec3};
 use std::{ops::Range, sync::Arc};
 
@@ -10,6 +10,7 @@ pub struct RotateX {
     object: Arc<dyn Hittable>,
     sin_theta: f64,
     cos_theta: f64,
+    bounding_box: Aabb,
 }
 
 /**
@@ -20,6 +21,7 @@ pub struct RotateY {
     object: Arc<dyn Hittable>,
     sin_theta: f64,
     cos_theta: f64,
+    bounding_box: Aabb,
 }
 
 /**
@@ -30,16 +32,58 @@ pub struct RotateZ {
     object: Arc<dyn Hittable>,
     sin_theta: f64,
     cos_theta: f64,
+    bounding_box: Aabb,
 }
 
 impl RotateX {
     #[must_use]
     pub fn new(object: Arc<dyn Hittable>, theta: f64) -> Self {
         let (sin_theta, cos_theta) = theta.to_radians().sin_cos();
+
+        let bounding_box = object.bounding_box(0.0..1.0);
+        let bbmn = bounding_box.minimum();
+        let bbmx = bounding_box.maximum();
+
+        let mut mnx = f64::INFINITY;
+        let mut mny = f64::INFINITY;
+        let mut mnz = f64::INFINITY;
+        let mut mxx = -f64::INFINITY;
+        let mut mxy = -f64::INFINITY;
+        let mut mxz = -f64::INFINITY;
+
+        for i in 0..2 {
+            let i = f64::from(i);
+            for j in 0..2 {
+                let j = f64::from(j);
+                for k in 0..2 {
+                    let k = f64::from(k);
+
+                    let x = i * bbmx.x() + (1.0 - i) * bbmn.x();
+                    let y = j * bbmx.y() + (1.0 - j) * bbmn.y();
+                    let z = k * bbmx.z() + (1.0 - k) * bbmn.z();
+
+                    let newy = cos_theta * y + sin_theta * z;
+                    let newz = -sin_theta * y + cos_theta * z;
+
+                    mnx = mnx.min(x);
+                    mxx = mxx.max(x);
+                    mny = mny.min(newy);
+                    mxy = mxy.max(newy);
+                    mnz = mnz.min(newz);
+                    mxz = mxz.max(newz);
+                }
+            }
+        }
+
+        let minimum = Vec3(mnx, mny, mnz);
+        let maximum = Vec3(mxx, mxy, mxz);
+        let bounding_box = Aabb::new(minimum, maximum);
+
         Self {
             object,
             sin_theta,
             cos_theta,
+            bounding_box,
         }
     }
 
@@ -53,10 +97,51 @@ impl RotateY {
     #[must_use]
     pub fn new(object: Arc<dyn Hittable>, theta: f64) -> Self {
         let (sin_theta, cos_theta) = theta.to_radians().sin_cos();
+
+        let bounding_box = object.bounding_box(0.0..1.0);
+        let bbmn = bounding_box.minimum();
+        let bbmx = bounding_box.maximum();
+
+        let mut mnx = f64::INFINITY;
+        let mut mny = f64::INFINITY;
+        let mut mnz = f64::INFINITY;
+        let mut mxx = -f64::INFINITY;
+        let mut mxy = -f64::INFINITY;
+        let mut mxz = -f64::INFINITY;
+
+        for i in 0..2 {
+            let i = f64::from(i);
+            for j in 0..2 {
+                let j = f64::from(j);
+                for k in 0..2 {
+                    let k = f64::from(k);
+
+                    let x = i * bbmx.x() + (1.0 - i) * bbmn.x();
+                    let y = j * bbmx.y() + (1.0 - j) * bbmn.y();
+                    let z = k * bbmx.z() + (1.0 - k) * bbmn.z();
+
+                    let newx = cos_theta * x + sin_theta * z;
+                    let newz = -sin_theta * x + cos_theta * z;
+
+                    mnx = mnx.min(newx);
+                    mxx = mxx.max(newx);
+                    mny = mny.min(y);
+                    mxy = mxy.max(y);
+                    mnz = mnz.min(newz);
+                    mxz = mxz.max(newz);
+                }
+            }
+        }
+
+        let minimum = Vec3(mnx, mny, mnz);
+        let maximum = Vec3(mxx, mxy, mxz);
+        let bounding_box = Aabb::new(minimum, maximum);
+
         Self {
             object,
             sin_theta,
             cos_theta,
+            bounding_box,
         }
     }
 
@@ -70,10 +155,51 @@ impl RotateZ {
     #[must_use]
     pub fn new(object: Arc<dyn Hittable>, theta: f64) -> Self {
         let (sin_theta, cos_theta) = theta.to_radians().sin_cos();
+
+        let bounding_box = object.bounding_box(0.0..1.0);
+        let bbmn = bounding_box.minimum();
+        let bbmx = bounding_box.maximum();
+
+        let mut mnx = f64::INFINITY;
+        let mut mny = f64::INFINITY;
+        let mut mnz = f64::INFINITY;
+        let mut mxx = -f64::INFINITY;
+        let mut mxy = -f64::INFINITY;
+        let mut mxz = -f64::INFINITY;
+
+        for i in 0..2 {
+            let i = f64::from(i);
+            for j in 0..2 {
+                let j = f64::from(j);
+                for k in 0..2 {
+                    let k = f64::from(k);
+
+                    let x = i * bbmx.x() + (1.0 - i) * bbmn.x();
+                    let y = j * bbmx.y() + (1.0 - j) * bbmn.y();
+                    let z = k * bbmx.z() + (1.0 - k) * bbmn.z();
+
+                    let newx = cos_theta * x + sin_theta * y;
+                    let newy = -sin_theta * x + cos_theta * y;
+
+                    mnx = mnx.min(newx);
+                    mxx = mxx.max(newx);
+                    mny = mny.min(newy);
+                    mxy = mxy.max(newy);
+                    mnz = mnz.min(z);
+                    mxz = mxz.max(z);
+                }
+            }
+        }
+
+        let minimum = Vec3(mnx, mny, mnz);
+        let maximum = Vec3(mxx, mxy, mxz);
+        let bounding_box = Aabb::new(minimum, maximum);
+
         Self {
             object,
             sin_theta,
             cos_theta,
+            bounding_box,
         }
     }
 
@@ -123,6 +249,10 @@ impl Hittable for RotateX {
             )
         })
     }
+
+    fn bounding_box(&self, _tr: Range<f64>) -> Aabb {
+        self.bounding_box.clone()
+    }
 }
 
 impl Hittable for RotateY {
@@ -165,6 +295,10 @@ impl Hittable for RotateY {
             )
         })
     }
+
+    fn bounding_box(&self, _tr: Range<f64>) -> Aabb {
+        self.bounding_box.clone()
+    }
 }
 
 impl Hittable for RotateZ {
@@ -206,5 +340,9 @@ impl Hittable for RotateZ {
                 rec.material(),
             )
         })
+    }
+
+    fn bounding_box(&self, _tr: Range<f64>) -> Aabb {
+        self.bounding_box.clone()
     }
 }
