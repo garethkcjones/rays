@@ -1,4 +1,4 @@
-use super::{HitRecord, Hittable};
+use super::{Aabb, HitRecord, Hittable};
 use crate::{Isotropic, Material, Ray, Texture, Vec3};
 use rand::prelude::*;
 use std::{ops::Range, sync::Arc};
@@ -92,5 +92,9 @@ impl Hittable for ConstantMedium {
         }
 
         None
+    }
+
+    fn bounding_box(&self, tr: Range<f64>) -> Aabb {
+        self.boundary.bounding_box(tr)
     }
 }
