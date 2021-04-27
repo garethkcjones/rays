@@ -5,6 +5,7 @@ src = [
   'hittable_aabb.cc',
   'hittable_aarect.cc',
   'hittable_block.cc',
+  'hittable_bvhnode.cc',
   'hittable_constantmedium.cc',
   'hittable_hitrecord.cc',
   'hittable_rotate.cc',
