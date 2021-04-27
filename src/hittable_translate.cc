@@ -7,6 +7,7 @@
 #include <utility>
 
 #include "hittable.hh"
+#include "hittable_aabb.hh"
 #include "hittable_hitrecord.hh"
 #include "ray.hh"
 #include "vec3.hh"
@@ -48,4 +49,11 @@ auto Translate::hit(Ray const &r,
 	} else {
 		return std::nullopt;
 	}
+}
+
+auto Translate::bounding_box(double const time0, double const time1) const
+	-> Aabb
+{
+	auto const output_box = object_->bounding_box(time0, time1);
+	return Aabb{output_box.minimum() + offset_, output_box.maximum() + offset_};
 }
