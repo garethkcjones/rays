@@ -1,5 +1,5 @@
 use crate::{Ray, Vec3};
-use std::mem;
+use std::{ops::Range, mem};
 
 /**
  * Type for representing an axis-aligned bounding box.
@@ -40,7 +40,10 @@ impl Aabb {
     }
 
     #[must_use]
-    pub fn hit(&self, r: &Ray, mut t_min: f64, mut t_max: f64) -> bool {
+    pub fn hit(&self, r: &Ray, tr: Range<f64>) -> bool {
+        let mut t_min = tr.start;
+        let mut t_max = tr.end;
+
         let Vec3(mnx, mny, mnz) = self.minimum;
         let Vec3(mxx, mxy, mxz) = self.maximum;
 
