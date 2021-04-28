@@ -14,6 +14,7 @@
 #include "hittable.hh"
 #include "hittable_aarect.hh"
 #include "hittable_block.hh"
+#include "hittable_bvhnode.hh"
 #include "hittable_constantmedium.hh"
 #include "hittable_rotate.hh"
 #include "hittable_sphere.hh"
@@ -307,6 +308,101 @@ namespace {
 		return objects;
 	}
 
+	auto final_scene() -> std::shared_ptr<rays::hittable::Hittable> {
+		using rays::Colour;
+		using rays::hittable::Block;
+		using rays::hittable::BvhNode;
+		using rays::hittable::ConstantMedium;
+		using rays::hittable::HittableList;
+		using rays::hittable::MovingSphere;
+		using rays::hittable::RotateY;
+		using rays::hittable::Sphere;
+		using rays::hittable::Translate;
+		using rays::hittable::XzRect;
+		using rays::material::Dielectric;
+		using rays::material::DiffuseLight;
+		using rays::material::Lambertian2;
+		using rays::material::Metal;
+		using rays::texture::Image;
+		using rays::texture::Noise;
+		using rays::Vec3;
+
+		auto rand_dev = std::random_device{};
+		auto rand_eng = std::default_random_engine{rand_dev()};
+
+		HittableList boxes1;
+		auto ground = Lambertian2::new_material(Colour{0.48, 0.83, 0.53});
+
+		auto rand_dst1 = std::uniform_real_distribution{1.0, 101.0};
+		auto const boxes_per_side = 20;
+		for (auto i = 0; i < boxes_per_side; ++i) {
+			for (auto j = 0; j < boxes_per_side; ++j) {
+				auto const w = 100.0;
+				auto const x0 = -1000.0 + i * w;
+				auto const z0 = -1000.0 + j * w;
+				auto const y0 = 0.0;
+				auto const x1 = x0 + w;
+				auto const y1 = rand_dst1(rand_eng);
+				auto const z1 = z0 + w;
+
+				boxes1.push_back(Block::new_hittable(Vec3{x0, y0, z0},
+					Vec3{x1, y1, z1}, ground));
+			}
+		}
+
+		auto const objects = std::make_shared<HittableList>();
+
+		objects->push_back(BvhNode::new_hittable(boxes1, 0.0, 1.0, rand_eng));
+
+		auto light = DiffuseLight::new_material(Colour{7.0, 7.0, 7.0});
+		objects->push_back(XzRect::new_hittable(123.0, 423.0, 147.0, 412.0,
+			554.0, std::move(light)));
+
+		auto const centre1 = Vec3{400.0, 400.0, 200.0};
+		auto const centre2 = centre1 + Vec3{30.0, 0.0, 0.0};
+		auto moving_sphere_material =
+			Lambertian2::new_material(Colour{0.7, 0.3, 0.1});
+		objects->push_back(MovingSphere::new_hittable(centre1, centre2, 0.0,
+			1.0, 50.0, std::move(moving_sphere_material)));
+
+		objects->push_back(Sphere::new_hittable(Vec3{260.0, 150.0, 45.0}, 50.0,
+			Dielectric::new_material(1.5)));
+		objects->push_back(Sphere::new_hittable(Vec3{0.0, 150.0, 145.0}, 50.0,
+			Metal::new_material(Colour{0.8, 0.8, 0.9}, 1.0)));
+
+		auto boundary = Sphere::new_hittable(Vec3{360.0, 150.0, 145.0}, 70.0,
+			Dielectric::new_material(1.5));
+		objects->push_back(boundary);
+		objects->push_back(ConstantMedium::new_hittable(std::move(boundary),
+			0.2, Colour{0.2, 0.4, 0.9}));
+		boundary = Sphere::new_hittable(Vec3{0.0, 0.0, 0.0}, 5000.0,
+			Dielectric::new_material(1.5));
+		objects->push_back(ConstantMedium::new_hittable(std::move(boundary),
+			0.0001, Colour{1.0, 1.0, 1.0}));
+
+		auto emat = Lambertian2::new_material(
+			Image::new_texture("earthmap.jpg"));
+		objects->push_back(Sphere::new_hittable(Vec3{400.0, 200.0, 400.0},
+			100.0, std::move(emat)));
+		auto pertext = Noise::new_texture(rand_eng, 0.1);
+		objects->push_back(Sphere::new_hittable(Vec3{220.0, 280.0, 300.0}, 80.0,
+			Lambertian2::new_material(std::move(pertext))));
+
+		HittableList boxes2;
+		auto white = Lambertian2::new_material(Colour{0.73, 0.73, 0.73});
+		auto const ns = 1000;
+		for (auto j = 0; j < ns; ++j) {
+			boxes2.push_back(Sphere::new_hittable(
+				Vec3::new_random(rand_eng, 0.0, 165.0), 10.0, white));
+		}
+
+		objects->push_back(Translate::new_hittable(RotateY::new_hittable(
+			BvhNode::new_hittable(boxes2, 0.0, 1.0, rand_eng), 15.0),
+			Vec3{-100.0, 270.0, 395.0}));
+
+		return objects;
+	}
+
 	/*
 	 * Builds and renders a scene.
 	 */
@@ -501,6 +597,33 @@ namespace {
 
 				// Camera.
 				lookfrom = Vec3{278.0, 278.0, -800.0};
+				lookat   = Vec3{278.0, 278.0,    0.0};
+				vup      = Vec3{ 0.0, 1.0, 0.0};
+				vfov = 40.0;
+				aspect_ratio = static_cast<double>(image_width) / image_height;
+				aperture = 0.0;
+				dist_to_focus = 10.0;
+				time0 = 0.0;
+				time1 = 1.0;
+
+				break;
+			}
+
+			case 8: {
+				// Image.
+				auto const image_aspect_ratio = 1.0;
+				image_width = 800;
+				image_height =
+					static_cast<int>(image_width / image_aspect_ratio);
+				samples_per_pixel = 10000;
+				max_depth = 50;
+
+				// World.
+				world = final_scene();
+				background = Colour{0.0, 0.0, 0.0};
+
+				// Camera.
+				lookfrom = Vec3{478.0, 278.0, -600.0};
 				lookat   = Vec3{278.0, 278.0,    0.0};
 				vup      = Vec3{ 0.0, 1.0, 0.0};
 				vfov = 40.0;
