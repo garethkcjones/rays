@@ -1,8 +1,8 @@
-use rand::prelude::*;
+use rand::{distributions::Uniform, prelude::*};
 use rays::{
-    Block, Camera, Chequer, Colour, ConstantMedium, Dielectric, DiffuseLight, Hittable, Image,
-    Lambertian2, Metal, MovingSphere, Noise, RotateY, Sphere, Translate, Vec3, XyRect, XzRect,
-    YzRect,
+    Block, BvhNode, Camera, Chequer, Colour, ConstantMedium, Dielectric, DiffuseLight, Hittable,
+    Image, Lambertian2, Metal, MovingSphere, Noise, RotateY, Sphere, Translate, Vec3, XyRect,
+    XzRect, YzRect,
 };
 use std::{
     env,
@@ -225,6 +225,112 @@ fn cornell_smoke() -> Arc<dyn Hittable> {
     Arc::new(objects)
 }
 
+fn final_scene() -> Result<Arc<dyn Hittable>, Box<dyn Error + Send + Sync>> {
+    let mut rand_eng = thread_rng();
+
+    let mut boxes1 = Vec::new();
+    let ground = Lambertian2::new_material(Colour(0.48, 0.83, 0.53));
+
+    let rand_dst = Uniform::from(1.0..=100.0);
+    const BOXES_PER_SIDE: u32 = 20;
+    for i in 0..BOXES_PER_SIDE {
+        let i = f64::from(i);
+        for j in 0..BOXES_PER_SIDE {
+            let j = f64::from(j);
+            const W: f64 = 100.0;
+            let x0 = -1000.0 + i * W;
+            let z0 = -1000.0 + j * W;
+            let y0 = 0.0;
+            let x1 = x0 + W;
+            let y1 = rand_eng.sample(rand_dst);
+            let z1 = z0 + W;
+
+            boxes1.push(Block::new_hittable(
+                Vec3(x0, y0, z0),
+                Vec3(x1, y1, z1),
+                ground.clone(),
+            ));
+        }
+    }
+
+    let mut objects = vec![BvhNode::new_hittable(&boxes1, 0.0..1.0)];
+
+    let light = DiffuseLight::new_material(Colour(7.0, 7.0, 7.0));
+    objects.push(XzRect::new_hittable(
+        123.0..423.0,
+        147.0..412.0,
+        554.0,
+        light,
+    ));
+
+    let centre1 = Vec3(400.0, 400.0, 200.0);
+    let centre2 = centre1 + Vec3(30.0, 0.0, 0.0);
+    let moving_sphere_material = Lambertian2::new_material(Colour(0.7, 0.3, 0.1));
+    objects.push(MovingSphere::new_hittable(
+        centre1,
+        centre2,
+        0.0..1.0,
+        50.0,
+        moving_sphere_material,
+    ));
+
+    objects.push(Sphere::new_hittable(
+        Vec3(260.0, 150.0, 45.0),
+        50.0,
+        Dielectric::new_material(1.5),
+    ));
+    objects.push(Sphere::new_hittable(
+        Vec3(0.0, 150.0, 145.0),
+        50.0,
+        Metal::new_material(Colour(0.8, 0.8, 0.9), 1.0),
+    ));
+
+    let boundary = Sphere::new_hittable(
+        Vec3(360.0, 150.0, 145.0),
+        70.0,
+        Dielectric::new_material(1.5),
+    );
+    objects.push(boundary.clone());
+    objects.push(ConstantMedium::new_hittable(
+        boundary,
+        0.2,
+        Colour(0.2, 0.4, 0.9),
+    ));
+    let boundary = Sphere::new_hittable(Vec3(0.0, 0.0, 0.0), 5000.0, Dielectric::new_material(1.5));
+    objects.push(ConstantMedium::new_hittable(
+        boundary,
+        0.0001,
+        Colour(1.0, 1.0, 1.0),
+    ));
+
+    let emat = Lambertian2::new_material(Image::new_texture("earthmap.jpg")?);
+    objects.push(Sphere::new_hittable(Vec3(400.0, 200.0, 400.0), 100.0, emat));
+    let pertext = Noise::new_texture(0.1);
+    objects.push(Sphere::new_hittable(
+        Vec3(220.0, 280.0, 300.0),
+        80.0,
+        Lambertian2::new_material(pertext),
+    ));
+
+    let mut boxes2 = Vec::new();
+    let white = Lambertian2::new_material(Colour(0.73, 0.73, 0.73));
+    const NS: u32 = 1000;
+    for _ in 0..NS {
+        boxes2.push(Sphere::new_hittable(
+            Vec3::new_random(0.0..165.0),
+            10.0,
+            white.clone(),
+        ));
+    }
+
+    objects.push(Translate::new_hittable(
+        RotateY::new_hittable(BvhNode::new_hittable(&boxes2, 0.0..1.0), 15.0),
+        Vec3(-100.0, 270.0, 395.0),
+    ));
+
+    Ok(Arc::new(objects))
+}
+
 /**
  * Builds and renders a scene.
  */
@@ -407,6 +513,30 @@ fn render(scene: u32, output: &mut dyn Write) -> Result<(), Box<dyn Error + Send
 
             // Camera.
             lookfrom = Vec3(278.0, 278.0, -800.0);
+            lookat = Vec3(278.0, 278.0, 0.0);
+            vup = Vec3(0.0, 1.0, 0.0);
+            vfov = 40.0;
+            aspect_ratio = f64::from(image_width) / f64::from(image_height);
+            aperture = 0.0;
+            dist_to_focus = 10.0;
+            time0 = 0.0;
+            time1 = 1.0;
+        }
+
+        8 => {
+            // Image.
+            let image_aspect_ratio = 1.0;
+            image_width = 800;
+            image_height = (f64::from(image_width) / image_aspect_ratio) as _;
+            samples_per_pixel = 10000;
+            max_depth = 50;
+
+            // World.
+            world = final_scene()?;
+            background = Colour(0.0, 0.0, 0.0);
+
+            // Camera.
+            lookfrom = Vec3(478.0, 278.0, -600.0);
             lookat = Vec3(278.0, 278.0, 0.0);
             vup = Vec3(0.0, 1.0, 0.0);
             vfov = 40.0;
