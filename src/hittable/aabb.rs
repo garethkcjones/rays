@@ -1,5 +1,5 @@
 use crate::{Ray, Vec3};
-use std::{ops::Range, mem};
+use std::{mem, ops::Range};
 
 /**
  * Type for representing an axis-aligned bounding box.

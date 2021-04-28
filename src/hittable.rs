@@ -1,6 +1,7 @@
 mod aabb;
 mod aarect;
 mod block;
+mod bvhnode;
 mod constantmedium;
 mod hitrecord;
 mod rotate;
@@ -10,6 +11,7 @@ use crate::{Ray, Vec3};
 use aabb::Aabb;
 pub use aarect::{XyRect, XzRect, YzRect};
 pub use block::Block;
+pub use bvhnode::BvhNode;
 pub use constantmedium::ConstantMedium;
 pub use hitrecord::HitRecord;
 pub use rotate::{RotateX, RotateY, RotateZ};
