@@ -16,8 +16,7 @@
 using namespace rays::hittable;
 
 namespace {
-	constexpr auto get_sphere_uv(rays::Vec3 const p) noexcept
-		-> std::pair<double, double>
+	auto get_sphere_uv(rays::Vec3 const p) noexcept -> std::pair<double, double>
 	{
 		// p: a given point on the sphere of radius one, centred at the origin.
 		// u: returned value [0,1] of angle around the Y axis from X=-1.
