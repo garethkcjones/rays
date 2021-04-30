@@ -422,11 +422,11 @@ namespace {
 		switch (scene) {
 			case 1: {
 				// Image.
-				auto const image_aspect_ratio = 16.0 / 9.0;
-				image_width = 400;
+				auto const image_aspect_ratio = 3.0 / 2.0;
+				image_width = 1200;
 				image_height =
 					static_cast<int>(image_width / image_aspect_ratio);
-				samples_per_pixel = 100;
+				samples_per_pixel = 500;
 				max_depth = 50;
 
 				// World.

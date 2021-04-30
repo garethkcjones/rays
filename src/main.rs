@@ -357,10 +357,10 @@ fn render(scene: u32, output: &mut dyn Write) -> Result<(), Box<dyn Error + Send
     match scene {
         1 => {
             // Image.
-            let image_aspect_ratio = 16.0 / 9.0;
-            image_width = 400;
+            let image_aspect_ratio = 3.0 / 2.0;
+            image_width = 1200;
             image_height = (f64::from(image_width) / image_aspect_ratio) as _;
-            samples_per_pixel = 100;
+            samples_per_pixel = 500;
             max_depth = 50;
 
             // World.
