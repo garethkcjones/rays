@@ -169,7 +169,6 @@ fn write_file(
  *
  * # Parameters
  *
- * * `num_threads` is the number of threads to distribute rendering over.
  * * `world` contains the hittable objects in the scene.
  * * `background` is the background colour.
  * * `image_width` and `image_height` are the image dimesions, in pixels.
@@ -181,7 +180,6 @@ fn write_file(
  */
 #[allow(clippy::too_many_arguments)]
 pub fn run(
-    num_threads: u32,
     world: Arc<dyn Hittable>,
     background: Colour,
     image_width: u32,
@@ -192,6 +190,7 @@ pub fn run(
     output: &mut dyn Write,
     log: bool,
 ) -> Result<(), Box<dyn Error + Send + Sync>> {
+    let num_threads = u32::try_from(num_cpus::get())?;
     assert!(num_threads > 0);
 
     let samples_per_thread = samples_per_pixel / num_threads;
