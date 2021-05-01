@@ -16,4 +16,4 @@ src = [
 
 thread_dep = dependency('threads')
 
-executable('rays', src, dependencies : thread_dep)
+executable('rays', src, dependencies : thread_dep, install : true)
