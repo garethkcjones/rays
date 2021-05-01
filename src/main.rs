@@ -278,7 +278,7 @@ fn get_progname(args: &[OsString]) -> &str {
 /**
  * Entry point.
  *
- * Usage: `rays [OUTPUT_FILE]`
+ * Usage: `rays SCENE_NUMBER [OUTPUT_FILE]`
  */
 fn main() {
     let args: Vec<_> = env::args_os().collect();
