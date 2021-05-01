@@ -193,10 +193,7 @@ fn render(scene: u32, output: &mut dyn Write) -> Result<(), Box<dyn Error + Send
 
     // Render.
 
-    let num_threads = 32;
-
     rays::run(
-        num_threads,
         world,
         image_width,
         image_height,
