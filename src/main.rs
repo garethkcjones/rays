@@ -232,10 +232,7 @@ fn render(scene: u32, output: &mut dyn Write) -> Result<(), Box<dyn Error + Send
 
     // Render.
 
-    let num_threads = 32;
-
     rays::run(
-        num_threads,
         world,
         image_width,
         image_height,
@@ -320,7 +317,7 @@ fn get_progname(args: &[OsString]) -> &str {
 /**
  * Entry point.
  *
- * Usage: `rays [OUTPUT_FILE]`
+ * Usage: `rays SCENE_NUMBER [OUTPUT_FILE]`
  */
 fn main() {
     let args: Vec<_> = env::args_os().collect();
