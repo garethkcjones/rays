@@ -7,4 +7,4 @@ src = [
   'vec3.cc'
 ]
 
-executable('rays', src)
+executable('rays', src, install : true)
