@@ -3,4 +3,4 @@ src = [
   'main.cc'
 ]
 
-executable('rays', src)
+executable('rays', src, install : true)
