@@ -522,7 +522,7 @@ namespace {
 /*
  * Entry point.
  *
- * Usage: rays [OUTPUT_FILE]
+ * Usage: rays SCENE_NUMBER [OUTPUT_FILE]
  */
 int main(int const argc, char const *const *const argv) {
 	auto const progname = get_progname(argc, argv);
